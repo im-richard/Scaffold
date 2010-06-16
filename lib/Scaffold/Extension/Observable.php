@@ -12,6 +12,8 @@
  */
 abstract class Scaffold_Extension_Observable
 {
+	public $data;
+
 	/**
 	 * Array of extension objects
 	 *
@@ -27,9 +29,9 @@ abstract class Scaffold_Extension_Observable
 	 * @access public
 	 * @return void
 	 */
-	public function attach(Scaffold_Extension_Observer $extension)
+	public function attach($name,Scaffold_Extension_Observer $extension)
 	{
-		$this->extensions[] = $extension;
+		$this->extensions[$name] = $extension;
 	}
 	
 	/**
