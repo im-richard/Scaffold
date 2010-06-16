@@ -10,7 +10,7 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold_Response extends Scaffold_Extension_Observable
+class Scaffold_Response
 {
 	/**
 	 * Conditional Get headers
