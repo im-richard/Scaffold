@@ -1,26 +1,20 @@
 <?php
-
 /**
- * Scaffold_CSS_Source
+ * Scaffold_Source_Interface
  *
- * A single CSS file or string. 
+ * The interface for all source types
  * 
- * @author your name
+ * @package 		Scaffold
+ * @subpackage		Source
+ * @author 			Anthony Short <anthonyshort@me.com>
+ * @copyright 		2009-2010 Anthony Short. All rights reserved.
+ * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
+ * @link 			https://github.com/anthonyshort/csscaffold/master
  */
 interface Scaffold_Source_Interface
-{
-	/**
-	 * Create the file object
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	public function __construct($content,$options = array());
-	
+{	
 	/**
 	 * Return the original contents of the source
-	 *
 	 * @access public
 	 * @return string
 	 */
@@ -28,11 +22,10 @@ interface Scaffold_Source_Interface
 	
 	/**
 	 * Get the current contents of the source
-	 *
 	 * @access public
 	 * @return string
 	 */
-	public function contents();
+	public function get();
 	
 	/**
 	 * Return the unique id for this source

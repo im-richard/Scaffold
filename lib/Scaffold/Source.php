@@ -1,53 +1,56 @@
 <?php
 
 /**
- * Scaffold_CSS_Source
+ * Scaffold_Source
  *
- * A single CSS file or string. 
+ * The base file for source objects. Every source object extends this class
  * 
  * @author your name
  */
 class Scaffold_Source
-{
+{	
 	/**
-	 * The source object
-	 *
-	 * @var Scaffold_Source_Interface
+	 * The source driver object
+	 * @var object
 	 */
-	private $_source;
+	protected $driver;
 	
 	/**
-	 * Create the source object
-	 *
-	 * @access public
-	 * @param $source Scaffold_Source_Interface
-	 * @return void
+	 * @var array
 	 */
-	public function __construct(Scaffold_Source_Interface $source)
+	public $options = array();
+	
+	/**
+	 * Constructor
+	 *
+	 * @author your name
+	 * @param $param
+	 * @return return type
+	 */
+	public function __construct($driver,$options = array())
 	{
-		$this->_source = $source;
+		$this->driver = $driver;
+		$this->options = $options;
 	}
 	
 	/**
 	 * Return the original contents of the source
-	 *
 	 * @access public
 	 * @return string
 	 */
 	public function original()
 	{
-		return $this->_source->original();
+		return $this->driver->original();
 	}
 	
 	/**
 	 * Get the current contents of the source
-	 *
 	 * @access public
 	 * @return string
 	 */
-	public function contents()
+	public function get()
 	{
-		return $this->_source->contents();
+		return $this->driver->get();
 	}
 	
 	/**
@@ -58,7 +61,7 @@ class Scaffold_Source
 	 */
 	public function id()
 	{
-		return $this->_source->id();
+		return $this->driver->id();
 	}
 	
 	/**
@@ -69,25 +72,6 @@ class Scaffold_Source
 	 */
 	public function last_modified()
 	{
-		return $this->_source->last_modified();
-	}
-	
-	/**
-	 * Finds a file relative to the source file
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	public function find_file($file)
-	{
-		$target = $this->_source->directory() . DIRECTORY_SEPARATOR . $file;
-
-		if($this->_source->directory() !== false AND file_exists($target))
-		{
-			return $target;
-		}
-		
-		return false;
+		return $this->driver->last_modified();
 	}
 }

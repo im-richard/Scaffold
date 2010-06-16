@@ -77,9 +77,8 @@ class Scaffold_Container
 		}
 		
 		# Load each of the extensions
-		
-		#foreach(glob($system.'/extensions/*/') as $ext)
-		/*{
+		foreach(glob($system.'/extensions/*/') as $ext)
+		{
 			$ext .= DIRECTORY_SEPARATOR;
 		
 			$config = array();
@@ -95,9 +94,10 @@ class Scaffold_Container
 			if(file_exists($ext.$file))
 			{
 				require_once($ext.$file);
-				$this->extensions[$name] = new $name($config,$ext);
+				$class = "Scaffold_Extension_".$name;
+				$this->extensions[$name] = new $class($config,$ext);
 			}
-		}*/
+		}
 	}
 
 	/**
@@ -107,22 +107,44 @@ class Scaffold_Container
 	 */
 	public function build() 
 	{	
-		# Get the system cache
 		$cache = $this->getCache();
-
-		# Create a new engine
 		$response = $this->getResponse();
+		$loader = $this->getLoader();
+		$scaffold = new Scaffold($cache,$response,$loader,$this->options['production']);
 		
-		# The main object
-		$scaffold = new Scaffold($cache,$response,$this->options['production']);
-		
-		# Register the extensions
-		foreach($this->extensions as $ext)
+		foreach($this->extensions as $name => $ext)
 		{
-			$scaffold->attach($ext);
+			$scaffold->attach($name,$ext);
 		}
 		
 		return $scaffold;
+	}
+	
+	/**
+	 * Create a new unrestricted source type
+	 * @param $type
+	 * @param $content
+	 * @return Scaffold_Source
+	 */
+	public function source($type,$content)
+	{
+		$class = 'Scaffold_Source_'.ucfirst($type);
+		$driver = new $class($content,$this->options);		
+		return new Scaffold_Source($driver,$this->options);
+	}
+	
+	/**
+	 * Gets the loader object
+	 *
+	 * @access public
+	 * @return Scaffold_Loader
+	 */
+	public function getLoader()
+	{
+		if(isset($this->_loader))
+			return $this->_loader;
+		
+		return $this->_loader = new Scaffold_Loader($this->options['load_paths']);
 	}
 	
 	/**
@@ -172,36 +194,6 @@ class Scaffold_Container
 	}
 	
 	/**
-	 * Builds a new Engine object with all of it's dependencies
-	 *
-	 * @access public
-	 * @param $param
-	 * @return return type
-	 *
-	public function getEngine()
-	{
-		if(isset($this->_engine))
-			return $this->_engine;
-			
-		// The engine dependencies
-		$dependencies = array();
-			
-		// Load the dependencies using reflection
-		$engine = new ReflectionClass('Scaffold_Engine');
-		$construct = $engine->getConstructor();
-		
-		// Loop through each dependency
-		foreach($construct->getParameters() as $param)
-		{
-			$param_class = $param->getClass();
-			$name = $param_class->getName();
-			$dependencies[] = new $name;
-		}
-		
-		return $this->_engine = $engine->newInstanceArgs($dependencies);
-	}
-	
-	/**
 	 * Gets the system cache object
 	 *
 	 * @access public
@@ -213,31 +205,5 @@ class Scaffold_Container
 			return $this->_cache;
 
 		return $this->_cache = new Scaffold_Cache_File($this->system.'/cache/',$this->options['cache_lifetime']);
-	}
-	
-	/**
-	 * Creates a new file source
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	public function file_source($file)
-	{
-		$sources = $this->getSourceContainer();
-		return $sources->file($file);
-	}
-	
-	/**
-	 * Creates a new string source
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	public function string_source($string)
-	{
-		$sources = $this->getSourceContainer();
-		return $sources->string($string);
 	}
 }
