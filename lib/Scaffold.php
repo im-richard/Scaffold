@@ -2,9 +2,7 @@
 /**
  * Scaffold
  *
- * - Parses files
- * - Parses directories of CSS files
- * - Parses pre-defined groups
+ * Compiles and renders Scaffold_Source objects
  *
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>
@@ -12,7 +10,7 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold
+class Scaffold extends Scaffold_Extension_Observable
 {
 	// =========================================
 	// = Public Variables =
@@ -26,33 +24,29 @@ class Scaffold
 	 */
 	public $production;
 	
-	// =========================================
-	// = Private Variables =
-	// =========================================
-	
 	/**
 	 * System cache
 	 *
-	 * @access private
+	 * @access public
 	 * @var Scaffold_Cache
 	 */
-	private $_cache;
+	public $cache;
 	
 	/**
 	 * Responds to the browser
 	 *
-	 * @access private
+	 * @access public
 	 * @var Scaffold_Reponse
 	 */
-	private $_response;
+	public $response;
 	
 	/**
 	 * Loads in files, directories and sources
 	 *
-	 * @access private
-	 * @var Scaffold_Load
+	 * @access public
+	 * @var Scaffold_Loader
 	 */
-	 private $_loader;
+	 public $loader;
 	
 	// =========================================
 	// = Protected Variables =
@@ -75,16 +69,16 @@ class Scaffold
 	 * @param $param
 	 * @return return type
 	 */
-	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, Scaffold_Load $loader, $production = false)
+	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, Scaffold_Loader $loader, $production = false)
 	{		
 		// The system cache
-		$this->_cache = $cache;
+		$this->cache = $cache;
 		
 		// This handles the output of CSS
-		$this->_response = $response;
+		$this->response = $response;
 		
-		// Paths to load files from
-		$this->_loader = $loader;
+		// Loads files and directories
+		$this->loader = $loader;
 		
 		// Set production mode
 		$this->production = $production;
@@ -103,15 +97,16 @@ class Scaffold
 	 */
 	public function compile(Scaffold_Source $source)
 	{
-		if($this->_cache->expired($source->id(),$source->last_modified()))
+		$cache_expired = $this->cache->expired($source->id(),$source->last_modified());
+		
+		if($this->production === false OR $cache_expired === true)
 		{
-			$result = $this->_parse($source->contents);
-			$this->notify('before_cache',$result,$source);
-			$this->_cache->set($source->id(),$source->contents());
+			$result = $this->_parse($source);
+			$this->cache->set($source->id(),$result);
 		}
 		else
 		{
-			$result = $this->_cache->get($source->id());
+			$result = $this->cache->get($source->id());
 		}
 
 		return $result;
@@ -130,7 +125,7 @@ class Scaffold
 	 */
 	public function render(Scaffold_Source $source)
 	{
-		$this->_response->render($source->contents,$source->last_modified,$this->production);
+		$this->response->render($source->get(),$source->last_modified(),$this->production,$this->_output_type);
 	}
 	
 	// ============================
@@ -150,11 +145,12 @@ class Scaffold
 	 * @param $css
 	 * @return string
 	 */
-	private function _parse($css)
+	private function _parse($source)
 	{
-		$css = $this->notify('initialize',$css);
-		$css = $this->notify('process',$css);
-		$css = $this->notify('format',$css);
-		return $css;
+		$this->data = array('source'=>$source);
+		$this->notify('initialize');
+		$this->notify('process');
+		$this->notify('format');
+		return $this->data['source'];
 	}
 }
