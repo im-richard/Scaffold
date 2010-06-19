@@ -32,6 +32,7 @@ abstract class Scaffold_Extension_Observable
 	public function attach($name,Scaffold_Extension_Observer $extension)
 	{
 		$this->extensions[$name] = $extension;
+		$extension->scaffold = $this;
 	}
 	
 	/**
@@ -68,7 +69,7 @@ abstract class Scaffold_Extension_Observable
 	{
 		foreach($this->extensions as $extension)
 		{
-			$extension->update($this,$hook);
+			$extension->update($hook);
 		}
 	}
 }

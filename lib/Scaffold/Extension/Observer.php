@@ -40,11 +40,11 @@ abstract class Scaffold_Extension_Observer
 	 * @access public
 	 * @return void
 	 */
-	public function update(Scaffold_Extension_Observable $observable, $hook)
+	public function update($hook)
 	{
 		if(method_exists($this, $hook))
 		{
-			$this->$hook($observable);
+			$this->$hook();
 		}
 	}
 }
