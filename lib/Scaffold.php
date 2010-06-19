@@ -101,8 +101,8 @@ class Scaffold extends Scaffold_Extension_Observable
 		
 		if($this->production === false OR $cache_expired === true)
 		{
-			$result = $this->_parse($source);
-			$this->cache->set($source->id(),$result);
+			$result = $this->parse($source);
+			$this->cache->set($source->id(),$result->get());
 		}
 		else
 		{
@@ -127,11 +127,7 @@ class Scaffold extends Scaffold_Extension_Observable
 	{
 		$this->response->render($source->get(),$source->last_modified(),$this->production,$this->_output_type);
 	}
-	
-	// ============================
-	// = Private Methods =
-	// ============================
-	
+
 	/**
 	 * Parses a CSS string through each of the extensions. Calls 3 hooks
 	 * 
@@ -145,7 +141,7 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * @param $css
 	 * @return string
 	 */
-	private function _parse($source)
+	public function parse($source)
 	{
 		$this->data = array('source'=>$source);
 		$this->notify('initialize');
