@@ -66,16 +66,6 @@ class Scaffold_Container
 		$this->system = $system;
 		$this->options = $options;
 		
-		/**
-		 * If we're just in development mode, we'll want to always recache
-		 * the file. Setting the cache_lifetime to 0 will force Scaffold
-		 * to make sure it reparsed the file each time.
-		 */
-		if($this->options['production'] === false)
-		{
-			$this->options['cache_lifetime'] = 0;
-		}
-		
 		# Load each of the extensions
 		foreach(glob($system.'/extensions/*/') as $ext)
 		{
@@ -119,20 +109,7 @@ class Scaffold_Container
 		
 		return $scaffold;
 	}
-	
-	/**
-	 * Create a new unrestricted source type
-	 * @param $type
-	 * @param $content
-	 * @return Scaffold_Source
-	 */
-	public function source($type,$content)
-	{
-		$class = 'Scaffold_Source_'.ucfirst($type);
-		$driver = new $class($content,$this->options);		
-		return new Scaffold_Source($driver,$this->options);
-	}
-	
+
 	/**
 	 * Gets the loader object
 	 *
