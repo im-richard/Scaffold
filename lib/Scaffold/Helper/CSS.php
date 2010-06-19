@@ -144,6 +144,19 @@ class Scaffold_Helper_CSS
 	}
 	
 	/**
+	 * Removes an atrule from a CSS string
+	 *
+	 * @author your name
+	 * @param $name
+	 * @return string
+	 */
+	public static function remove_atrule($name,$css)
+	{
+		$rules = self::find_atrule($name,$css);
+		return str_replace($rules[0],'',$css);
+	}
+	
+	/**
 	 * Takes a string of a CSS rule:
 	 *
 	 * 		property:value;
@@ -308,5 +321,56 @@ class Scaffold_Helper_CSS
 	public function remove_properties_with_value($property,$value)
 	{
 		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $this->string);
+	}
+	
+	/**
+	 * Get the line number of a certain string within the CSS
+	 *
+	 * @author your name
+	 * @param $param
+	 * @return return type
+	 */
+	public static function line_number($string,$css)
+	{
+		if(strstr($css,$string))
+		{
+			$before = explode($string,$css);
+			$lines = explode("\n",$before[0]);
+			$line = count($lines);
+			return $line;
+		}
+		return false;
+	}
+	
+	/**
+	 * Get the contents of a line number
+	 *
+	 * @author your name
+	 * @param $param
+	 * @return return type
+	 */
+	public static function line_contents($line,$css,$context = false)
+	{
+		$css = explode("\n",$css);
+		
+		if($context === false)
+		{
+			return $css[$line - 1];
+		}
+		
+		$lines = array();
+		
+		$min = $line - $context;
+		if($min < 0) $min = 0;
+		
+		$max = $line + $context;
+		if($max > (count($css) -1)) $max = count($css) - 1;
+		
+		for ($i = $min; $i <= $max; $i++)
+		{
+			$lines[] = $css[$i];
+		}
+		
+		return implode("\n",$lines);
 	}
 }
