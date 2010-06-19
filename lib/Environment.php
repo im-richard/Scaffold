@@ -86,13 +86,13 @@ class Environment
 	 * @param   object   exception object
 	 * @return  boolean
 	 */
-	public static function exception_handler(Exception $e, $code = false, $view_file = false)
+	public static function exception_handler(Exception $e)
 	{
 		try
 		{
 			# Exception text information
 			$type    = get_class($e);
-			$code    = $e->getCode();
+			$code = $e->getCode();
 			$message = $e->getMessage();
 			$file    = $e->getFile();
 			$line    = $e->getLine();
@@ -102,14 +102,22 @@ class Environment
 			{
 				header('Content-Type: text/html;', TRUE, 500);
 			}
-			
+	
+			// Use the human-readable error name
 			if($e instanceof ErrorException)
 			{
-				// Use the human-readable error name
 				if(isset(self::$_php_errors[$code]))
 				{
-					$code = self::$_php_errors[$code];
+					$title = self::$_php_errors[$code];
 				}
+			}
+			elseif(isset($e->title))
+			{
+				$title = $e->title;
+			}
+			else
+			{
+				$title = "Error";
 			}
 
 			ob_start();
