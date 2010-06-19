@@ -11,59 +11,37 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold_Source_String extends Scaffold_Source_Base
+class Scaffold_Source_String extends Scaffold_Source
 {
-	/**
-	 * A unique identifier
-	 * @var string
-	 */
-	public $id;
-
-	/**
-	 * @var string
-	 */
-	public $last_modified = 0;
-
-	/**
-	 * @var string
-	 */
-	public $contents;
-
-	/**
-	 * The original content before modification
-	 * @var string
-	 */
-	public $original;
-
 	/**
 	 * Constructor
 	 */
 	public function __construct($content,$options = array())
 	{
 		$this->options = $options;
-		$this->contents = $this->original = $content;
+		$this->contents = $content;
 		$this->last_modified = (isset($options['last_modified'])) ? $options['last_modified'] : time();
 		$this->id = (isset($options['id'])) ? $options['id'] : md5($string);
 	}
-	
-	/**
-	 * Return the original contents of the source
-	 * @access public
-	 * @return string
-	 */
-	public function original()
-	{
-		return $this->original;
-	}
-	
+
 	/**
 	 * Get the current contents of the source
 	 * @access public
 	 * @return string
 	 */
-	public function contents()
+	public function get()
 	{
 		return $this->contents;
+	}
+	
+	/**
+	 * Set the current contents of the source
+	 * @access public
+	 * @return string
+	 */
+	public function set($value)
+	{
+		return $this->contents = $value;
 	}
 	
 	/**

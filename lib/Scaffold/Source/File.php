@@ -11,40 +11,24 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold_Source_File implements Scaffold_Source_Interface
+class Scaffold_Source_File extends Scaffold_Source
 {
 	/**
-	 * A unique identifier
+	 * The path to the source file
 	 * @var string
 	 */
-	public $id;
-
-	/**
-	 * @var string
-	 */
-	public $last_modified;
-
-	/**
-	 * @var string
-	 */
-	public $contents;
-
-	/**
-	 * The original content before modification
-	 * @var string
-	 */
-	public $original;
+	public $path;
 
 	/** 
 	 * Constructor
 	 */
-	public function __construct($content,$options = array())
+	public function __construct($path,$options = array())
 	{
 		$this->options = $options;
-		$this->contents = file_get_contents($content);
-		$this->original = $content;
-		$this->last_modified = (isset($options['last_modified'])) ? $options['last_modified'] : filemtime($content);
-		$this->id = (isset($options['id'])) ? $options['id'] : md5(serialize(array($content,$this->last_modified)));
+		$this->contents = $this->original = file_get_contents($path);
+		$this->path = $path;
+		$this->last_modified = (isset($options['last_modified'])) ? $options['last_modified'] : filemtime($path);
+		$this->id = (isset($options['id'])) ? $options['id'] : md5($path);
 	}
 	
 	/**
@@ -52,9 +36,17 @@ class Scaffold_Source_File implements Scaffold_Source_Interface
 	 * @access public
 	 * @return string
 	 */
+	public function path()
+	{
+		return $this->path;
+	}
+	
+	/**
+	 * Returns the contents of the original source file
+	 */
 	public function original()
 	{
-		return file_get_contents($this->original);
+		return $this->original;
 	}
 	
 	/**
@@ -65,6 +57,16 @@ class Scaffold_Source_File implements Scaffold_Source_Interface
 	public function get()
 	{
 		return $this->contents;
+	}
+	
+	/**
+	 * Set the current contents of the source
+	 * @access public
+	 * @return string
+	 */
+	public function set($value)
+	{
+		return $this->contents = $value;
 	}
 	
 	/**

@@ -1,19 +1,33 @@
 <?php
-
 /**
- * Scaffold_Source
+ * Scaffold_Source_Interface
  *
- * The base file for source objects. Every source object extends this class
+ * The interface for all source types
  * 
- * @author your name
+ * @package 		Scaffold
+ * @subpackage		Source
+ * @author 			Anthony Short <anthonyshort@me.com>
+ * @copyright 		2009-2010 Anthony Short. All rights reserved.
+ * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
+ * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold_Source
-{	
+abstract class Scaffold_Source
+{
 	/**
-	 * The source driver object
-	 * @var object
+	 * A unique identifier
+	 * @var string
 	 */
-	protected $driver;
+	public $id;
+
+	/**
+	 * @var string
+	 */
+	public $last_modified;
+	
+	/**
+	 * @var string
+	 */
+	public $contents;
 	
 	/**
 	 * @var array
@@ -21,37 +35,18 @@ class Scaffold_Source
 	public $options = array();
 	
 	/**
-	 * Constructor
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	public function __construct($driver,$options = array())
-	{
-		$this->driver = $driver;
-		$this->options = $options;
-	}
-	
-	/**
-	 * Return the original contents of the source
-	 * @access public
-	 * @return string
-	 */
-	public function original()
-	{
-		return $this->driver->original();
-	}
-	
-	/**
 	 * Get the current contents of the source
 	 * @access public
 	 * @return string
 	 */
-	public function get()
-	{
-		return $this->driver->get();
-	}
+	abstract public function get();
+	
+	/**
+	 * Set the current contents of the source
+	 * @access public
+	 * @return string
+	 */
+	abstract public function set($value);
 	
 	/**
 	 * Return the unique id for this source
@@ -59,10 +54,7 @@ class Scaffold_Source
 	 * @access public
 	 * @return string
 	 */
-	public function id()
-	{
-		return $this->driver->id();
-	}
+	abstract public function id();
 	
 	/**
 	 * Get the last-modified time for this source
@@ -70,8 +62,5 @@ class Scaffold_Source
 	 * @access public
 	 * @return string
 	 */
-	public function last_modified()
-	{
-		return $this->driver->last_modified();
-	}
+	abstract public function last_modified();
 }
