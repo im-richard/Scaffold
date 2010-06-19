@@ -6,7 +6,6 @@
  * - Returns the contents of files
  * - Directory listings
  * - Search for files and directories within defined load paths
- * - Create Scaffold_Source objects
  * 
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>
@@ -36,6 +35,39 @@ class Scaffold_Loader
 	// ============================
 	// = Public Methods =
 	// ============================
+
+	/**
+	 * Adds a load path
+	 * @access public
+	 * @param $path
+	 * @throws Scaffold_Loader_Exception
+	 * @return void
+	 */
+	public function add_load_path($path)
+	{
+		if(is_dir($path))
+		{
+			$this->_load_paths[] = $path;
+		}
+		else
+		{
+			// Throw exception
+		}
+	}
+	
+	/**
+	 * Removes a load path
+	 * @access public
+	 * @param $path
+	 * @return void
+	 */
+	public function remove_load_path($path)
+	{
+		if($key = array_search($path, $this->_load_paths))
+		{
+			unset($this->_load_paths[$key]);
+		}
+	}
 
 	/**
 	 * Finds a file on the filesystem using the load paths
