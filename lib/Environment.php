@@ -18,7 +18,6 @@ class Environment
 {
 	/**
 	 * Human-readable error descriptions
-	 *
 	 * @var array
 	 */
 	protected static $_php_errors = array
@@ -37,7 +36,6 @@ class Environment
 	 * Automatically loads Scaffold's classes.
 	 * Assumes the scaffold folder with all the classes
 	 * is located next to this file.
-	 *
 	 * @access public
 	 * @param $class string
 	 * @return boolean
@@ -62,7 +60,6 @@ class Environment
 	/**
 	 * PHP error handler, converts all errors into ErrorExceptions. This handler
 	 * respects error_reporting settings.
-	 *
 	 * @author 	Kohana
 	 * @throws  ErrorException
 	 * @return  TRUE
@@ -81,7 +78,6 @@ class Environment
 	/**
 	 * Inline exception handler, displays the error message, source of the
 	 * exception, and the stack trace of the error.
-	 *
 	 * @author 	Kohana
 	 * @param   object   exception object
 	 * @return  boolean
@@ -92,7 +88,7 @@ class Environment
 		{
 			# Exception text information
 			$type    = get_class($e);
-			$code = $e->getCode();
+			$code 	 = $e->getCode();
 			$message = $e->getMessage();
 			$file    = $e->getFile();
 			$line    = $e->getLine();

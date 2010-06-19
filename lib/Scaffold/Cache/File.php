@@ -40,7 +40,6 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		$this->directory 	= $path;
 		$this->expires 		= $expires;
 	}
-	
 
 	// =========================================
 	// = Get and set cache methods =
@@ -96,7 +95,6 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		chmod($target, 0777);
 		touch($target, time());
 	}
-	
 
 	// =========================================
 	// = Delete Cache Methods =
@@ -148,7 +146,6 @@ class Scaffold_Cache_File extends Scaffold_Cache
 			}
 		}
 	}
-	
 
 	// =========================================
 	// = Cache Item Methods =
