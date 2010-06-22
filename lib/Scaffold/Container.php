@@ -35,28 +35,7 @@ class Scaffold_Container
 	public $options;
 	
 	/**
-	 * @var Scaffold_Response
-	 */
-	public $_response;
-	
-	/**
-	 * @var Scaffold_Response_Compressor
-	 */
-	public $_response_compressor;
-	
-	/**
-	 * @var Scaffold_Response_Cache
-	 */
-	public $_response_cache;
-	
-	/**
-	 * @var Scaffold_Cache_File
-	 */
-	public $_cache;
-	
-	/**
 	 * Constructor
-	 *
 	 * @author your name
 	 * @param $param
 	 * @return return type
@@ -65,9 +44,22 @@ class Scaffold_Container
 	{
 		$this->system = $system;
 		$this->options = $options;
-		
+		$this->extensions = $this->loadExtensions($system.'/extensions/*/');
+	}
+	
+	/**
+	 * Loads the extension files
+	 *
+	 * @author your name
+	 * @param $param
+	 * @return return type
+	 */
+	public function loadExtensions($path)
+	{
+		$extensions = array();
+	
 		# Load each of the extensions
-		foreach(glob($system.'/extensions/*/') as $ext)
+		foreach(glob($path) as $ext)
 		{
 			$ext .= DIRECTORY_SEPARATOR;
 		
@@ -85,34 +77,41 @@ class Scaffold_Container
 			{
 				require_once($ext.$file);
 				$class = "Scaffold_Extension_".$name;
-				$this->extensions[$name] = new $class($config,$ext);
+				$extensions[$name] = new $class($config,$ext);
 			}
 		}
+		
+		return $extensions;
 	}
 
 	/**
 	 * Generates Scaffold_Engine objects
-	 *
 	 * @return Scaffold
 	 */
 	public function build() 
-	{	
+	{
+		# For caching CSS files
 		$cache = $this->getCache();
+		
+		# Sending responses to the browser
 		$response = $this->getResponse();
+		
+		# Loading files and directories
 		$loader = $this->getLoader();
+		
+		# The main object
 		$scaffold = new Scaffold($cache,$response,$loader,$this->options['production']);
 		
 		foreach($this->extensions as $name => $ext)
 		{
 			$scaffold->attach($name,$ext);
 		}
-		
+
 		return $scaffold;
 	}
 
 	/**
 	 * Gets the loader object
-	 *
 	 * @access public
 	 * @return Scaffold_Loader
 	 */
@@ -144,7 +143,6 @@ class Scaffold_Container
 	
 	/**
 	 * Gets the response encoder object
-	 *
 	 * @access public
 	 * @return Scaffold_Response_Compressor
 	 */
