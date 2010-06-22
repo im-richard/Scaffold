@@ -14,8 +14,8 @@ class Scaffold_Helper_CSS
 {
 	/**
 	 * Removes single-line comments from a string
-	 *
 	 * @access public
+	 * @param string
 	 * @return string
 	 */
 	public static function remove_inline_comments($string)
@@ -24,46 +24,34 @@ class Scaffold_Helper_CSS
 	}
 
 	/**
-	 * Compresses down the CSS file. Not a complete compression,
-	 * but enough to minimize parsing time.
-	 *
+	 * Compresses down the CSS file by removing comments and whitespace
+	 * @access public
+	 * @param string
 	 * @return string $css
 	 */	
 	public static function compress($string)
 	{		
-		# Remove comments
 		$string = self::remove_comments($string);
-		
-		# Remove inline comments
 		$string = self::remove_inline_comments($string);
-		
-		# Extra spaces
-		$string = self::remove_extra_whitespace($string);
-		
+		$string = self::remove_whitespace($string);
 		return $string;
 	}
 
 	/**
-	 * Removes extra whitespace
-	 *
+	 * Removes extra whitespace and line breaks
 	 * @access public
 	 * @param $string
 	 * @return string
 	 */
-	public static function remove_extra_whitespace($string)
+	public static function remove_whitespace($string)
 	{
-		# Remove extra white space
 		$string = preg_replace('/\s+/', ' ', $string);
-		
-		# Remove line breaks
 		$string = preg_replace('/\n|\r/', '', $string);
-		
 		return $string;
 	}
 
 	/**
 	 * Removes css comments
-	 *
 	 * @access public
 	 * @param $string
 	 * @return string
@@ -75,7 +63,7 @@ class Scaffold_Helper_CSS
 
 	/**
 	 * Finds CSS 'functions'. These are things like url(), embed() etc.
-	 *
+	 * Handles interior brackets as well by using recursion.
 	 * @access public
 	 * @param $name
 	 * @param $string
@@ -83,30 +71,13 @@ class Scaffold_Helper_CSS
 	 */
 	public static function find_functions($name,$string)
 	{
-		$regex =
-		"/
-			{$name}
-			(
-				\s*\(\s*
-					( (?: (?1) | [^()]+ )* )
-				\s*\)\s*
-			)
-		/sx";
-
-		if(preg_match_all($regex, $this->string, $match))
-		{
-			return $match;
-		}
-		else
-		{
-			return array();
-		}
+		$regex ="/{$name}(\s*\(\s*((?:(?1)|[^()]+)*)\s*\)\s*)/sx";
+		return preg_match_all($regex, $this->string, $match) ? $match : array();
 	}
 
 	/**
 	 * Finds @groups within the css and returns
 	 * an array with the values, and groups.
-	 *
 	 * @access public
 	 * @param $name
 	 * @param $string
@@ -120,34 +91,27 @@ class Scaffold_Helper_CSS
 			@{$name}
 			
 			# Flag
-			(?:
-				\(( [^)]*? )\)
-			)?
+			(?:\(( [^)]*? )\))?
 			
 			[^{]*?
 
 			(
-				([0-9a-zA-Z\_\-\@*&]*?)\s*
+				([0-9a-zA-Z\_\-\@*&]*?)\s*		# Selector
 				\{	
-					( (?: [^{}]+ | (?2) )*)
+					( (?: [^{}]+ | (?2) )*)		# Selector Contents
 				\}
 			)
 
 		/ixs";
-			
-		if(preg_match_all($regex, $string, $matches))
-		{
-			return $matches;		
-		}
-		
-		return array();
+
+		return preg_match_all($regex, $string, $matches) ? $matches : array();		
 	}
 	
 	/**
 	 * Removes an atrule from a CSS string
-	 *
-	 * @author your name
+	 * @access public
 	 * @param $name
+	 * @param $css
 	 * @return string
 	 */
 	public static function remove_atrule($name,$css)
@@ -163,7 +127,7 @@ class Scaffold_Helper_CSS
 	 * 		property:value;
 	 *		etc.
 	 *
-	 * And breaks it into an array like so:
+	 * And breaks it into an array:
 	 *
 	 *		array('property'=>'value');
 	 *
@@ -196,66 +160,43 @@ class Scaffold_Helper_CSS
 	
 	/**
 	 * Finds selectors which contain a particular property
-	 *
-	 * @author Anthony Short
-	 * @param $css
+	 * @access public
 	 * @param $property string
 	 * @param $value string
+	 * @param $css string
+	 * @return array
 	 */
-	public function find_selectors_with_property($property, $value = ".*?")
-	{		
-		if(preg_match_all("/([^{}]*)\s*\{\s*[^}]*(".$property."\s*\:\s*(".$value.")\s*\;).*?\s*\}/sx", $this->string, $match))
-		{
-			return $match;
-		}
-		else
-		{
-			return array();
-		}
+	public static function find_selectors_with_property($property,$value,$css)
+	{
+		$regex = "/([^{}]*)\s*\{\s*[^}]*(".$property."\s*\:\s*(".$value.")\s*\;).*?\s*\}/sx";
+		return preg_match_all($regex,$css,$match) ? $match : array();
 	}
 	
 	/**
 	 * Finds all properties with a particular value
-	 *
-	 * @author Anthony Short
-	 * @param $property
-	 * @param $value
+	 * @access public
+	 * @param $property Regex formatted string for a property
+	 * @param $value Regex formatted string for a value
 	 * @param $css
 	 * @return array
 	 */
-	public function find_properties_with_value($property, $value = ".*?")
-	{		
-		# Make the property name regex-friendly
-		$property = Scaffold_Utils::preg_quote($property);
-		$regex = "/ ({$property}) \s*\:\s* ({$value}) /sx";
-			
-		if(preg_match_all($regex, $this->string, $match))
-		{
-			return $match;
-		}
-		else
-		{
-			return array();
-		}
+	public static function find_properties_with_value($property,$value,$css)
+	{
+		$regex = "/({$property})\s*\:\s*({$value})/sx";
+		return preg_match_all($regex, $this->string, $match) ? $match : array();
 	}
 		
 	/**
 	 * Finds a selector and returns it as string
-	 *
-	 * @author Anthony Short
+	 * @access public
 	 * @param $selector string
-	 * @param $css string
+	 * @param $string string
+	 * @todo This will break if the selector they try and find is actually part of another selector
 	 */
-	public function find_selectors($selector, $recursive = "")
-	{		
-		if($recursive != "")
-		{
-			$recursive = "|(?{$recursive})";
-		}
-
+	public static function find_selectors($selector,$string)
+	{
 		$regex = 
 			"/
-				
 				# This is the selector we're looking for
 				({$selector})
 				
@@ -263,114 +204,46 @@ class Scaffold_Helper_CSS
 				(
 					([0-9a-zA-Z\_\-\*&]*?)\s*
 					\{	
-						(?P<properties>(?:[^{}]+{$recursive})*)
+						(?P<properties>(?:[^{}]+|(?2))*)
 					\}
 				)
-				
 			/xs";
-		
-		if(preg_match_all($regex, $this->string, $match))
-		{
-			return $match;
-		}
-		else
-		{
-			return array();
-		}
+
+		return preg_match_all($regex, $this->string, $match) ? $match : array();
 	}
 	
 	/**
 	 * Finds all properties within a css string
-	 *
-	 * @author Anthony Short
-	 * @param $property string
-	 * @param $css string
+	 * @access public
+	 * @param $property string Regex formatted string
+	 * @param $string string
 	 */
-	public function find_property($property)
-	{ 		
-		if(preg_match_all('/[^-a-zA-Z](('.Scaffold_Utils::preg_quote($property).')\s*\:\s*(.*?)\s*\;)/sx', $this->string, $matches))
-		{
-			array_shift($matches);
-			return $matches;
-		}
-		else
-		{
-			return array();
-		}
+	public static function find_property($property,$string)
+	{ 
+		$regex = '/[^-a-zA-Z](('.$property.')\s*\:\s*(.*?)\s*\;)/sx';
+		return preg_match_all($regex,$string,$matches) ? $matches : array();
 	}
 	
 	/**
 	 * Check if a selector exists
-	 *
 	 * @param $name
+	 * @param string
 	 * @return boolean
 	 */
-	public function selector_exists($name)
+	public static function selector_exists($name,$string)
 	{
-		return preg_match('/'.preg_quote($name).'\s*?({|,)/', $this->string);
+		return preg_match('/'.$name.'\s*?({|,)/', $string) ? true : false;
 	}
 		
 	/**
 	 * Removes all instances of a particular property from the css string
-	 *
-	 * @author Anthony Short
+	 * @access public
 	 * @param $property string
 	 * @param $value string
 	 * @param $css string
 	 */
-	public function remove_properties_with_value($property,$value)
+	public static function remove_properties_with_value($property,$value,$string)
 	{
-		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $this->string);
-	}
-	
-	/**
-	 * Get the line number of a certain string within the CSS
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	public static function line_number($string,$css)
-	{
-		if(strstr($css,$string))
-		{
-			$before = explode($string,$css);
-			$lines = explode("\n",$before[0]);
-			$line = count($lines);
-			return $line;
-		}
-		return false;
-	}
-	
-	/**
-	 * Get the contents of a line number
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	public static function line_contents($line,$css,$context = false)
-	{
-		$css = explode("\n",$css);
-		
-		if($context === false)
-		{
-			return $css[$line - 1];
-		}
-		
-		$lines = array();
-		
-		$min = $line - $context;
-		if($min < 0) $min = 0;
-		
-		$max = $line + $context;
-		if($max > (count($css) -1)) $max = count($css) - 1;
-		
-		for ($i = $min; $i <= $max; $i++)
-		{
-			$lines[] = $css[$i];
-		}
-		
-		return implode("\n",$lines);
+		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $string);
 	}
 }
