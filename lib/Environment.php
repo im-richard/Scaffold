@@ -13,9 +13,13 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-
 class Environment
 {
+	/**
+	 * @var string
+	 */
+	private static $_view;
+
 	/**
 	 * Human-readable error descriptions
 	 * @var array
@@ -115,11 +119,18 @@ class Environment
 			{
 				$title = "Error";
 			}
-
-			ob_start();
-			include dirname(__FILE__).'/../views/error.php';
-			echo ob_get_clean();
-
+			
+			if(self::$_view !== null)
+			{
+				ob_start();
+				include self::$_view;
+				echo ob_get_clean();
+			}
+			else
+			{
+				echo self::exception_text($e);
+			}
+			
 			return true;
 		}
 		catch (Exception $e)
@@ -131,6 +142,24 @@ class Environment
 			echo self::exception_text($e);
 
 			exit(1);
+		}
+	}
+	
+	/**
+	 * Set a view file to use for errors and exceptions
+	 * @author Anthony Short
+	 * @param $path Path to the view file
+	 * @return void
+	 */
+	public static function set_view($path)
+	{
+		if(is_file($path))
+		{
+			self::$_view = $path;
+		}
+		else
+		{
+			throw new Exception('[Environment] Path to view file is not valid');
 		}
 	}
 	
