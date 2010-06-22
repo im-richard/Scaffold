@@ -138,8 +138,8 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * As well as these, the extensions themselves can create hooks, so that
 	 * you can only run an extension during another extension.
 	 *
-	 * @param $css
-	 * @return string
+	 * @param $source Scaffold_Source
+	 * @return Scaffold_Source
 	 */
 	public function parse($source)
 	{
