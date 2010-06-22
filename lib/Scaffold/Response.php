@@ -106,7 +106,7 @@ class Scaffold_Response
 		$this->_cache = $cache;
 		
 		// Get the default options
-		$options = array_merge($options, $this->_default_options);
+		$options = array_merge($this->_default_options,$options);
 		
 		// Max age of the cache
 		$this->_max_age = $options['max_age'];
@@ -140,7 +140,7 @@ class Scaffold_Response
 	 * @param $compress
 	 * @return void
 	 */
-	public function render($content,$last_modified,$use_cache = true)
+	public function render($content,$last_modified,$use_cache = true,$output_type = null)
 	{
 		// Compress the content if we can
 		// This will just return the content if we can't

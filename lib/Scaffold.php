@@ -18,15 +18,13 @@ class Scaffold extends Scaffold_Extension_Observable
 
 	/**
 	 * Is Scaffold in production mode?
-	 *
 	 * @access public
 	 * @var string
 	 */
 	public $production;
 	
 	/**
-	 * System cache
-	 *
+	 * Handles the caching of parsed sources
 	 * @access public
 	 * @var Scaffold_Cache
 	 */
@@ -34,15 +32,13 @@ class Scaffold extends Scaffold_Extension_Observable
 	
 	/**
 	 * Responds to the browser
-	 *
 	 * @access public
 	 * @var Scaffold_Reponse
 	 */
 	public $response;
 	
 	/**
-	 * Loads in files, directories and sources
-	 *
+	 * Loads in files,directories and sources
 	 * @access public
 	 * @var Scaffold_Loader
 	 */
@@ -53,8 +49,7 @@ class Scaffold extends Scaffold_Extension_Observable
 	// =========================================
 	
 	/**
-	 * Output type
-	 *
+	 * HTTP output type
 	 * @var string
 	 */
 	protected $_output_type = 'text/css';
@@ -64,10 +59,12 @@ class Scaffold extends Scaffold_Extension_Observable
 	// =========================================
 	
 	/**
-	 * Constructor
-	 *
-	 * @param $param
-	 * @return return type
+	 * @access public
+	 * @param $cache 		Scaffold_Cache
+	 * @param $response 	Scaffold_Response
+	 * @param $loader 		Scaffold_Loader
+	 * @param $production 	boolean
+	 * @return void
 	 */
 	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, Scaffold_Loader $loader, $production = false)
 	{		
@@ -90,24 +87,24 @@ class Scaffold extends Scaffold_Extension_Observable
 	
 	/**
 	 * Compiles the CSS using the engine and caches the result
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
+	 * @access public
+	 * @param $source Scaffold_Source
+	 * @return array
 	 */
 	public function compile(Scaffold_Source $source)
 	{
-		$cache_expired = $this->cache->expired($source->id(),$source->last_modified());
+		$id 		= $source->id();
+		$modified 	= $source->last_modified();
+		$expired 	= $this->cache->expired($id,$modified);
 		
-		if($this->production === false OR $cache_expired === true)
+		if($this->production === false OR $expired === true)
 		{
-			$result = $this->parse($source);
-			$this->cache->set($source->id(),$result->get());
+			$this->cache->set($id,$this->parse($source));
 		}
-		else
-		{
-			$result = $this->cache->get($source->id());
-		}
+
+		$result = array();
+		$result['string'] = $this->cache->get($id);
+		$result['last_modified'] = $this->cache->modified($id);
 
 		return $result;
 	}
@@ -120,12 +117,13 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * don't have to clear the cache every time you make a request.
 	 *
 	 * @access public
-	 * @param $source Scaffold_Source
+	 * @param $output 			string 		The contents to be output to the browser
+	 * @param $last_modified 	int 		Time to compare against the browser cache
 	 * @return void
 	 */
-	public function render(Scaffold_Source $source)
+	public function render($output,$last_modified)
 	{
-		$this->response->render($source->get(),$source->last_modified(),$this->production,$this->_output_type);
+		$this->response->render($output,$last_modified,$this->production,$this->_output_type);
 	}
 
 	/**
@@ -139,7 +137,7 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * you can only run an extension during another extension.
 	 *
 	 * @param $source Scaffold_Source
-	 * @return Scaffold_Source
+	 * @return string
 	 */
 	public function parse($source)
 	{
@@ -147,6 +145,6 @@ class Scaffold extends Scaffold_Extension_Observable
 		$this->notify('initialize');
 		$this->notify('process');
 		$this->notify('format');
-		return $this->data['source'];
+		return $this->data['source']->get();
 	}
 }

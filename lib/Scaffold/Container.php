@@ -137,8 +137,8 @@ class Scaffold_Container
 		// Dependencies
 		$response_encoder = $this->getResponseEncoder();
 		$response_cache = $this->getResponseCache();
-			
-		return $this->_response = new Scaffold_Response($response_encoder,$response_cache,array('content_type' => 'text/css'));
+
+		return $this->_response = new Scaffold_Response($response_encoder,$response_cache,$this->options);
 	}
 	
 	/**
@@ -165,7 +165,7 @@ class Scaffold_Container
 		if(isset($this->_response_cache))
 			return $this->_response_cache;
 		
-		return $this->_response_cache = new Scaffold_Response_Cache($this->options['cache_lifetime']);
+		return $this->_response_cache = new Scaffold_Response_Cache();
 	}
 	
 	/**
@@ -179,6 +179,6 @@ class Scaffold_Container
 		if(isset($this->_cache))
 			return $this->_cache;
 
-		return $this->_cache = new Scaffold_Cache_File($this->system.'/cache/',$this->options['cache_lifetime']);
+		return $this->_cache = new Scaffold_Cache_File($this->system.'/cache/',$this->options['max_age']);
 	}
 }

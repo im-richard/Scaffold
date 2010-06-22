@@ -59,7 +59,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		if($file = $this->exists($id))
 		{
 			// Get the contents of the file
-			$data = file_get_contents($file);
+			$data = file_get_contents($this->find($id));
 		}
 
 		return isset($data) ? $data : $default;
@@ -159,12 +159,12 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * @return boolean
 	 */
 	public function expired($id,$time)
-	{		
+	{
 		# When the cache item was modified
 		$modified = $expires = $this->modified($id);
 		
 		# When the output file expires
-		$expires =+ $this->expires;
+		$expires += $this->expires;
 
 		# If the file has expired, or the original is newer
 		return (time() >= $expires OR $modified < $time OR $modified === 0);
