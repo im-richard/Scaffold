@@ -1,6 +1,6 @@
 <?php
 
-require_once './init.php';
+require_once '../_init.php';
 
 class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'init.php';
+require_once '../_init.php';
 
 /**
  * Test class for Scaffold_Factory.
