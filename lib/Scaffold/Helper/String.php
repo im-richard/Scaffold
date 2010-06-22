@@ -3,7 +3,7 @@
 /**
  * Scaffold_Helper_String
  *
- * Helper methods for dealing with the contents of files
+ * Helper methods for dealing with string
  * 
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>

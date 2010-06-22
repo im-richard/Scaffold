@@ -12,7 +12,6 @@ class Scaffold_LoaderTest extends PHPUnit_Framework_TestCase
      * @var Scaffold_Loader
      */
     protected $object;
-    
     protected $load_paths = array();
 
     /**
