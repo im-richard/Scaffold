@@ -15,10 +15,15 @@ abstract class Scaffold_Extension extends Scaffold_Extension_Observer
 {
 	/**
 	 * The configuration
-	 *
 	 * @var array
 	 */
 	public $config = array();
+	
+	/**
+	 * Path to the folder containing this extension
+	 * @var string
+	 */
+	public $path;
 	
 	/**
 	 * Default settings which are used if the configuration
