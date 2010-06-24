@@ -82,7 +82,6 @@ class Environment
 	/**
 	 * Inline exception handler, displays the error message, source of the
 	 * exception, and the stack trace of the error.
-	 * @author 	Kohana
 	 * @param   object   exception object
 	 * @return  boolean
 	 */
@@ -91,11 +90,12 @@ class Environment
 		try
 		{
 			# Exception text information
-			$type    = get_class($e);
-			$code 	 = $e->getCode();
-			$message = $e->getMessage();
-			$file    = $e->getFile();
-			$line    = $e->getLine();
+			$title 		= "Error";
+			$type    	= get_class($e);
+			$code 	 	= $e->getCode();
+			$message 	= $e->getMessage();
+			$file    	= $e->getFile();
+			$line    	= $e->getLine();
 			
 			# Server error status
 			if(!headers_sent())
@@ -115,10 +115,6 @@ class Environment
 			{
 				$title = $e->title;
 			}
-			else
-			{
-				$title = "Error";
-			}
 			
 			if(self::$_view !== null)
 			{
@@ -128,7 +124,7 @@ class Environment
 			}
 			else
 			{
-				echo self::exception_text($e);
+				throw new Exception($e);
 			}
 			
 			return true;
