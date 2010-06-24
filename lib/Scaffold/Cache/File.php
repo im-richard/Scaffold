@@ -21,9 +21,9 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	
 	/**
 	 * Local cache lifetime
-	 * @var int
+	 * @var mixed
 	 */
-	protected $expires;
+	protected $expires = false;
 
 	// =========================================
 	// = Constructors & Initialization Methods =
@@ -76,24 +76,21 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function set($id,$data,$lifetime = NULL)
 	{	
-		# Create the cache file
 		$target = $this->find($id);
 		
-		# If the target directory doesn't exist
 		if(!is_dir(dirname($target)))
 		{
 			$this->create(dirname($id));
 		}
 		
-		# What to write
 		$data = (is_array($data)) ? serialize($data) : $data;
 
-		# Put it in the cache
+		# Write the data
 		file_put_contents($target, $data);
-		
-		# Set its parmissions
 		chmod($target, 0777);
 		touch($target, time());
+		
+		return true;
 	}
 
 	// =========================================
@@ -108,43 +105,76 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function delete($id)
 	{
-		if($file = $this->find($id))
+		if($this->exists($id))
 		{
-			@unlink($file);
+			@unlink($this->find($id));
+			return true;
 		}
+		return false;
 	}
 	
 	/**
 	 * Clear out the cache directory
-	 *
-	 * @param 	$id
+	 * @param 	$dir
 	 * @access	public
 	 * @return 	boolean
 	 */
-	public function delete_all($dir = false)
+	public function empty_dir($dir = false)
 	{
 		// Start from the cache directory
 		if($dir === false)
 		{
 			$dir = $this->directory;
 		}
-		
-		// Loop through each of the files and directories
-		foreach(glob($dir.'*',GLOB_MARK) as $file)
-		{ 
-			// If it's a directory, clean it out, then remove it
-			if(is_dir($file))
-			{ 
-				$this->delete_all($file);
-				@rmdir($file); 
+		else
+		{
+			if($this->exists($dir) === false)
+			{
+				// @todo Throw error
+				return false;
 			}
 			
-			// Otherwise just remove the file
+			$dir = $this->find($dir);
+		}
+		
+		// Loop through each of the files and directories
+		foreach(glob($dir.'/*',GLOB_MARK) as $file)
+		{ 
+			if(is_dir($file))
+			{ 
+				$this->empty_dir($file);
+				@rmdir($file); 
+			}
 			else 
 			{
 				@unlink($file); 
 			}
 		}
+		
+		return true;
+	}
+	
+	/**
+	 * Deletes a directory. Empties the directory then deletes it.
+	 * @access public
+	 * @param string $dir 
+	 * @return void
+	 */
+	public function delete_dir($id)
+	{
+		$this->empty_dir($id);
+		@rmdir($this->find($id));
+		return true;
+	}
+	
+	/**
+	 * Clears out everything within the cache folder
+	 * @return void
+	 * @access public
+	 */
+	public function delete_all()
+	{
+		$this->empty_dir();
 	}
 
 	// =========================================
@@ -152,7 +182,9 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	// =========================================
 
 	/**
-	 * Checks if a cache item has expired.
+	 * Checks if a cache item has expired. Cache files are expired
+	 * if the original file has been modified since the cache file was
+	 * created. It can also expire after a certain amount of time.
 	 *
 	 * @param $id
 	 * @param $time
@@ -160,14 +192,27 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function expired($id,$time)
 	{
-		# When the cache item was modified
+		$expired = false;
 		$modified = $expires = $this->modified($id);
-		
-		# When the output file expires
-		$expires += $this->expires;
+	
+		if($this->expires != false)
+		{
+			$expires += $this->expires;
+			$expired = (time() >= $expires);
+		}
 
-		# If the file has expired, or the original is newer
-		return (time() >= $expires OR $modified < $time OR $modified === 0);
+		return ($expired OR $modified <= $time);
+	}
+	
+	/**
+	 * Set the maximum age for cache files
+	 * @param string $int 
+	 * @return void
+	 * @access public
+	 */
+	public function set_expires($int)
+	{
+		$this->expires = $int;
 	}
 	
 	/**
@@ -178,7 +223,14 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function exists($id)
 	{
-		return is_file($this->find($id));
+		if(is_file($this->find($id)) OR is_dir($this->find($id)))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	/**
@@ -193,8 +245,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	}
 	
 	/**
-	 * Finds a file inside the cache and returns it's full path
-	 *
+	 * Finds a file or directory inside the cache and returns it's full path
 	 * @param $file
 	 * @return string
 	 */
