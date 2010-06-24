@@ -37,7 +37,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function __construct($path,$expires)
 	{
-		$this->directory 	= $path;
+		$this->directory 	= realpath($path) . DIRECTORY_SEPARATOR;
 		$this->expires 		= $expires;
 	}
 
