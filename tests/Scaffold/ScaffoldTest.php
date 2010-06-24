@@ -65,15 +65,4 @@ class ScaffoldTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('foo',$result['string']);
 		$this->assertEquals(0,$result['last_modified']);
 	} // simple_compile
-	
-	/**
-	 * simple render
-	 * @author Anthony Short
-	 * @test
-	 */
-	public function simple_render()
-	{
-		$this->assertEquals( $this->object->render('foo',0), true );
-	} // simple render
-	
 }

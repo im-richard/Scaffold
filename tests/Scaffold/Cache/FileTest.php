@@ -1,13 +1,14 @@
 <?php
 
-require_once '../../_init.php';
+require_once __DIR__ .'/../../_init.php';
 
 class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 {
-	var $cache_dir = '../../_cache/';
+	var $cache_dir;
 	
 	public function setUp() 
 	{
+		$this->cache_dir  = realpath(__DIR__ .'/../../_cache/') . DIRECTORY_SEPARATOR;
 		$this->object = new Scaffold_Cache_File($this->cache_dir,0);
 	}
 

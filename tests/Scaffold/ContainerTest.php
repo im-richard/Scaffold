@@ -23,7 +23,7 @@ class Scaffold_ContainerTest extends PHPUnit_Framework_TestCase
     	$options = array
     	(
     		'production' => false,
-    		'cache_lifetime' => 3600,
+    		'max_age' => 3600,
     		'load_paths' => array(),
     		'output_compression' => false,
     		'output_style' => 'none'

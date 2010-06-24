@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__.'/../init.php';
+require_once __DIR__.'/../../_init.php';
 
 /**
  * Test class for Scaffold_Response_Compressor.
