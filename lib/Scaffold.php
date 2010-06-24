@@ -68,16 +68,9 @@ class Scaffold extends Scaffold_Extension_Observable
 	 */
 	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, Scaffold_Loader $loader, $production = false)
 	{		
-		// The system cache
 		$this->cache = $cache;
-		
-		// This handles the output of CSS
 		$this->response = $response;
-		
-		// Loads files and directories
 		$this->loader = $loader;
-		
-		// Set production mode
 		$this->production = $production;
 	}
 	
