@@ -1,0 +1,24 @@
+<phpunit bootstrap="./_init.php">
+	
+    <testsuite name="scaffold test suite">
+        <directory>./</directory>
+    </testsuite>
+
+    <php>
+    	<ini name="include_path" value="../lib:/usr/local/zend/share/pear"/>
+    </php>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../lib</directory>
+        </whitelist>
+    </filter>
+	
+    <logging>
+        <log type="coverage-html" target="./log/report" charset="UTF-8"
+            yui="true" highlight="true"
+            lowUpperBound="50" highLowerBound="80"/>
+        <log type="testdox-html" target="./log/testdox.html" />
+    </logging>
+
+</phpunit>

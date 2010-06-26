@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Scaffold_Helper_CSS</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Scaffold_Helper_CSS</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Scaffold_CSS</p>
+<p class="description"><p>Helper methods for dealing with CSS</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Short &lt;<a href="mailto:anthonyshort@me.com">anthonyshort@me.com</a>&gt;</li>
+				<li><span class="field">copyright:</span> 2009-2010 Anthony Short. All rights reserved.</li>
+				<li><span class="field">link:</span> <a href="https://github.com/anthonyshort/csscaffold/master">https://github.com/anthonyshort/csscaffold/master</a></li>
+				<li><span class="field">license:</span> <a href="http://opensource.org/licenses/bsd-license.php">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Scaffold---Helper---CSS.php.html">/Scaffold/Helper/CSS.php</a> (line <span class="field">13</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+												<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#escape_regex" title="details" class="method-name">escape_regex</a>
+											(<span class="var-type">$selector</span>&nbsp;<span class="var-name">$selector</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#find_atrule" title="details" class="method-name">find_atrule</a>
+											(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#find_functions" title="details" class="method-name">find_functions</a>
+											(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>, <span class="var-type">$type</span>&nbsp;<span class="var-name">2</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#find_properties" title="details" class="method-name">find_properties</a>
+											(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#find_properties_with_value" title="details" class="method-name">find_properties_with_value</a>
+											(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$value</span>&nbsp;<span class="var-name">$value</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$css</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#find_selectors" title="details" class="method-name">find_selectors</a>
+											(<span class="var-type">$selector</span>&nbsp;<span class="var-name">$selector</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#find_selectors_with_property" title="details" class="method-name">find_selectors_with_property</a>
+											(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$css</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#remove_atrule" title="details" class="method-name">remove_atrule</a>
+											(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$css</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#remove_comments" title="details" class="method-name">remove_comments</a>
+											(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#remove_inline_comments" title="details" class="method-name">remove_inline_comments</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#remove_newlines" title="details" class="method-name">remove_newlines</a>
+											(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#remove_properties" title="details" class="method-name">remove_properties</a>
+											(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#remove_properties_with_value" title="details" class="method-name">remove_properties_with_value</a>
+											(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$value</span>&nbsp;<span class="var-name">$value</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">array</span>
+										<a href="#ruleset_to_array" title="details" class="method-name">ruleset_to_array</a>
+											(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">boolean</span>
+										<a href="#selector_exists" title="details" class="method-name">selector_exists</a>
+											(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result">boolean</span>
+										<a href="#valid_selector" title="details" class="method-name">valid_selector</a>
+											(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+								
+																																																																																																																																				</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodescape_regex" id="escape_regex"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method escape_regex</span> (line <span class="line-number">60</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Encodes a selector so that it's able to be used in regular expressions</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			escape_regex
+		</span>
+					(<span class="var-type">$selector</span>&nbsp;<span class="var-name">$selector</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$selector</span>
+				<span class="var-name">$selector</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfind_atrule" id="find_atrule"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method find_atrule</span> (line <span class="line-number">296</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Finds @groups within the css and returns  an array with the values, and groups.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			find_atrule
+		</span>
+					(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$name</span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfind_functions" id="find_functions"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method find_functions</span> (line <span class="line-number">81</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Finds CSS 'functions'. These are things like url(), embed() etc.</p>
+<p class="description"><p>Handles interior brackets as well by using recursion.</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			find_functions
+		</span>
+					(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>, <span class="var-type">$type</span>&nbsp;<span class="var-name">2</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$type</span>
+				<span class="var-name">2</span><span class="var-description">: int Which array to return</span>			</li>
+					<li>
+				<span class="var-type">$name</span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfind_properties" id="find_properties"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method find_properties</span> (line <span class="line-number">268</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Finds all properties within a css string</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			find_properties
+		</span>
+					(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$property</span>
+				<span class="var-name">$property</span><span class="var-description">: string Regex formatted string</span>			</li>
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span><span class="var-description">: string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfind_properties_with_value" id="find_properties_with_value"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method find_properties_with_value</span> (line <span class="line-number">219</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Finds all properties with a particular value</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			find_properties_with_value
+		</span>
+					(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$value</span>&nbsp;<span class="var-name">$value</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$css</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$property</span>
+				<span class="var-name">$property</span><span class="var-description">: Regex formatted string for a property</span>			</li>
+					<li>
+				<span class="var-type">$value</span>
+				<span class="var-name">$value</span><span class="var-description">: Regex formatted string for a value</span>			</li>
+					<li>
+				<span class="var-type">$css</span>
+				<span class="var-name">$css</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfind_selectors" id="find_selectors"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method find_selectors</span> (line <span class="line-number">179</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Finds a selector and returns it as string</p>
+	<ul class="tags">
+				<li><span class="field">todo:</span> This will break if the selector they try and find is actually part of another selector</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			find_selectors
+		</span>
+					(<span class="var-type">$selector</span>&nbsp;<span class="var-name">$selector</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$selector</span>
+				<span class="var-name">$selector</span><span class="var-description">: string</span>			</li>
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span><span class="var-description">: string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodfind_selectors_with_property" id="find_selectors_with_property"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method find_selectors_with_property</span> (line <span class="line-number">153</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Finds selectors which contain a particular property</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			find_selectors_with_property
+		</span>
+					(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$css</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$property</span>
+				<span class="var-name">$property</span><span class="var-description">: string</span>			</li>
+					<li>
+				<span class="var-type">$css</span>
+				<span class="var-name">$css</span><span class="var-description">: string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremove_atrule" id="remove_atrule"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method remove_atrule</span> (line <span class="line-number">318</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes an atrule from a CSS string</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			remove_atrule
+		</span>
+					(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$css</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$name</span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type">$css</span>
+				<span class="var-name">$css</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremove_comments" id="remove_comments"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method remove_comments</span> (line <span class="line-number">49</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes css comments</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			remove_comments
+		</span>
+					(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremove_inline_comments" id="remove_inline_comments"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method remove_inline_comments</span> (line <span class="line-number">27</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes single-line comments from a string</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			remove_inline_comments
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremove_newlines" id="remove_newlines"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method remove_newlines</span> (line <span class="line-number">38</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes line breaks and tabs</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			remove_newlines
+		</span>
+					(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremove_properties" id="remove_properties"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method remove_properties</span> (line <span class="line-number">279</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes all instances of a particular property from the css string</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			remove_properties
+		</span>
+					(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$property</span>
+				<span class="var-name">$property</span><span class="var-description">: string</span>			</li>
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span><span class="var-description">: string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodremove_properties_with_value" id="remove_properties_with_value"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method remove_properties_with_value</span> (line <span class="line-number">249</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Removes all instances of a particular property from the css string</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			remove_properties_with_value
+		</span>
+					(<span class="var-type">$property</span>&nbsp;<span class="var-name">$property</span>, <span class="var-type">$value</span>&nbsp;<span class="var-name">$value</span>, <span class="var-type">$css</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$property</span>
+				<span class="var-name">$property</span><span class="var-description">: string</span>			</li>
+					<li>
+				<span class="var-type">$value</span>
+				<span class="var-name">$value</span><span class="var-description">: string</span>			</li>
+					<li>
+				<span class="var-type">$css</span>
+				<span class="var-name">$string</span><span class="var-description">: string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodruleset_to_array" id="ruleset_to_array"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method ruleset_to_array</span> (line <span class="line-number">118</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Takes a string of a CSS rule:</p>
+<p class="description"><p>property:value;  		property:value; 		etc.</p><p>And breaks it into an array:</p><p>array('property'=&gt;'value');</p></p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">array</span>
+		<span class="method-name">
+			ruleset_to_array
+		</span>
+					(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodselector_exists" id="selector_exists"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method selector_exists</span> (line <span class="line-number">192</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Check if a selector exists</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			selector_exists
+		</span>
+					(<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$name</span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodvalid_selector" id="valid_selector"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method valid_selector</span> (line <span class="line-number">202</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Checks if a selector is valid</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			valid_selector
+		</span>
+					(<span class="var-type">$string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$string</span>
+				<span class="var-name">$string</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sat, 26 Jun 2010 11:38:26 +0000 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

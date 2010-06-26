@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Scaffold_Response_Cache</title>
+			<link rel="stylesheet" href="../../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Scaffold_Response_Cache</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Scaffold_Response_Cache</p>
+<p class="description"><p>Makes checking the requesting user agents cache easier. It extracts the  etag and last-modified headers and allows you to compare another etag  and modified time against these to determine if the cache is still valid.</p><p>It automatically fixes the HTTP_IF_MODIFIED_SINCE header issue in IE6.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Anthony Short &lt;<a href="mailto:anthonyshort@me.com">anthonyshort@me.com</a>&gt;</li>
+				<li><span class="field">copyright:</span> 2009-2010 Anthony Short. All rights reserved.</li>
+				<li><span class="field">link:</span> <a href="https://github.com/anthonyshort/csscaffold/master">https://github.com/anthonyshort/csscaffold/master</a></li>
+				<li><span class="field">license:</span> <a href="http://opensource.org/licenses/bsd-license.php">New BSD License</a></li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_Scaffold---Response---Cache.php.html">/Scaffold/Response/Cache.php</a> (line <span class="field">20</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																				
+												<div class="method-definition">
+											<span class="method-result">return</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type">$param</span>&nbsp;<span class="var-name">0</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#get_etag" title="details" class="method-name">get_etag</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#get_modified_since" title="details" class="method-name">get_modified_since</a>
+											(<span class="var-type">$param</span>&nbsp;<span class="var-name">0</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">boolean</span>
+										<a href="#valid" title="details" class="method-name">valid</a>
+											(<span class="var-type">$last_modified</span>&nbsp;<span class="var-name">$last_modified</span>, <span class="var-type">$etag</span>&nbsp;<span class="var-name">$etag</span>)
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">43</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> type</li>
+				<li><span class="field">author:</span> your name</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">return</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type">$param</span>&nbsp;<span class="var-name">0</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$param</span>
+				<span class="var-name">0</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodget_etag" id="get_etag"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_etag</span> (line <span class="line-number">76</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets the client etags</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			get_etag
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodget_modified_since" id="get_modified_since"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">get_modified_since</span> (line <span class="line-number">88</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets the modified-since header</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			get_modified_since
+		</span>
+					(<span class="var-type">$param</span>&nbsp;<span class="var-name">0</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$param</span>
+				<span class="var-name">0</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodvalid" id="valid"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">valid</span> (line <span class="line-number">65</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Checks if the users cache is still valid by checking the last modified  time and etag against the browsers sent header.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">boolean</span>
+		<span class="method-name">
+			valid
+		</span>
+					(<span class="var-type">$last_modified</span>&nbsp;<span class="var-name">$last_modified</span>, <span class="var-type">$etag</span>&nbsp;<span class="var-name">$etag</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$last_modified</span>
+				<span class="var-name">$last_modified</span>			</li>
+					<li>
+				<span class="var-type">$etag</span>
+				<span class="var-name">$etag</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Sat, 26 Jun 2010 11:38:25 +0000 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
