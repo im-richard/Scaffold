@@ -13,6 +13,12 @@
 class Scaffold_Helper_CSS
 {
 	/**
+	 * Regex for a valid selector
+	 * @var string
+	 */
+	private static $_identifier = '[0-9a-zA-Z\_\-\*&\#\[\]~=|\"\'\^\$\:\>\+\(\)]';
+
+	/**
 	 * Removes single-line comments from a string
 	 * @access public
 	 * @param string
@@ -24,30 +30,14 @@ class Scaffold_Helper_CSS
 	}
 
 	/**
-	 * Compresses down the CSS file by removing comments and whitespace
-	 * @access public
-	 * @param string
-	 * @return string $css
-	 */	
-	public static function compress($string)
-	{		
-		$string = self::remove_comments($string);
-		$string = self::remove_inline_comments($string);
-		$string = self::remove_whitespace($string);
-		return $string;
-	}
-
-	/**
-	 * Removes extra whitespace and line breaks
+	 * Removes line breaks and tabs
 	 * @access public
 	 * @param $string
 	 * @return string
 	 */
-	public static function remove_whitespace($string)
+	public static function remove_newlines($string)
 	{
-		$string = preg_replace('/\s+/', ' ', $string);
-		$string = preg_replace('/\n|\r/', '', $string);
-		return $string;
+		return preg_replace('/\n+|\r+|\t+/', '', $string);
 	}
 
 	/**
@@ -60,6 +50,24 @@ class Scaffold_Helper_CSS
 	{
 		return preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $string);
 	}
+	
+	/**
+	 * Encodes a selector so that it's able to be used in regular expressions
+	 * @access public
+	 * @param $selector
+	 * @return string
+	 */
+	public static function escape_regex($selector)
+	{
+		$selector = preg_quote($selector,'-');
+		$selector = str_replace('#','\#',$selector);
+		$selector = preg_replace('/\s+/',"\s+",$selector);
+		return $selector;
+	}
+	
+	// ============================
+	// = Function Methods =
+	// ============================
 
 	/**
 	 * Finds CSS 'functions'. These are things like url(), embed() etc.
@@ -67,58 +75,31 @@ class Scaffold_Helper_CSS
 	 * @access public
 	 * @param $name
 	 * @param $string
+	 * @param $type int Which array to return
 	 * @return array
 	 */
 	public static function find_functions($name,$string)
 	{
+		$return = array();
 		$regex ="/{$name}(\s*\(\s*((?:(?1)|[^()]+)*)\s*\)\s*)/sx";
-		return preg_match_all($regex, $this->string, $match) ? $match : array();
-	}
-
-	/**
-	 * Finds @groups within the css and returns
-	 * an array with the values, and groups.
-	 * @access public
-	 * @param $name
-	 * @param $string
-	 * @return array
-	 */
-	public static function find_atrule($name,$string)
-	{
-		$regex = 
-		"/
-			# Group name
-			@{$name}
-			
-			# Flag
-			(?:\(( [^)]*? )\))?
-			
-			[^{]*?
-
-			(
-				([0-9a-zA-Z\_\-\@*&]*?)\s*		# Selector
-				\{	
-					( (?: [^{}]+ | (?2) )*)		# Selector Contents
-				\}
-			)
-
-		/ixs";
-
-		return preg_match_all($regex, $string, $matches) ? $matches : array();		
+		
+		if(preg_match_all($regex, $string, $match))
+		{
+			foreach($match[0] as $key => $value)
+			{
+				$return[$key] = array(
+					'string' => $value,
+					'param' => $match[2][$key]
+				);
+			}
+		}
+		
+		return $return;
 	}
 	
-	/**
-	 * Removes an atrule from a CSS string
-	 * @access public
-	 * @param $name
-	 * @param $css
-	 * @return string
-	 */
-	public static function remove_atrule($name,$css)
-	{
-		$rules = self::find_atrule($name,$css);
-		return str_replace($rules[0],'',$css);
-	}
+	// ============================
+	// = Ruleset Methods =
+	// ============================
 	
 	/**
 	 * Takes a string of a CSS rule:
@@ -151,7 +132,37 @@ class Scaffold_Helper_CSS
 			// Make sure it's set
 			if(isset($value[1]))
 			{
-				$return[trim($value[0])] = str_replace('#COLON#', ':', trim($value[1], "'\" "));
+				$return[trim($value[0])] = str_replace('#COLON#', ':', trim($value[1]));
+			}
+		}
+		
+		return $return;
+	}
+	
+	// ============================
+	// = Selector Methods =
+	// ============================
+	
+	/**
+	 * Finds selectors which contain a particular property
+	 * @access public
+	 * @param $property string
+	 * @param $css string
+	 * @return array
+	 */
+	public static function find_selectors_with_property($property,$css)
+	{
+		$return = array();
+		$regex = "/([^{}]*)\s*\{\s*($property|[^}]*[\s\;]$property)\s*:[^}]*}/sx";
+		
+		if(preg_match_all($regex,$css,$match))
+		{
+			foreach($match[0] as $key => $value)
+			{
+				$return[$key] = array(
+					'string' => $value,
+					'selector' => $match[1][$key]
+				);
 			}
 		}
 		
@@ -159,18 +170,43 @@ class Scaffold_Helper_CSS
 	}
 	
 	/**
-	 * Finds selectors which contain a particular property
+	 * Finds a selector and returns it as string
 	 * @access public
-	 * @param $property string
-	 * @param $value string
-	 * @param $css string
-	 * @return array
+	 * @param $selector string
+	 * @param $string string
+	 * @todo This will break if the selector they try and find is actually part of another selector
 	 */
-	public static function find_selectors_with_property($property,$value,$css)
+	public static function find_selectors($selector,$string)
 	{
-		$regex = "/([^{}]*)\s*\{\s*[^}]*(".$property."\s*\:\s*(".$value.")\s*\;).*?\s*\}/sx";
-		return preg_match_all($regex,$css,$match) ? $match : array();
+		$selector = self::escape_regex($selector);
+		$regex = "/(^|[}\s;])(($selector)\s*\{[^}]*\})/sx";
+		return preg_match_all($regex, $string, $match) ? $match[2] : array();
 	}
+
+	/**
+	 * Check if a selector exists
+	 * @param $name
+	 * @param $string
+	 * @return boolean
+	 */
+	public static function selector_exists($name,$string)
+	{
+		return preg_match('/(^|})\s*'.$name.'\s*\{/', $string) ? true : false;
+	}
+	
+	/** 
+	 * Checks if a selector is valid
+	 * @param $string
+	 * @return boolean
+	 */
+	public static function valid_selector($string)
+	{
+		return preg_match(self::$_identifier,$string);
+	}
+	
+	// ============================
+	// = Property Methods =
+	// ============================
 	
 	/**
 	 * Finds all properties with a particular value
@@ -182,57 +218,25 @@ class Scaffold_Helper_CSS
 	 */
 	public static function find_properties_with_value($property,$value,$css)
 	{
-		$regex = "/({$property})\s*\:\s*({$value})/sx";
-		return preg_match_all($regex, $this->string, $match) ? $match : array();
-	}
-		
-	/**
-	 * Finds a selector and returns it as string
-	 * @access public
-	 * @param $selector string
-	 * @param $string string
-	 * @todo This will break if the selector they try and find is actually part of another selector
-	 */
-	public static function find_selectors($selector,$string)
-	{
-		$regex = 
-			"/
-				# This is the selector we're looking for
-				({$selector})
-				
-				# Return all inner selectors and properties
-				(
-					([0-9a-zA-Z\_\-\*&]*?)\s*
-					\{	
-						(?P<properties>(?:[^{}]+|(?2))*)
-					\}
-				)
-			/xs";
+		$return = array();
+		$escaped_property = self::escape_regex($property);
+		$value = self::escape_regex($value);
 
-		return preg_match_all($regex, $this->string, $match) ? $match : array();
-	}
+		$regex = "/([^{}]*)\s*\{\s*(($escaped_property|[^}]*[\s\;]$escaped_property)(\s*:\s*$value\s*\;*))[^}]*}/sx";
+		
+		if(preg_match_all($regex,$css,$match))
+		{
+			foreach($match[0] as $key => $value)
+			{		
+				$return[$key] = array(
+					'string' => $value,
+					'selector' => $match[1][$key],
+					'property' => $property . $match[4][$key]
+				);
+			}
+		}
 	
-	/**
-	 * Finds all properties within a css string
-	 * @access public
-	 * @param $property string Regex formatted string
-	 * @param $string string
-	 */
-	public static function find_property($property,$string)
-	{ 
-		$regex = '/[^-a-zA-Z](('.$property.')\s*\:\s*(.*?)\s*\;)/sx';
-		return preg_match_all($regex,$string,$matches) ? $matches : array();
-	}
-	
-	/**
-	 * Check if a selector exists
-	 * @param $name
-	 * @param string
-	 * @return boolean
-	 */
-	public static function selector_exists($name,$string)
-	{
-		return preg_match('/'.$name.'\s*?({|,)/', $string) ? true : false;
+		return $return;
 	}
 		
 	/**
@@ -244,6 +248,76 @@ class Scaffold_Helper_CSS
 	 */
 	public static function remove_properties_with_value($property,$value,$string)
 	{
-		return preg_replace('/'.$property.'\s*\:\s*'.$value.'\s*\;/', '', $string);
+		if($props = self::find_properties_with_value($property,$value,$string))
+		{
+			foreach($props as $prop)
+			{
+				$new = str_replace($prop['property'],'',$prop['string']);
+				$string = str_replace($prop['string'],$new,$string);
+			}
+		}
+		return $string;
+	}
+	
+	/**
+	 * Finds all properties within a css string
+	 * @access public
+	 * @param $property string Regex formatted string
+	 * @param $string string
+	 */
+	public static function find_properties($property,$string)
+	{
+		return self::find_properties_with_value($property,'[^;}]*',$string);
+	}
+	
+	/**
+	 * Removes all instances of a particular property from the css string
+	 * @access public
+	 * @param $property string
+	 * @param $string string
+	 */
+	public static function remove_properties($property,$string)
+	{
+		return self::remove_properties_with_value($property,'[^;}]*',$string);
+	}
+	
+	// ============================
+	// = @ Rule Methods =
+	// ============================
+
+	/**
+	 * Finds @groups within the css and returns
+	 * an array with the values, and groups.
+	 * @access public
+	 * @param $name
+	 * @param $string
+	 * @return array
+	 */
+	public static function find_atrule($name,$string)
+	{
+		$name = self::escape_regex($name);
+		$regex = "/
+		
+		@{$name}([^{]*?)
+		\{
+			((".self::$_identifier."*?)\s*\{((?:[^{}]+|(?2))*)\})
+		\}
+		
+		/xs";
+
+		return preg_match_all($regex, $string, $matches) ? $matches : array();		
+	}
+	
+	/**
+	 * Removes an atrule from a CSS string
+	 * @access public
+	 * @param $name
+	 * @param $css
+	 * @return string
+	 */
+	public static function remove_atrule($name,$css)
+	{
+		$rules = self::find_atrule($name,$css);
+		return str_replace($rules[0],'',$css);
 	}
 }
