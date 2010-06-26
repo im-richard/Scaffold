@@ -120,11 +120,13 @@ class Scaffold extends Scaffold_Extension_Observable
 	}
 
 	/**
-	 * Parses a CSS string through each of the extensions. Calls 3 hooks
+	 * Parses a CSS string through each of the extensions. Calls 5 hooks
 	 * 
 	 * - Initialize: Used for loading libraries and preparing for processing
+	 * - Pre-process: Any formatting or processing that needs to occur so that the process hook will go smooth
 	 * - Process: Any form of processing the CSS.
-	 * - Format: Used for formatting the CSS. Basically, no syntax manipulation.
+	 * - Post-process: Cleaning up anything left behind from the process hook to make it valid CSS again.
+	 * - Format: Used for formatting the CSS. Should be valid CSS by this point.
 	 *
 	 * As well as these, the extensions themselves can create hooks, so that
 	 * you can only run an extension during another extension.
@@ -136,7 +138,9 @@ class Scaffold extends Scaffold_Extension_Observable
 	{
 		$this->data = array('source'=>$source);
 		$this->notify('initialize');
+		$this->notify('pre_process');
 		$this->notify('process');
+		$this->notify('post_process');
 		$this->notify('format');
 		return $this->data['source']->get();
 	}
