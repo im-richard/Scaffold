@@ -71,9 +71,9 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 		$expected = array
 		(
 			0 => array(
-					'string' => '@constants{property:value;property:value;}',
-					'params' => '',
-					'content' => 'property:value;property:value;'
+					0 => '@constants{property:value;property:value;}',	// string
+					1 => '',											// params
+					2 => 'property:value;property:value;'				// content
 				)
 		);
 	
@@ -197,7 +197,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			0 => array(
 					'string' => '#id5{color:red;background:blue}',
 					'selector' => '#id5',
-					'property' => 'color:red;'
+					'property' => 'color:red'
 				)
 		);
 		$output = Scaffold_Helper_CSS::find_properties_with_value('color','red',$string);
@@ -390,9 +390,14 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 
     public function testFind_property()
     {
-        $string = 'id{background:blue}#id2{color:blue}#id3{background-color:red}#id4{dbackground:blue}#id5{color:red;background:blue}';
-		$expected = array
-		(
+        $string = '
+			id{background:blue}
+			#id2{color:blue}
+			#id3{background-color:red}
+			#id4{dbackground:blue}
+			#id5{color:red;background:blue}
+		';
+		$expected = array(
 			0 => array(
 					'string' => 'id{background:blue}',
 					'selector' => 'id',
@@ -405,6 +410,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 				),
 		);
 		$output = Scaffold_Helper_CSS::find_properties('background',$string);
+		
 		$this->assertEquals($expected,$output);
     }
 

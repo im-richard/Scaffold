@@ -216,26 +216,53 @@ class Scaffold_Helper_CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_properties_with_value($property,$value,$css)
+	public static function find_properties_with_value($property,$value,$css,$escape_value=true)
 	{
 		$return = array();
 		$escaped_property = self::escape_regex($property);
-		$value = self::escape_regex($value);
-
-		$regex = "/([^{}]*)\s*\{\s*(($escaped_property|[^}]*[\s\;]$escaped_property)(\s*:\s*$value\s*\;*))[^}]*}/sx";
+		$value = $escape_value ? self::escape_regex($value) : $value;
 		
-		if(preg_match_all($regex,$css,$match))
+		$regex = "/
+			\s*
+			
+			([^{}]*)									(?# selector)
+			
+			\s*
+			
+			\{		
+													
+				(?:										(?# property is complicated, as we may be first or intermediate - dbackground instance)
+					[^}]*[\s\;]
+					|
+					\s*
+				)
+				($escaped_property)	
+				\s*
+				
+				:										(?# property value seperator)
+				
+				\s*
+				($value)
+				;?
+				
+				[^}]*									(?# everything after our property of interest)
+				
+			\}											(?# end content)
+			
+			/sx";
+		
+		if(preg_match_all($regex,$css,$matches,PREG_SET_ORDER))
 		{
-			foreach($match[0] as $key => $value)
+			foreach ( $matches as $key => $match )
 			{		
 				$return[$key] = array(
-					'string' => $value,
-					'selector' => $match[1][$key],
-					'property' => $property . $match[4][$key]
+					'string' => trim($match[0]),
+					'selector' => $match[1],
+					'property' => $match[2].':'.$match[3]
 				);
 			}
 		}
-	
+		
 		return $return;
 	}
 		
@@ -246,16 +273,38 @@ class Scaffold_Helper_CSS
 	 * @param $value string
 	 * @param $css string
 	 */
-	public static function remove_properties_with_value($property,$value,$string)
+	public static function remove_properties_with_value($property,$value,$string,$escape_value=true)
 	{
-		if($props = self::find_properties_with_value($property,$value,$string))
-		{
-			foreach($props as $prop)
-			{
-				$new = str_replace($prop['property'],'',$prop['string']);
-				$string = str_replace($prop['string'],$new,$string);
-			}
-		}
+		# Prepare
+		$escaped_property = self::escape_regex($property);
+		$value = $escape_value ? self::escape_regex($value) : $value;
+		
+		# Generate regex
+		$regex = "/
+			(
+				\{							
+				(?:										(?# property is complicated, as we may be first or intermediate - dbackground instance)
+					\s*
+					|
+					[^}]*[\s\;]
+				)
+			)
+			
+			($escaped_property)	
+			\s*
+		
+			:										(?# property value seperator)
+		
+			\s*
+			($value)
+			;?
+		
+		/sx";
+		
+		# Remove property
+		$string = preg_replace($regex, '$1', $string);
+		
+		# Return string
 		return $string;
 	}
 	
@@ -267,7 +316,7 @@ class Scaffold_Helper_CSS
 	 */
 	public static function find_properties($property,$string)
 	{
-		return self::find_properties_with_value($property,'[^;}]*',$string);
+		return self::find_properties_with_value($property,'[^;}]*',$string,false);
 	}
 	
 	/**
@@ -278,7 +327,7 @@ class Scaffold_Helper_CSS
 	 */
 	public static function remove_properties($property,$string)
 	{
-		return self::remove_properties_with_value($property,'[^;}]*',$string);
+		return self::remove_properties_with_value($property,'[^;}]*',$string,false);
 	}
 	
 	// ============================
@@ -297,15 +346,19 @@ class Scaffold_Helper_CSS
 	{
 		$name = self::escape_regex($name);
 		$regex = "/
+		@{$name}			(?# the name to find)
 		
-		@{$name}([^{]*?)
-		\{
-			((".self::$_identifier."*?)\s*\{((?:[^{}]+|(?2))*)\})
-		\}
+		([^{]*?)			(?# atrules params)
+		
+		\{					(?# start atrule content)
+			(.*?)
+		\}					(?# end atrule content)
 		
 		/xs";
 
-		return preg_match_all($regex, $string, $matches) ? $matches : array();		
+		$result = preg_match_all($regex, $string, $matches, PREG_SET_ORDER) ? $matches : array();	
+		
+		return $result;
 	}
 	
 	/**
