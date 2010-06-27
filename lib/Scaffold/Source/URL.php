@@ -24,8 +24,17 @@ class Scaffold_Source_Url extends Scaffold_Source
 	 */
 	public function __construct($url,$options = array())
 	{
+		try
+		{
+			$contents = file_get_contents($url);
+		}
+		catch(Exception $e)
+		{
+			throw new Exception("URL doesn't exist - $url");
+		}
+
 		$this->options = $options;
-		$this->contents = $this->original = file_get_contents($url);
+		$this->contents = $this->original = $contents;
 		$this->url = $url;
 		$this->last_modified = (isset($options['last_modified'])) ? $options['last_modified'] : time();
 		$this->id = (isset($options['id'])) ? $options['id'] : md5($url);

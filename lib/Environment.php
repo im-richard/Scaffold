@@ -46,6 +46,11 @@ class Environment
 	 */
 	public static function auto_load($class)
 	{
+		# Check if class is already loaded
+		if ( class_exists($class,false) ) {
+			return true;
+		}
+
 		# Transform the class name into a path
 		$file = str_replace('_', '/', strtolower($class)) . '.php';
 		
@@ -58,7 +63,7 @@ class Environment
 			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -122,11 +127,6 @@ class Environment
 				include self::$_view;
 				echo ob_get_clean();
 			}
-			else
-			{
-				throw new Exception($e);
-			}
-			
 			return true;
 		}
 		catch (Exception $e)
