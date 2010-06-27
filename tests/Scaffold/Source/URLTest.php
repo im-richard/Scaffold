@@ -2,7 +2,7 @@
 
 class Scaffold_Source_UrlTest extends PHPUnit_Framework_TestCase
 {
-	var $url =  'http://maxvoltar.com/assets/css/master.css';
+	var $url =  'http://files.anthonyshort.com.au/stylesheets/screen.css';
 
 	public function setUp() 
 	{
@@ -32,4 +32,18 @@ class Scaffold_Source_UrlTest extends PHPUnit_Framework_TestCase
 		$actual = $this->object->id();
 		$this->assertEquals( $expected, $actual );
 	} // Get the id
+	
+	/**
+	 * Get a url that fails
+	 * @expectedException Exception
+	 * @author Anthony Short
+	 * @test
+	 */
+	public function Get_a_url_that_fails()
+	{
+		
+		$source = new Scaffold_Source_Url('http://files.anthonyshort.com.au/stylesheets/foobar.css');
+		$this->assertEquals( $expected, $actual );
+	}
+	
 }
