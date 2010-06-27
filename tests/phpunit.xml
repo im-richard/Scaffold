@@ -5,7 +5,7 @@
     </testsuite>
 
     <php>
-    	<ini name="include_path" value="../lib:/usr/local/zend/share/pear"/>
+    	<ini name="include_path" value="../lib:/usr/local/zend/share/pear:/usr/lib/php/PEAR"/>
     </php>
 
     <filter>

@@ -18,6 +18,12 @@ class Scaffold_Source_File extends Scaffold_Source
 	 * @var string
 	 */
 	public $path;
+	
+	/**
+	 * The type of source
+	 * @var string
+	 */
+	public $type = 'file';
 
 	/** 
 	 * Constructor

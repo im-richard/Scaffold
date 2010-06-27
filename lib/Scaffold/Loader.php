@@ -78,7 +78,7 @@ class Scaffold_Loader
 	 * @throws Scaffold_Loader_Exception
 	 * @return string
 	 */
-	public function find_file($file)
+	public function find_file($file,$required = true)
 	{
 		// Docroot relative file
 		if($file[0] == DIRECTORY_SEPARATOR)
@@ -99,7 +99,7 @@ class Scaffold_Loader
 			else
 			{
 				// Go through each of the include paths to find it
-				foreach($this->load_paths as $path)
+				foreach($this->_load_paths as $path)
 				{
 					$search = $path.DIRECTORY_SEPARATOR.$file;
 					
@@ -112,9 +112,13 @@ class Scaffold_Loader
 			}
 		}
 		
-		if(!is_file($file))
+		if(!is_file($file) AND $required === true)
 		{
 			throw new Exception('The file cannot be found ['.$file.']');
+		}
+		elseif(!is_file($file) AND $required === false)
+		{
+			return false;
 		}
 
 		return $file;
