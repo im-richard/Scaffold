@@ -14,6 +14,12 @@
 class Scaffold_Source_String extends Scaffold_Source
 {
 	/**
+	 * The type of source
+	 * @var string
+	 */
+	public $type = 'string';
+
+	/**
 	 * Constructor
 	 */
 	public function __construct($content,$options = array())

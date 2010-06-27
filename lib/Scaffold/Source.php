@@ -35,6 +35,11 @@ abstract class Scaffold_Source
 	public $options = array();
 	
 	/**
+	 * @var string
+	 */
+	public $type;
+	
+	/**
 	 * Get the current contents of the source
 	 * @access public
 	 * @return string

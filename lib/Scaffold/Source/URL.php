@@ -14,6 +14,12 @@
 class Scaffold_Source_Url extends Scaffold_Source
 {
 	/**
+	 * The type of source
+	 * @var string
+	 */
+	public $type = 'url';
+
+	/**
 	 * The url to the source file
 	 * @var string
 	 */
