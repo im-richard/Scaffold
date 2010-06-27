@@ -236,14 +236,12 @@ class Scaffold_Helper_CSS
 					|
 					\s*
 				)
-				($escaped_property)	
-				\s*
+				($escaped_property\s*)	
 				
 				:										(?# property value seperator)
 				
-				\s*
-				($value)
-				;?
+				(\s*$value\s*;?)
+				
 				
 				[^}]*									(?# everything after our property of interest)
 				
@@ -290,14 +288,12 @@ class Scaffold_Helper_CSS
 				)
 			)
 			
-			($escaped_property)	
-			\s*
-		
+			($escaped_property\s*)	
+			
 			:										(?# property value seperator)
-		
-			\s*
-			($value)
-			;?
+			
+			(\s*$value\s*;?)
+			
 		
 		/sx";
 		
