@@ -35,6 +35,20 @@ class Scaffold_Container
 	public $options;
 	
 	/**
+	 * Default configuration
+	 *
+	 * @var array
+	 */
+	private $_defaults = array
+	(
+		'production' 			=> false,
+		'max_age' 				=> 3600,
+		'load_paths' 			=> array(),
+		'output_compression' 	=> false,
+		'extensions'			=> array()
+	);
+	
+	/**
 	 * Constructor
 	 * @author your name
 	 * @param $param
@@ -43,7 +57,7 @@ class Scaffold_Container
 	public function __construct($system,$options = array())
 	{
 		$this->system = $system;
-		$this->options = $options;
+		$this->options = array_merge($this->_defaults, $options);
 		$this->extensions = $this->loadExtensions($system.'/extensions/*/');
 	}
 	
@@ -66,6 +80,9 @@ class Scaffold_Container
 			$config = array();
 			$name = basename($ext);
 			$file = $name.'.php';
+			
+			if(!in_array($name, $this->options['extensions']))
+				continue;
 			
 			if(isset($this->options[$name]))
 			{
