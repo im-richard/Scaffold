@@ -191,13 +191,13 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 	 */
 	public function Find_all_properties_with_a_value()
 	{
-		$string = '#id{background:blue}#id2{color:blue}#id3{background-color:red}#id{dbackground:blue}#id5{color:red;background:blue}';
+		$string = '#id{background:blue}#id2{color:blue}#id3{background-color:red}#id{dbackground:blue}#id5{color : red ;background:blue}';
 		$expected = array
 		(
 			0 => array(
-					'string' => '#id5{color:red;background:blue}',
+					'string' => '#id5{color : red ;background:blue}',
 					'selector' => '#id5',
-					'property' => 'color:red'
+					'property' => 'color : red ;'
 				)
 		);
 		$output = Scaffold_Helper_CSS::find_properties_with_value('color','red',$string);
@@ -222,7 +222,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 					'property' => 'background:blue'
 				),
 			1 => array(
-					'string' => '#id5{color:red;background:blue}',
+					'string' => '#id5{color : red ;background:blue}',
 					'selector' => '#id5',
 					'property' => 'background:blue'
 				)
