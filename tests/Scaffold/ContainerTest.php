@@ -30,6 +30,11 @@ class Scaffold_ContainerTest extends PHPUnit_Framework_TestCase
     	);
         $this->object = new Scaffold_Container($system,$options);
     }
+    
+    public function testSetupWithNoConfig()
+    {
+    	$this->object = new Scaffold_Container(realpath('../'));
+    }
 
     public function testGetResponse()
     {

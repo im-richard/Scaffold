@@ -31,7 +31,7 @@ abstract class Scaffold_Extension extends Scaffold_Extension_Observer
 	 *
 	 * @var array
 	 */
-	protected $defaults = array();
+	public $_defaults = array();
 	
 	/**
 	 * Sets the configuration
@@ -45,7 +45,7 @@ abstract class Scaffold_Extension extends Scaffold_Extension_Observer
 	public function __construct($config,$path)
 	{
 		// Merge the default config with the custom config
-		$this->config = array_merge($this->defaults,$config);
+		$this->config = array_merge($this->_defaults,$config);
 		
 		// The path to the module folder
 		$this->path = $path;

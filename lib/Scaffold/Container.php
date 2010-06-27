@@ -57,7 +57,7 @@ class Scaffold_Container
 	public function __construct($system,$options = array())
 	{
 		$this->system = $system;
-		$this->options = array_merge($this->_defaults, $options);
+		$this->options = array_merge($this->_defaults, $options);		
 		$this->extensions = $this->loadExtensions($system.'/extensions/*/');
 	}
 	
@@ -74,30 +74,30 @@ class Scaffold_Container
 	
 		# Load each of the extensions
 		foreach(glob($path) as $ext)
-		{
+		{			
 			$ext .= DIRECTORY_SEPARATOR;
 		
-			$config = array();
-			$name = basename($ext);
-			$file = $name.'.php';
+			$config 	= array();
+			$name 		= basename($ext);
+			$class 		= 'Scaffold_Extension_' . $name;
+			$file 		= $ext.$name.'.php';
 			
+			# This extension isn't enabled
 			if(!in_array($name, $this->options['extensions']))
 				continue;
 			
+			# Get the config for the extension if available
 			if(isset($this->options[$name]))
-			{
 				$config = $this->options[$name];
-			}
-
+			
 			# Load the controller
-			if(file_exists($ext.$file))
+			if(file_exists($file))
 			{
-				require_once($ext.$file);
-				$class = "Scaffold_Extension_".$name;
+				require_once realpath($ext.$name.'.php');
 				$extensions[$name] = new $class($config,$ext);
 			}
 		}
-		
+
 		return $extensions;
 	}
 
