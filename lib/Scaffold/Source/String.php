@@ -19,9 +19,9 @@ class Scaffold_Source_String extends Scaffold_Source
 	public function __construct($content,$options = array())
 	{
 		$this->options = $options;
-		$this->contents = $content;
+		$this->contents = $content;		
 		$this->last_modified = (isset($options['last_modified'])) ? $options['last_modified'] : time();
-		$this->id = (isset($options['id'])) ? $options['id'] : md5($string);
+		$this->id = (isset($options['id'])) ? $options['id'] : md5($content);
 	}
 
 	/**
