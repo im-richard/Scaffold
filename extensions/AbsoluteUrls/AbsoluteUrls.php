@@ -19,11 +19,9 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 	 * @var array
 	 */
 	public $_defaults = array(
-	
-		# Do we want to make all the file paths required?
+
 		# If true, an exception will be thrown on missing files
 		'require_files' => false
-
 	);
 
 	/**
@@ -32,20 +30,19 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 	 * @param $css
 	 * @return $css string
 	 */
-	public function format()
+	public function format($source)
 	{
 		# We can only process files
-		if($this->scaffold->data['source']->type != 'file')
-			return;
+		if($source->type != 'file') return;
 
 		// HOOK //
 		$this->scaffold->notify('absoluteurls_before');
 		
 		# Full path the the source file
-		$path = $this->scaffold->data['source']->path;
+		$path = $source->path;
 		
 		# The CSS
-		$css = $this->scaffold->data['source']->get();
+		$css = $source->get();
 	
 		# The absolute url to the directory of the current CSS file
 		$path = str_replace($_SERVER['DOCUMENT_ROOT'], '/', $path);
@@ -111,7 +108,7 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 		}
 		
 		# Update the source
-		$this->scaffold->data['source']->set($css);
+		$source->set($css);
 		
 		// HOOK //
 		$this->scaffold->notify('absoluteurls_after');

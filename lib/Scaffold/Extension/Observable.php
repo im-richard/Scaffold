@@ -65,11 +65,11 @@ abstract class Scaffold_Extension_Observable
 	 * @access public
 	 * @return Scaffold_Engine
 	 */
-	public function notify($hook)
+	public function notify($hook,$data = false)
 	{
 		foreach($this->extensions as $extension)
 		{
-			$extension->update($hook);
+			$extension->update($hook,$data);
 		}
 	}
 }
