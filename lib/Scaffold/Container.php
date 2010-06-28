@@ -21,13 +21,6 @@ class Scaffold_Container
 	public $system;
 	
 	/**
-	 * Extensions
-	 *
-	 * @var array
-	 */
-	public $extensions = array();
-	
-	/**
 	 * The various options for different parts of the system
 	 *
 	 * @var array
@@ -58,7 +51,6 @@ class Scaffold_Container
 	{
 		$this->system = $system;
 		$this->options = array_merge($this->_defaults, $options);		
-		$this->extensions = $this->loadExtensions($system.'/extensions/*/');
 	}
 	
 	/**
@@ -119,7 +111,10 @@ class Scaffold_Container
 		# The main object
 		$scaffold = new Scaffold($cache,$response,$loader,$this->options['production']);
 		
-		foreach($this->extensions as $name => $ext)
+		# Load the extensions
+		$extensions = $this->loadExtensions($this->system.'/extensions/*/');
+		
+		foreach($extensions as $name => $ext)
 		{
 			$scaffold->attach($name,$ext);
 		}
