@@ -37,6 +37,9 @@ class Scaffold_Extension_ServerImport extends Scaffold_Extension
 	 */
 	public function initialize()
 	{
+		if($this->scaffold->data['source']->type != 'file')
+			return;
+
 		// The source contents as per usual
 		$css = $this->scaffold->data['source']->get();
 		$path = $this->scaffold->data['source']->path;
