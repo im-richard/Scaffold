@@ -13,10 +13,16 @@
 class Scaffold_Helper_CSS
 {
 	/**
+	 * Valid start of a selector
+	 * @var string
+	 */
+	public static $selector_start = '[0-9A-Za-z\_\#\.\*\:\&]';
+
+	/**
 	 * Regex for a valid selector
 	 * @var string
 	 */
-	private static $_identifier = '[0-9a-zA-Z\_\-\*&\#\[\]~=|\"\'\^\$\:\>\+\(\)]';
+	public static $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s]';
 
 	/**
 	 * Removes single-line comments from a string
