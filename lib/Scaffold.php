@@ -92,7 +92,9 @@ class Scaffold extends Scaffold_Extension_Observable
 		
 		if($this->production === false OR $expired === true)
 		{
-			$this->cache->set($id,$this->parse($source));
+			$this->cache->set($id,
+				$this->parse($source)->get()
+			);
 		}
 
 		$result = array();
@@ -116,7 +118,12 @@ class Scaffold extends Scaffold_Extension_Observable
 	 */
 	public function render($output,$last_modified)
 	{
-		$this->response->render($output,$last_modified,$this->production,$this->_output_type);
+		$this->response->render(
+			$output,
+			$last_modified,
+			$this->production,
+			$this->_output_type
+		);
 	}
 
 	/**
@@ -132,16 +139,16 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * you can only run an extension during another extension.
 	 *
 	 * @param $source Scaffold_Source
-	 * @return string
+	 * @return Scaffold_Source
 	 */
 	public function parse($source)
 	{
-		$this->data = array('source'=>$source);
-		$this->notify('initialize');
-		$this->notify('pre_process');
-		$this->notify('process');
-		$this->notify('post_process');
-		$this->notify('format');
-		return $this->data['source']->get();
+		$params = array($source);
+		$this->notify('initialize',$params);
+		$this->notify('pre_process',$params);
+		$this->notify('process',$params);
+		$this->notify('post_process',$params);
+		$this->notify('format',$params);
+		return $source;
 	}
 }

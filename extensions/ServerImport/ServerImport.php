@@ -35,17 +35,15 @@ class Scaffold_Extension_ServerImport extends Scaffold_Extension
 	 * @param $param
 	 * @return return type
 	 */
-	public function initialize()
+	public function initialize($source)
 	{
-		if($this->scaffold->data['source']->type != 'file')
-			return;
+		// Can only parse files, obviously
+		if($source->type != 'file') return;
 
-		// The source contents as per usual
-		$css = $this->scaffold->data['source']->get();
-		$path = $this->scaffold->data['source']->path;
-		
 		// Replace all the imports
-		$this->scaffold->data['source']->set($this->find_and_replace($css,$path));
+		$source->set(
+			$this->find_and_replace($source->get(),$source->path)
+		);
 	}
 	
 	/**
