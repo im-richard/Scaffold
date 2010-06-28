@@ -143,11 +143,12 @@ class Scaffold extends Scaffold_Extension_Observable
 	 */
 	public function parse($source)
 	{
-		$this->notify('initialize',$source);
-		$this->notify('pre_process',$source);
-		$this->notify('process',$source);
-		$this->notify('post_process',$source);
-		$this->notify('format',$source);
+		$params = array($source);
+		$this->notify('initialize',$params);
+		$this->notify('pre_process',$params);
+		$this->notify('process',$params);
+		$this->notify('post_process',$params);
+		$this->notify('format',$params);
 		return $source;
 	}
 }
