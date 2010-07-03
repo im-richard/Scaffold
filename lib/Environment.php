@@ -47,12 +47,11 @@ class Environment
 	public static function auto_load($class)
 	{
 		# Check if class is already loaded
-		if ( class_exists($class,false) ) {
+		if (class_exists($class,false)) 
 			return true;
-		}
 
 		# Transform the class name into a path
-		$file = str_replace('_', '/', strtolower($class)) . '.php';
+		$file = str_replace('_', '/', ucfirst($class)) . '.php';
 		
 		# The path to the lib folder with the file
 		$path = dirname(__FILE__) . '/' . $file;
