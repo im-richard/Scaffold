@@ -83,10 +83,7 @@ else
 }
 
 // Compiles the source object
-$result = $scaffold->compile($source);
+$scaffold->compile($source);
 
 // Use the result to render it to the browser. Hooray!
-$scaffold->render(
-	$result['string'],
-	$result['last_modified']
-);
+$scaffold->render($source);
