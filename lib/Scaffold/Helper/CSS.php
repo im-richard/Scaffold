@@ -13,10 +13,16 @@
 class Scaffold_Helper_CSS
 {
 	/**
+	 * Valid start of a selector
+	 * @var string
+	 */
+	public static $selector_start = '[0-9A-Za-z\_\#\.\*\:\&\=]';
+
+	/**
 	 * Regex for a valid selector
 	 * @var string
 	 */
-	private static $_identifier = '[0-9a-zA-Z\_\-\*&\#\[\]~=|\"\'\^\$\:\>\+\(\)]';
+	public static $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s]';
 
 	/**
 	 * Removes single-line comments from a string
@@ -176,10 +182,10 @@ class Scaffold_Helper_CSS
 	 * @param $string string
 	 * @todo This will break if the selector they try and find is actually part of another selector
 	 */
-	public static function find_selectors($selector,$string)
+	public static function find_selectors($selector,$string,$escape = true)
 	{
-		$selector = self::escape_regex($selector);
-		$regex = "/(^|[}\s;])(($selector)\s*\{[^}]*\})/sx";
+		$selector = ($escape) ? self::escape_regex($selector) : $selector;
+		$regex = "/(^|[\}\s\;])* ( ($selector) \s*\{[^}]*\} )/sx";
 		return preg_match_all($regex, $string, $match) ? $match[2] : array();
 	}
 

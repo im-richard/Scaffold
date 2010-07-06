@@ -40,6 +40,11 @@ abstract class Scaffold_Source
 	public $type;
 	
 	/**
+	 * @var int
+	 */
+	public $expires;
+	
+	/**
 	 * Get the current contents of the source
 	 * @access public
 	 * @return string

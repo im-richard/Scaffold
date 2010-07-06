@@ -1,8 +1,7 @@
 <?php
 /**
  * Scaffold
- *
- * Compiles and renders Scaffold_Source objects
+ * Handles for Scaffold_Source objects 
  *
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>
@@ -86,22 +85,29 @@ class Scaffold extends Scaffold_Extension_Observable
 	 */
 	public function compile(Scaffold_Source $source)
 	{
-		$id 		= $source->id();
-		$modified 	= $source->last_modified();
-		$expired 	= $this->cache->expired($id,$modified);
+		# Try and load it from the cache
+		$cached = $this->cache->get($source->id);
 		
-		if($this->production === false OR $expired === true)
+		# Can't load it from the cache, we're in dev mode, or the original file has changed
+		if($cached === false OR $this->production === false OR $source->last_modified > $cached->last_modified)
 		{
-			$this->cache->set($id,$this->parse($source));
+			// Run it through the extensions
+			$source = $this->parse($source);
+			
+			// Save it to the cache
+			$this->save($source);
 		}
-
-		$result = array();
-		$result['string'] = $this->cache->get($id);
-		$result['last_modified'] = $this->cache->modified($id);
-
-		return $result;
+		else
+		{
+			// Update the source with the cache values
+			$source->contents = $cached->contents;
+			$source->last_modified = $cached->last_modified;
+			$source->expires = $cached->expires;
+		}
+		
+		return $source;
 	}
-	
+
 	/**
 	 * Renders the contents of a file. In production mode, it will tell
 	 * the rendering engine to use the browsers cache if it's available.
@@ -114,34 +120,56 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * @param $last_modified 	int 		Time to compare against the browser cache
 	 * @return void
 	 */
-	public function render($output,$last_modified)
+	public function render(Scaffold_Source $source)
 	{
-		$this->response->render($output,$last_modified,$this->production,$this->_output_type);
+		$this->response->render(
+			$source->get(),
+			$source->last_modified,
+			$this->production,
+			$this->_output_type
+		);
 	}
 
 	/**
-	 * Parses a CSS string through each of the extensions. Calls 5 hooks
+	 * Parses a CSS string through each of the extensions.
 	 * 
 	 * - Initialize: Used for loading libraries and preparing for processing
+	 * - Pre-format
 	 * - Pre-process: Any formatting or processing that needs to occur so that the process hook will go smooth
 	 * - Process: Any form of processing the CSS.
 	 * - Post-process: Cleaning up anything left behind from the process hook to make it valid CSS again.
-	 * - Format: Used for formatting the CSS. Should be valid CSS by this point.
+	 * - Post-Format: Used for formatting the CSS. Should be valid CSS by this point.
 	 *
 	 * As well as these, the extensions themselves can create hooks, so that
 	 * you can only run an extension during another extension.
 	 *
 	 * @param $source Scaffold_Source
-	 * @return string
+	 * @return Scaffold_Source
 	 */
-	public function parse($source)
+	public function parse(Scaffold_Source $source)
 	{
-		$this->data = array('source'=>$source);
-		$this->notify('initialize');
-		$this->notify('pre_process');
-		$this->notify('process');
-		$this->notify('post_process');
-		$this->notify('format');
-		return $this->data['source']->get();
+		$params = array($source);
+		$this->notify('initialize',$params);
+		$this->notify('pre_format',$params);
+		$this->notify('pre_process',$params);
+		$this->notify('process',$params);
+		$this->notify('post_process',$params);
+		$this->notify('post_format',$params);
+		return $source;
+	}
+
+	/**
+	 * Saves the contents of the source object
+	 * @access public
+	 * @param $source Scaffold_Source
+	 * @return void
+	 */
+	public function save(Scaffold_Source $source)
+	{
+		$this->cache->set(
+			$source->id,
+			$source->get(),
+			$source->last_modified
+		);
 	}
 }

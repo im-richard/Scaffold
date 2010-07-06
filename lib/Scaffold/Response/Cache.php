@@ -159,7 +159,7 @@ class Scaffold_Response_Cache
 	 * @return return type
 	 */
 	private function _is_modified($last_modified)
-	{		
+	{
 		return ($last_modified > $this->_modified_since);
 	}
 }
