@@ -85,35 +85,27 @@ class Scaffold extends Scaffold_Extension_Observable
 	 */
 	public function compile(Scaffold_Source $source)
 	{
-		if($this->recache($source))
+		# Try and load it from the cache
+		$data = $this->cache->get($source->id);
+		
+		# Can't load it from the cache, we're in dev mode, or the original file has changed
+		if($data === false OR $this->production === false OR $source->last_modified > $data->last_modified)
 		{
-			$this->parse($source);
+			// Run it through the extensions
+			$source = $this->parse($source);
+			
+			// Save it to the cache
 			$this->save($source);
 		}
-
-		return $this->load($source);
-	}
-	
-	/**
-	 * Checks if the source file should be recached
-	 * @access public
-	 * @param $source Scaffold_Source
-	 * @return boolean
-	 */
-	public function recache(Scaffold_Source $source)
-	{
-		return ($this->production === false OR $this->has_expired($source));
-	}
-	
-	/**
-	 * Checks if a cache for a source file has expired
-	 * @access public
-	 * @param $source
-	 * @return boolean
-	 */
-	public function has_expired(Scaffold_Source $source)
-	{		
-		return $this->cache->expired($source->id,$source->modified);
+		else
+		{
+			// Update the source with the cache values
+			$source->contents = $data->contents;
+			$source->last_modified = $data->last_modified;
+			$source->expires = $data->expires;
+		}
+		
+		return $source;
 	}
 
 	/**
@@ -178,20 +170,6 @@ class Scaffold extends Scaffold_Extension_Observable
 			$source->id,
 			$source->get(),
 			$source->last_modified
-		);
-	}
-
-	/**
-	 * Gets the contents of the cache file for a source object
-	 * @access public
-	 * @param $source Scaffold_Source
-	 * @return array
-	 */
-	public function load(Scaffold_Source $source)
-	{
-		return array(
-			'string' 		=> $this->cache->get($source->id),
-			'last_modified' => $this->cache->modified($source->id)
 		);
 	}
 }

@@ -14,58 +14,50 @@ class Scaffold_Response
 {
 	/**
 	 * Conditional Get headers
-	 *
 	 * @var Scaffold_Reponse_Cache
 	 */
 	private $_cache;
 	
 	/**
 	 * Content encoder
-	 *
 	 * @var Scaffold_Reponse_Encoder
 	 */
 	private $_encoder;
 	
 	/**
 	 * The headers to be sent to the browser
-	 *
 	 * @var array
 	 */
-	private $_headers = array();
+	public $headers = array();
 	
 	/**
 	 * if true, the Cache-Control header will contain 
 	 * "public", allowing proxies to cache the content. Otherwise "private" will 
 	 * be sent, allowing only browser caching.
-	 *
 	 * @var boolean
 	 */
 	private $_scope;
 	
 	/**
 	 * The max-age header
-	 *
 	 * @var int
 	 */
 	private $_max_age;
 	
 	/**
 	 * When the cache expires
-	 *
 	 * @var int
 	 */
 	private $_expires;
 	
 	/**
 	 * Status
-	 *
 	 * @var int
 	 */
 	private $_status = 200;
 
 	/**
 	 * Last modified header
-	 *
 	 * @var string
 	 */
 	private $_last_modified = 0;
@@ -75,14 +67,12 @@ class Scaffold_Response
 	 * content (only HTTP1.1 clients can conditionally GET). The string is
 	 * an md5 hash of a string and changes whenever the resource changes. 
 	 * This is not needed/used if $_last_modified is set.
-	 *
 	 * @var string
 	 */
 	private $_content_hash = false;
 	
 	/**
 	 * Default Options
-	 *
 	 * @var array
 	 */
 	protected $_default_options = array
@@ -134,7 +124,6 @@ class Scaffold_Response
 	/**
 	 * Renders content to the browsers.
 	 * If the clients cache isn't modified, it shouldn't send anything
-	 *
 	 * @access public
 	 * @param $content
 	 * @param $compress
@@ -153,11 +142,11 @@ class Scaffold_Response
 		$this->_set_last_modified($last_modified);
 		
 		// Set expiration time for this file. The last modified time + lifetime
-		$this->_set_expires($last_modified);
+		$this->_set_expires($last_modified + $this->_max_age);
 
 		// Set the etag for this file
 		$this->_set_etag($last_modified,$this->_encoder->get_encoding_type(),$this->_content_length);
-		
+
 		// The clients cache is still fresh, so we don't
 		// need to display any content to the browser.
 		if($this->_valid_cache() === true AND $use_cache == true)
@@ -269,9 +258,9 @@ class Scaffold_Response
 	 * @access private
 	 * @return void
 	 */
-	private function _set_expires($last_modified)
+	private function _set_expires($expires)
 	{
-		$expires = $last_modified + $this->_max_age;
+		$this->_expires = $expires;
 		$this->_add_header('Expires', $this->_time($expires));
 	}
 

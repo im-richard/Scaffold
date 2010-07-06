@@ -20,10 +20,10 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	protected $directory;
 	
 	/**
-	 * Local cache lifetime
+	 * The maximum age of cache files
 	 * @var mixed
 	 */
-	protected $expires = false;
+	public $max_age;
 
 	// =========================================
 	// = Constructors & Initialization Methods =
@@ -35,10 +35,10 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * @param 	$path 	The path to the cache directory
 	 * @return 	void
 	 */
-	public function __construct($path,$expires)
+	public function __construct($path,$max_age)
 	{
 		$this->directory 	= realpath($path) . DIRECTORY_SEPARATOR;
-		$this->expires 		= $expires;
+		$this->max_age 		= $max_age;
 	}
 
 	// =========================================
@@ -54,15 +54,21 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * @access public
 	 * @abstract
 	 */
-	public function get($id, $default = NULL)
+	public function get($id, $default = false)
 	{
-		if($file = $this->exists($id))
+		if($file = $this->find($id))
 		{
-			// Get the contents of the file
-			$data = file_get_contents($this->find($id));
+			$data = file_get_contents($file);
+			$data = json_decode($data);
+			
+			// If we're past the expiry date
+			if(time() >= $data->expires)
+				return $default;
+				
+			return $data;
 		}
 
-		return isset($data) ? $data : $default;
+		return $default;
 	}
 
 	/**
@@ -70,37 +76,36 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 *
 	 * @param string $id 
 	 * @param string $data 
-	 * @param integer $lifetime [Optional]
+	 * @param integer $original When the original file was last modified
 	 * @return boolean
 	 * @access public
 	 */
-	public function set($id,$data,$lifetime = NULL)
+	public function set($id,$data,$last_modified = false)
 	{	
-		$target = $this->find($id);
+		$target = $this->directory.$id;
 		
 		if(!is_dir(dirname($target)))
 		{
 			$this->create(dirname($id));
 		}
 		
-		$data = (is_array($data)) ? serialize($data) : $data;
+		# Serialize the data
+		$data = json_encode((object) array(
+			'contents'  	=> (is_array($data)) ? serialize($data) : $data,
+			'last_modified'	=> $last_modified,
+			'expires' 		=> time() + $this->max_age,
+		));
 
-		# Write the data
-		file_put_contents($target, $data);
-		chmod($target, 0777);
-		touch($target, time());
-		
-		return true;
+		return file_put_contents($target,$data);
 	}
 
 	// =========================================
-	// = Delete Cache Methods =
+	// = Delete Methods =
 	// =========================================
 
 	/**
 	 * Removes a cache item
-	 *
-	 * @param $file
+	 * @param $id
 	 * @return boolean
 	 */
 	public function delete($id)
@@ -130,7 +135,6 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		{
 			if($this->exists($dir) === false)
 			{
-				// @todo Throw error
 				return false;
 			}
 			
@@ -180,57 +184,16 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	// =========================================
 	// = Cache Item Methods =
 	// =========================================
-
-	/**
-	 * Checks if a cache item has expired. Cache files are expired
-	 * if the original file has been modified since the cache file was
-	 * created. It can also expire after a certain amount of time.
-	 *
-	 * @param $id
-	 * @param $time
-	 * @return boolean
-	 */
-	public function expired($id,$time)
-	{
-		$expired = false;
-		$modified = $expires = $this->modified($id);
-	
-		if($this->expires != false)
-		{
-			$expires += $this->expires;
-			$expired = (time() >= $expires);
-		}
-
-		return ($expired OR $modified <= $time);
-	}
-	
-	/**
-	 * Set the maximum age for cache files
-	 * @param string $int 
-	 * @return void
-	 * @access public
-	 */
-	public function set_expires($int)
-	{
-		$this->expires = $int;
-	}
 	
 	/**
 	 * Returns the full path of the cache file, if it exists
-	 *
-	 * @param $file
-	 * @return string
+	 * @param $id
+	 * @return boolean
 	 */
 	public function exists($id)
 	{
-		if(is_file($this->find($id)) OR is_dir($this->find($id)))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		$file = $this->find($id);
+		return (is_file($file) OR is_dir($file)); 
 	}
 	
 	/**
@@ -239,23 +202,28 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * @param $file
 	 * @return int
 	 */
-	public function modified($id)
+	public function expires($id)
 	{
-		return ( $this->exists($id) ) ? filemtime($this->find($id)) : 0;
+		return ($this->exists($id)) ? $this->load($id)->expires : false;
 	}
 	
 	/**
 	 * Finds a file or directory inside the cache and returns it's full path
+	 * @access public
 	 * @param $file
 	 * @return string
 	 */
 	public function find($id)
 	{
-		return $this->directory.$id;
+		$file = $this->directory.$id;
+		return (file_exists($file)) ? $file : false;
 	}
 
 	/**
 	 * Create the cache file directory
+	 * @access public
+	 * @param $path
+	 * @return void
 	 */
 	public function create($path)
 	{
