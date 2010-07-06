@@ -57,8 +57,9 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	public function get($id, $relative_time = false, $default = false)
 	{
 		$time = ($relative_time !== false) ? $relative_time : time();
-	
-		if($file = $this->find($id))
+		$file = $this->find($id);
+		
+		if(file_exists($file))
 		{
 			$data = file_get_contents($file);
 			$data = json_decode($data);
@@ -101,90 +102,59 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		return file_put_contents($target,$data);
 	}
 
-	// =========================================
-	// = Delete Methods =
-	// =========================================
-
 	/**
-	 * Removes a cache item
-	 * @param $id
+	 * Delete a cache entry based on id, or delete an entire directory
+	 * @param string $id 
 	 * @return boolean
+	 * @access public
 	 */
 	public function delete($id)
 	{
-		if($this->exists($id))
+		$item = $this->find($id);
+		
+		// It's a cache item
+		if(is_file($item))
 		{
-			@unlink($this->find($id));
+			unlink($item);
 			return true;
 		}
+		
+		// It's a directory
+		elseif(is_dir($item))
+		{
+			// Loop through each of the files and directories
+			foreach(glob($item.'/*',GLOB_MARK) as $file)
+			{ 
+				if(is_dir($file))
+				{
+					$relative_dir = str_replace($item,'/',$file);
+					$this->delete($relative_dir);
+					rmdir($file); 
+				}
+				else 
+				{
+					unlink($file); 
+				}
+			}
+			
+			return true;
+		}
+
 		return false;
 	}
 	
 	/**
-	 * Clear out the cache directory
-	 * @param 	$dir
-	 * @access	public
-	 * @return 	boolean
-	 */
-	public function empty_dir($dir = false)
-	{
-		// Start from the cache directory
-		if($dir === false)
-		{
-			$dir = $this->directory;
-		}
-		else
-		{
-			if($this->exists($dir) === false)
-			{
-				return false;
-			}
-			
-			$dir = $this->find($dir);
-		}
-		
-		// Loop through each of the files and directories
-		foreach(glob($dir.'/*',GLOB_MARK) as $file)
-		{ 
-			if(is_dir($file))
-			{ 
-				$this->empty_dir($file);
-				@rmdir($file); 
-			}
-			else 
-			{
-				@unlink($file); 
-			}
-		}
-		
-		return true;
-	}
-	
-	/**
-	 * Deletes a directory. Empties the directory then deletes it.
-	 * @access public
-	 * @param string $dir 
-	 * @return void
-	 */
-	public function delete_dir($id)
-	{
-		$this->empty_dir($id);
-		@rmdir($this->find($id));
-		return true;
-	}
-	
-	/**
-	 * Clears out everything within the cache folder
-	 * @return void
+	 * Delete all cache entries
+	 * @return boolean
 	 * @access public
 	 */
 	public function delete_all()
 	{
-		$this->empty_dir();
-	}
-
+		$this->delete('/');
+	}	
+	
 	// =========================================
-	// = Cache Item Methods =
+	// = Local Methods =
 	// =========================================
 	
 	/**
@@ -210,15 +180,14 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	}
 	
 	/**
-	 * Finds a file or directory inside the cache and returns it's full path
+	 * Gets the full file path for a cache item
 	 * @access public
-	 * @param $file
+	 * @param $id
 	 * @return string
 	 */
 	public function find($id)
 	{
-		$file = $this->directory.$id;
-		return (file_exists($file)) ? $file : false;
+		return $this->directory.$id;
 	}
 
 	/**

@@ -16,13 +16,13 @@ abstract class Scaffold_Cache
 	 * The server path to the cache directory
 	 * @var string
 	 */
-	protected $directory;
+	public $directory;
 	
 	/**
 	 * Local cache lifetime
 	 * @var int
 	 */
-	protected $expires;
+	public $expires;
 	
 	// =========================================
 	// = Abstract Methods =
@@ -37,22 +37,20 @@ abstract class Scaffold_Cache
 	 * @access public
 	 * @abstract
 	 */
-	abstract public function get($id, $default = NULL);
+	abstract public function get($id, $relative_time = false, $default = NULL);
 
 	/**
 	 * Set a value based on an id. Optionally add tags.
-	 * 
-	 * Note : Some caching engines do not support
-	 * tagging
+	 *
 	 *
 	 * @param string $id 
 	 * @param string $data 
-	 * @param integer $lifetime [Optional]
+	 * @param integer $last_modified [Optional]
 	 * @return boolean
 	 * @access public
 	 * @abstract
 	 */
-	abstract public function set($id, $data, $lifetime = NULL);
+	abstract public function set($id, $data, $last_modified = NULL);
 
 	/**
 	 * Delete a cache entry based on id

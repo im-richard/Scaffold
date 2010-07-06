@@ -143,7 +143,7 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	public function Empty_directory()
 	{
 		$this->object->set('bar/foo/foo','I gonna get deleted');
-		$this->object->empty_dir('bar/foo');
+		$this->object->delete('bar/foo');
 		$this->assertFalse( is_file($this->cache_dir.'bar/foo/foo') );
 	} // Empty directory
 	
@@ -154,10 +154,10 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	 */
 	public function Delete_directory()
 	{
-		$this->object->delete_dir('bar');
+		$this->object->delete('bar');
 		$this->assertFalse( is_dir($this->cache_dir.'bar/foo/') );
 		
-		$this->object->delete_dir('foobar');
+		$this->object->delete('foobar');
 		$this->assertFalse( is_dir($this->cache_dir.'bar/foobar/') );
 	} // Delete directory
 	
