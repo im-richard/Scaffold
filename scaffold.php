@@ -19,7 +19,7 @@ $system = './';
  *		1. One of the files in the request has changed
  *		2. The cache lifetime has expired (set below)
  */
-$config['production'] = true;
+$config['production'] = false;
 
 /**
  * Cache Lifetime
@@ -66,11 +66,12 @@ $config['far_future_expires_header'] = true;
  * Enabled extensions
  */
 $config['extensions'] = array(
-	//'AbsoluteUrls',
-	//'ServerImport',
+	'AbsoluteUrls',
+	'ServerImport',
 	//'NestedSelectors',
 	//'Mixins'
-	'Minify'
+	'Minify',
+	'Constants'
 );
 
 /**
