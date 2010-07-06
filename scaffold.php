@@ -48,6 +48,16 @@ $config['load_paths'] = array(realpath('./'));
  */
 $config['output_compression'] = false;
 
+/**
+ * Set far expires headers
+ *
+ * By settings the Expires header to a time well in the future it allows the browser
+ * to keep the item cached, reducing HTTP requests over time. When the file is modified,
+ * the cache will update and send a new etag to the browser, so they will still see
+ * the new file.
+ */
+$config['far_future_expires_header'] = true;
+
 // =========================================
 // = Extension Configuration =
 // =========================================

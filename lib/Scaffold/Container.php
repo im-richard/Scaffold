@@ -50,7 +50,7 @@ class Scaffold_Container
 	public function __construct($system,$options = array())
 	{
 		$this->system = $system;
-		$this->options = array_merge($this->_defaults, $options);		
+		$this->options = array_merge($this->_defaults,$options);
 	}
 	
 	/**

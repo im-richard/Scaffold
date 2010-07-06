@@ -79,7 +79,8 @@ class Scaffold_Response
 	(
 		'scope' 		=> 'public',
 		'content_type' 	=> 'text/css',
-		'max_age'		=> 3600
+		'max_age'		=> 3600,
+		'far_future_expires_header' => true
 	);
 
 	/**
@@ -109,6 +110,12 @@ class Scaffold_Response
 		
 		// Cache control
 		$this->_set_cache_control($this->_max_age,$this->_scope);
+		
+		// Expires Header
+		if($options['far_future_expires_header'] === true)
+		{
+			$this->_max_age = time() + 30;
+		}
 		
 		// If encoding is enabled
 		if($this->_encoder->get_encoding_method() !== false)
@@ -158,6 +165,8 @@ class Scaffold_Response
 			$this->send_headers();
 			echo $content;
 		}
+		
+		exit;
 	}
 	
 	/**

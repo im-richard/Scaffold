@@ -70,7 +70,6 @@ class Scaffold_Source_Url extends Scaffold_Source
 	 */
 	private function _load_file_from_url($url)
 	{
-		print_r('sdfdsf');exit;
 		$result = false;
 		$curl = curl_init($url);
 		
