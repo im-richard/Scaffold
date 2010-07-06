@@ -35,7 +35,7 @@ class Scaffold_Extension_ServerImport extends Scaffold_Extension
 	 * @param $param
 	 * @return return type
 	 */
-	public function initialize($source)
+	public function pre_process($source)
 	{
 		// Can only parse files, obviously
 		if($source->type != 'file') return;

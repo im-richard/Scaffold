@@ -30,7 +30,7 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 	 * @param $css
 	 * @return $css string
 	 */
-	public function format($source)
+	public function post_format($source)
 	{
 		# We can only process files
 		if($source->type != 'file') return;
@@ -90,7 +90,7 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 		{
 			foreach($found[1] as $key => $value)
 			{
-				$url = $value;
+				$url = $this->unquote($value);
 	
 				# Absolute Path
 				if($this->skip($url))
@@ -145,5 +145,15 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 		$exploded = array_slice($exploded, 0, (count($exploded) - $n) );
 		return implode(DIRECTORY_SEPARATOR,$exploded);
 	}
-
+	
+	/**
+	 * Removes surrounding quotes from a string
+	 * @access public
+	 * @param $string
+	 * @return string
+	 */
+	public function unquote($string)
+	{
+		return trim($string,"\"' ");
+	}
 }

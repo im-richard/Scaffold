@@ -8,6 +8,11 @@
 class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 {
 	/**
+	 * The character used to represent the parent selector
+	 */
+	const PARENT = '&';
+
+	/**
 	 * Array of selectors to skip and keep them nested.
 	 * It just checks if the string is present, so it can
 	 * just be part of a string, like the @media rule is below.
@@ -25,7 +30,6 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	private $comments = array();
 
 	/**
-	 * The main processing function called by Scaffold. MUST return $css!
 	 * @access public
 	 * @return $source Scaffold_Source
 	 */
@@ -198,7 +202,7 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 * @return string
 	 */
 	public function parse_selector($parent, $child)
-	{		
+	{
 		# If there are listed parents eg. #id, #id2, #id3
 		if(strstr($child, ","))
 		{
@@ -206,9 +210,10 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 		}
 		
 		# If the child references the parent selector
-		elseif (strstr($child, "#SCAFFOLD-PARENT#"))
-		{						
-			$parent = str_replace("#SCAFFOLD-PARENT#", $parent, $child);
+		elseif (strstr($child, self::PARENT))
+		{
+							
+			$parent = str_replace(self::PARENT, $parent, $child);
 		}
 		
 		# Otherwise, do it normally
@@ -235,9 +240,9 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 		foreach($children as $key => $child)
 		{
 			# If the child references the parent selector
-			if (strstr($child, "#SCAFFOLD-PARENT#"))
+			if (strstr($child, self::PARENT))
 			{
-				$children[$key] = str_replace("#SCAFFOLD-PARENT#", $parent, $child);	
+				$children[$key] = str_replace(self::PARENT, $parent, $child);	
 			}
 			else
 			{
@@ -274,6 +279,8 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 		    "<import url=\"$1\" media=\"$2\" />",
 		    $xml
 		);
+		
+		# Convert other at-rules
 
 		# Add semi-colons to the ends of property lists which don't have them
 		$xml = preg_replace('/((\:|\+)[^;])*?\}/', "$1;}", $xml);
