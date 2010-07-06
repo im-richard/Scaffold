@@ -38,13 +38,13 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 * @param Scaffold
 	 * @return void
 	 */
-	function process()
+	function process($source)
 	{
 		// HOOK //
 		$this->scaffold->notify('constants_start');
 		
 		# Extract the constants from the source and save them
-		$css = $this->scaffold->data['source']->get();
+		$css = $source->get();
 		$this->extract($css);
 		$this->constants = array_merge($this->config['constants'],$this->constants);
 		$this->scaffold->data['constants'] =& $this->constants;
@@ -54,15 +54,15 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 		
 		# Remove the @constants rules and save them
 		$css = $this->remove_constant_rules($css);
-		$this->scaffold->data['source']->set($css);
+		$source->set($css);
 		
 		// HOOK //
 		$this->scaffold->notify('constants_before_replace');
-		
+			
 		# Now replace each of the constants in the CSS string
 		$css = $this->replace($css);
-		$this->scaffold->data['source']->set($css);
-		
+		$source->set($css);
+
 		// HOOK //
 		$this->scaffold->notify('constants_end');
 	}
@@ -76,10 +76,10 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	public function extract($css)
 	{
 		$constants = Scaffold_Helper_CSS::find_atrule('constants',$css);
-
-		if(count($constants) > 0)
+		
+		foreach($constants as $key => $group)
 		{
-			foreach(Scaffold_Helper_CSS::ruleset_to_array($constants[4][0]) as $key => $value)
+			foreach(Scaffold_Helper_CSS::ruleset_to_array($constants[$key][2]) as $key => $value)
 			{
 				# This lets constants equal other constants.
 				$value = $this->replace($value);
@@ -96,7 +96,14 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 */
 	public function remove_constant_rules($css)
 	{
-		return Scaffold_Helper_CSS::remove_atrule('constants',$css);
+		$rules = Scaffold_Helper_CSS::find_atrule('constants',$css);
+		
+		foreach($rules as $rule)
+		{
+			$css = str_replace($rule[0],'',$css);
+		}
+		
+		return $css;
 	}
 
 	/**
@@ -136,31 +143,44 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 * Replaces all of the constants in a CSS string
 	 * with the constants defined in the member variable $constants
 	 * using PHP's interpolation.
+	 * @access public
+	 * @param $css string
+	 * @return string
 	 */
 	public function replace($css)
 	{
-		# Pull the constants into the local scope as variables
-		extract($this->constants, EXTR_SKIP);
+		// Sort the constants so they replace correctly
+		$this->constants = $this->_sort_array_by_key_length($this->constants);
 		
-		try
+		foreach($this->constants as $key => $value)
 		{
-			$css = stripslashes( eval('return "' . addslashes($css) . '";') );
-		}
-		catch(Exception $e)
-		{
-			$trace = $e->getTrace();
-			$missing = str_replace('Undefined variable: ', '',$trace[0]['args'][1]);
-
-			// Error message
-			$title 			= "Missing Constant";
-			$line_number 	= Scaffold_Helper_CSS::line_number('$'.$missing,$css);
-			$line 			= Scaffold_Helper_CSS::line_contents($line_number,$css,5);
-			$message 		= 'Missing CSS constant - <code>$' . $missing . '</code><pre><code>'.$line.'</code></pre>';
-			
-			// Throw the error
-			throw new Scaffold_Extension_Exception($title,$message,$this->scaffold->data['source']->path,$line_number);
+			$css = preg_replace('/\$'.$key.'/',$value,$css);
 		}
 		
 		return $css;
+	}
+	
+	/**
+	 * Sorts the constants by length.
+	 * @access private
+	 * @return void
+	 */
+	private function _sort_array_by_key_length($array)
+	{
+		array_flip($array);
+		uasort($array,array($this,'_sort'));
+		array_flip($array);	
+		return $array;
+	}
+	
+	/**
+	 * Sorts the constants by length.
+	 * @access private
+	 * @param $a
+	 * @param $b
+	 */
+	private function _sort($a,$b)
+	{
+		return strlen($b)-strlen($a);
 	}
 }
