@@ -9,7 +9,7 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	public function setUp() 
 	{
 		$this->cache_dir  = realpath(__DIR__ .'/../../_cache/') . DIRECTORY_SEPARATOR;
-		$this->object = new Scaffold_Cache_File($this->cache_dir,0);
+		$this->object = new Scaffold_Cache_File($this->cache_dir,3600);
 	}
 
 	/**
@@ -17,9 +17,10 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	 * @author Anthony Short
 	 * @test
 	 */
-	public function Set_the_contents()
+	public function Set_and_get_the_contents()
 	{
-		$this->assertTrue($this->object->set('foo','bar'));
+		$this->object->set('foo','bar');
+		$this->assertTrue(file_exists($this->cache_dir.'/foo'));
 	} // Set the contents
 	
 	/**
@@ -41,7 +42,6 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	{
 		$this->assertTrue( $this->object->exists('foo') );
 	} // Checks if foo exists
-	
 
 	/**
 	 * Get the contents
@@ -50,7 +50,8 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	 */
 	public function Get_the_contents()
 	{
-		$this->assertEquals('bar',$this->object->get('foo'));
+		$data = $this->object->get('foo');
+		$this->assertEquals('bar',$data->contents);
 	}
 	
 	/**
@@ -71,7 +72,7 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	 */
 	public function Get_default_value()
 	{
-		$get = $this->object->get('file',true);
+		$get = $this->object->get('file',null,true);
 		$this->assertTrue( $get );
 	} // Get default value
 	
@@ -83,7 +84,7 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	public function Set_array()
 	{
 		$array = array('foo'=>'bar');
-		$this->assertTrue($this->object->set('foo',$array));
+		$this->assertNotNull($this->object->set('foo',$array));
 	} // Set array
 	
 	/**
@@ -93,8 +94,8 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	 */
 	public function Get_array()
 	{
-		$array = $this->object->get('foo');
-		$array = unserialize($array);
+		$data = $this->object->get('foo');
+		$array = unserialize($data->contents);
 		$this->assertEquals( $array['foo'], 'bar' );
 		$this->object->delete('foo');
 	} // Get array
@@ -182,43 +183,28 @@ class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 	 */
 	public function Check_expiration_with_a_max_age()
 	{
-		# Cache expires in an hour from when it was created
-		$this->object->set_expires(3600);
+		$this->object->max_age = $max_age = 3600;
+		$file = $this->object->find(__FUNCTION__);
+		$now = time();
+
+		//
+		
+		$this->object->set(__FUNCTION__,'bar');
+		$data = $this->object->get(__FUNCTION__);
+		$this->assertEquals($data->expires,$now + $max_age);
 		
 		//
 		
-		# Cache file was just modified
-		touch($this->object->find('foo'),time());
-		
-		# Original file was modified an hour ago
-		$original = time() - 3600;
-
-		# Check to see if the cache is expired by comparing it's modified time to the modified time of the original file
-		$this->assertFalse($this->object->expired('foo',$original));
-		
-		// ---------------------------
-		// This will occur when the original file is updated, the cache should update too
-		// ---------------------------
-	
-		# Cache was modified an hour ago
-		touch($this->object->find('foo'),time() - 3600);
-		
-		# Original file was just modified
-		$original = time();
-
-		# The cache should be remade to match the new file
-		$this->assertTrue($this->object->expired('foo',$original));
+		$this->object->set(__FUNCTION__,'bar');
+		$data = $this->object->get(__FUNCTION__,$now + 3600); // Cache has existed for an hour
+		$this->assertFalse($data);
 		
 		//
+
+		$this->object->set(__FUNCTION__,'bar');
+		$data = $this->object->get(__FUNCTION__,$now + 1800); // Cache has existed for 30 minutes
+		$this->assertNotNull($data);
 		
-		# Cache was modified an 30 mins ago
-		touch($this->object->find('foo'),time() - 1800);
-
-		# Original file was modified an hour ago
-		$original = time() - 3600;
-
-		# The cache should still be fresh
-		$this->assertFalse($this->object->expired('foo',$original));
-	}
-	
+		$this->object->delete_all();
+	}	
 }

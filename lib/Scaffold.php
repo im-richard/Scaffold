@@ -86,10 +86,10 @@ class Scaffold extends Scaffold_Extension_Observable
 	public function compile(Scaffold_Source $source)
 	{
 		# Try and load it from the cache
-		$data = $this->cache->get($source->id);
+		$cached = $this->cache->get($source->id);
 		
 		# Can't load it from the cache, we're in dev mode, or the original file has changed
-		if($data === false OR $this->production === false OR $source->last_modified > $data->last_modified)
+		if($cached === false OR $this->production === false OR $source->last_modified > $cached->last_modified)
 		{
 			// Run it through the extensions
 			$source = $this->parse($source);
@@ -100,9 +100,9 @@ class Scaffold extends Scaffold_Extension_Observable
 		else
 		{
 			// Update the source with the cache values
-			$source->contents = $data->contents;
-			$source->last_modified = $data->last_modified;
-			$source->expires = $data->expires;
+			$source->contents = $cached->contents;
+			$source->last_modified = $cached->last_modified;
+			$source->expires = $cached->expires;
 		}
 		
 		return $source;

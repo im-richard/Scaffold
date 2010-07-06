@@ -17,7 +17,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * The server path to the cache directory
 	 * @var string
 	 */
-	protected $directory;
+	public $directory;
 	
 	/**
 	 * The maximum age of cache files
@@ -48,21 +48,23 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	/**
 	 * Retrieve a value based on an id
 	 *
-	 * @param string $id 
-	 * @param string $default [Optional] Default value to return if id not found
+	 * @param $id 
+	 * @param $relative_time Check the cache relative to this time. Defaults to time()
+	 * @param $default [Optional] Default value to return if id not found
 	 * @return mixed
 	 * @access public
-	 * @abstract
 	 */
-	public function get($id, $default = false)
+	public function get($id, $relative_time = false, $default = false)
 	{
+		$time = ($relative_time !== false) ? $relative_time : time();
+	
 		if($file = $this->find($id))
 		{
 			$data = file_get_contents($file);
 			$data = json_decode($data);
 			
 			// If we're past the expiry date
-			if(time() >= $data->expires)
+			if($time >= $data->expires)
 				return $default;
 				
 			return $data;
@@ -76,11 +78,11 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 *
 	 * @param string $id 
 	 * @param string $data 
-	 * @param integer $original When the original file was last modified
+	 * @param integer $last_modified When the source file was last modified
 	 * @return boolean
 	 * @access public
 	 */
-	public function set($id,$data,$last_modified = false)
+	public function set($id,$data,$last_modified = null)
 	{	
 		$target = $this->directory.$id;
 		
@@ -92,7 +94,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		# Serialize the data
 		$data = json_encode((object) array(
 			'contents'  	=> (is_array($data)) ? serialize($data) : $data,
-			'last_modified'	=> $last_modified,
+			'last_modified'	=> (isset($last_modified)) ? $last_modified : time(),
 			'expires' 		=> time() + $this->max_age,
 		));
 
@@ -192,7 +194,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function exists($id)
 	{
-		$file = $this->find($id);
+		$file = $this->directory.$id;
 		return (is_file($file) OR is_dir($file)); 
 	}
 	
