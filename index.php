@@ -83,7 +83,7 @@ else
 }
 
 // Compiles the source object
-$scaffold->compile($source);
+$source = $scaffold->compile($source);
 
 // Use the result to render it to the browser. Hooray!
 $scaffold->render($source);
