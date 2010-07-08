@@ -52,9 +52,7 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 	 * @return string
 	 */
 	public function process($source)
-	{
-		$error = array();
-		
+	{		
 		// The path to the cache file we'll use to temporary store the files
 		$path = $this->scaffold->cache->set('sass/'.$source->id,$source->contents,null,false);
 		

@@ -64,8 +64,8 @@ class Scaffold_Cache_File extends Scaffold_Cache
 			$data = file_get_contents($file);
 			$data = json_decode($data);
 			
-			// If we're past the expiry date
-			if($time >= $data->expires)
+			// If the file CAN expire, and it already has, return nothing
+			if($data->expires !== false AND $time >= $data->expires)
 				return $default;
 				
 			return $data;
@@ -80,7 +80,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * @param string $id 
 	 * @param string $data 
 	 * @param integer $last_modified When the source file was last modified
-	 * @return boolean
+	 * @return string The full path of the file that was just used as a cache
 	 * @access public
 	 */
 	public function set($id,$data,$last_modified = null,$encode = true)
@@ -98,12 +98,11 @@ class Scaffold_Cache_File extends Scaffold_Cache
 			$data = json_encode((object) array(
 				'contents'  	=> (is_array($data)) ? serialize($data) : $data,
 				'last_modified'	=> (isset($last_modified)) ? $last_modified : time(),
-				'expires' 		=> time() + $this->max_age,
+				'expires' 		=> ($this->max_age === false) ? false : time() + $this->max_age,
 			));
 		}
 		
 		file_put_contents($target,$data);
-		
 		return $target;
 	}
 
