@@ -66,12 +66,13 @@ $config['far_future_expires_header'] = true;
  * Enabled extensions
  */
 $config['extensions'] = array(
-	'AbsoluteUrls',
-	'ServerImport',
+	//'AbsoluteUrls',
+	//'ServerImport',
 	//'NestedSelectors',
 	//'Mixins'
-	'Minify',
-	'Constants'
+	//'Minify',
+	//'Constants',
+	'Sass'
 );
 
 /**
