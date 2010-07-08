@@ -83,7 +83,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * @return boolean
 	 * @access public
 	 */
-	public function set($id,$data,$last_modified = null)
+	public function set($id,$data,$last_modified = null,$encode = true)
 	{	
 		$target = $this->directory.$id;
 		
@@ -92,14 +92,19 @@ class Scaffold_Cache_File extends Scaffold_Cache
 			$this->create(dirname($id));
 		}
 		
-		# Serialize the data
-		$data = json_encode((object) array(
-			'contents'  	=> (is_array($data)) ? serialize($data) : $data,
-			'last_modified'	=> (isset($last_modified)) ? $last_modified : time(),
-			'expires' 		=> time() + $this->max_age,
-		));
-
-		return file_put_contents($target,$data);
+		if($encode === true)
+		{
+			# Serialize the data
+			$data = json_encode((object) array(
+				'contents'  	=> (is_array($data)) ? serialize($data) : $data,
+				'last_modified'	=> (isset($last_modified)) ? $last_modified : time(),
+				'expires' 		=> time() + $this->max_age,
+			));
+		}
+		
+		file_put_contents($target,$data);
+		
+		return $target;
 	}
 
 	/**
@@ -198,7 +203,9 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function create($path)
 	{
-		// Create the directories inside the cache folder
+		if(is_dir($path))
+			return;
+		
 		$next = "";
 				
 		foreach(explode('/',$path) as $dir)
