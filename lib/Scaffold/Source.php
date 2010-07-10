@@ -73,4 +73,12 @@ abstract class Scaffold_Source
 	 * @return string
 	 */
 	abstract public function last_modified();
+	
+	/**
+	 * Finds a file relative to the source file from a URL
+	 * @access public
+	 * @param $url
+	 * @return mixed
+	 */
+	abstract public function find($url);
 }

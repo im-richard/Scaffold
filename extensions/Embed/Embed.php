@@ -58,10 +58,10 @@ class Scaffold_Extension_Embed extends Scaffold_Extension
 			// Path to the source file on the server. Used for relative paths.
 			$base = dirname($this->source->path) . DIRECTORY_SEPARATOR;
 			
-			// Get the full path to the file
-			$path = $this->_resolve_url($url,$base);			
+			// Get the full path to the file relative to the source
+			$path = $this->source->find($url);			
 			
-			if(file_exists($path))
+			if($path !== false)
 			{
 				// File info
 				$id = md5($path);
@@ -114,28 +114,6 @@ class Scaffold_Extension_Embed extends Scaffold_Extension
 		}
 		
 		return false;
-	}
-	
-	/** 
-	 * Resolves a path to a URL
-	 * @access public
-	 * @param $url
-	 * @return string
-	 */
-	private function _resolve_url($url,$base)
-	{
-		$path = false;
-
-		if($url[0] == '/')
-		{
-			$path = $_SERVER['DOCUMENT_ROOT'] . $url;
-		}
-		else
-		{
-			$path = $base . $url;
-		}
-		
-		return $path;
 	}
 	
 	/**

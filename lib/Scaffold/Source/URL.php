@@ -171,4 +171,15 @@ class Scaffold_Source_Url extends Scaffold_Source
 	{
 		return $this->last_modified;
 	}
+	
+	/**
+	 * Finds a file relative to the source file from a URL
+	 * @access public
+	 * @param $url
+	 * @return boolean
+	 */
+	public function find($url)
+	{
+		return false;
+	}
 }

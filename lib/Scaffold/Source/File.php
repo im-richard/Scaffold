@@ -96,4 +96,24 @@ class Scaffold_Source_File extends Scaffold_Source
 	{
 		return $this->last_modified;
 	}
+	
+	/**
+	 * Finds a file relative to the source file from a URL
+	 * @access public
+	 * @param $url
+	 * @return mixed
+	 */
+	public function find($url)
+	{
+		if($url[0] == '/' OR $url[0] == '\\')
+		{
+			$path = $_SERVER['DOCUMENT_ROOT'] . $url;
+		}
+		else
+		{
+			$path = dirname($this->path) . DIRECTORY_SEPARATOR . $url;
+		}
+
+		return (file_exists($path)) ? $path : false;
+	}
 }
