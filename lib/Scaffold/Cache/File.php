@@ -94,10 +94,8 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		
 		if($encode === true)
 		{
-			if($expires === true)
-			{
-				$expires = ($this->max_age === false) ? false : time() + $this->max_age;
-			}
+			// If max age or expires is false, the cache will never expire
+			$expires = ($expires === false OR $this->max_age === false) ? false : time() + $this->max_age;
 			
 			# Serialize the data
 			$data = json_encode((object) array(

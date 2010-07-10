@@ -85,7 +85,7 @@ class Scaffold_Extension_Embed extends Scaffold_Extension
 						$data = $data->contents;
 					}
 
-					$string = 'data:image/'.$mime.';base64,' . $data;
+					$string = 'data:'.$mime.';base64,' . $data;
 					return "url($string)";
 				}
 			}

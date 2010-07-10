@@ -45,7 +45,7 @@ class Scaffold_Extension_Properties extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function post_process($source)
+	public function pre_process($source)
 	{
 		// Go through each custom function
 		foreach($this->properties as $name => $property)

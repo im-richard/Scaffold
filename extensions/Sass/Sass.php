@@ -25,7 +25,7 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 			'scss' => true,
 			
 			// Output style. Can be nested (default), compact, compressed, or expanded.
-			'style' => 'expanded',
+			'style' => 'compressed',
 			
 			// Don't cache to sassc files.
 			'no-cache' => true,
@@ -70,9 +70,6 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 		}
 		
 		$sass = file_get_contents($temp);
-
-		// Delete the temporary directory contents
-		$this->scaffold->cache->delete('/sass');
 		
 		// Set the contents to the source! We're all done!
 		$source->set($sass);		
