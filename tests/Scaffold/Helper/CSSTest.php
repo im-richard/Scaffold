@@ -53,11 +53,11 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 		(
 			0 => array(
 					'string' => 'url( http://google.com )',
-					'param' => 'http://google.com '
+					'params' => array('http://google.com ')
 				),
 			1 => array(
 					'string' => 'url("images/bullet.png")',
-					'param' => '"images/bullet.png"'
+					'params' => array('"images/bullet.png"')
 				)
 		);
 	
