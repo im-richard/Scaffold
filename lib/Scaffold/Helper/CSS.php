@@ -281,11 +281,12 @@ class Scaffold_Helper_CSS
 		if(preg_match_all($regex,$css,$matches,PREG_SET_ORDER))
 		{
 			foreach ( $matches as $key => $match )
-			{		
+			{			
 				$return[$key] = array(
 					'string' => trim($match[0]),
 					'selector' => $match[1],
-					'property' => $match[2].':'.$match[3]
+					'property' => $match[2].':'.$match[3],
+					'value' => trim($match[3],':;')
 				);
 			}
 		}
