@@ -286,7 +286,7 @@ class Scaffold_Helper_CSS
 					'string' => trim($match[0]),
 					'selector' => $match[1],
 					'property' => $match[2].':'.$match[3],
-					'value' => trim($match[3],':;')
+					'value' => trim($match[3],':; ')
 				);
 			}
 		}
