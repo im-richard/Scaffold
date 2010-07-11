@@ -67,17 +67,16 @@ $config['far_future_expires_header'] = true;
  */
 $config['extensions'] = array(
 	//'AbsoluteUrls',
-	//'ServerImport',
-	//'NestedSelectors',
-	//'Mixins'
-	//'Minify',
 	//'Constants',
-	//'Sass',
-	//'Functions',
-	//'Random',
 	//'Embed',
-	//'Properties',
+	//'Functions',
+	//'HSL',
 	//'ImageReplace',
+	//'Minify',
+	//'Properties',
+	//'Random',
+	//'Sass',
+	//'ServerImport',
 	//'YUICompressor'
 );
 
