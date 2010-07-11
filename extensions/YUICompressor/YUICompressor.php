@@ -1,8 +1,8 @@
 <?php
 /**
- * Scaffold_Extension_Sass
+ * Scaffold_Extension_YUICompressor
  *
- * Rewrites all URL's in the CSS to absolute paths.
+ * Parses the CSS through the YUI Compressor
  * 
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>
