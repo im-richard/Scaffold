@@ -72,12 +72,12 @@ class Minify_CSS_Compressor {
         
         // preserve empty comment after '>'
         // http://www.webdevout.net/css-hacks#in_css-selectors
-        $css = preg_replace('@>/\\*\\s*\\*/@', '>/*keep*/', $css);
+        //$css = preg_replace('@>/\\*\\s*\\*/@', '>/*keep*/', $css);
         
         // preserve empty comment between property and value
         // http://css-discuss.incutio.com/?page=BoxModelHack
-        $css = preg_replace('@/\\*\\s*\\*/\\s*:@', '/*keep*/:', $css);
-        $css = preg_replace('@:\\s*/\\*\\s*\\*/@', ':/*keep*/', $css);
+        //$css = preg_replace('@/\\*\\s*\\*/\\s*:@', '/*keep*/:', $css);
+        //$css = preg_replace('@:\\s*/\\*\\s*\\*/@', ':/*keep*/', $css);
         
         // apply callback to all valid comments (and strip out surrounding ws
         $css = preg_replace_callback('@\\s*/\\*([\\s\\S]*?)\\*/\\s*@'
@@ -139,7 +139,7 @@ class Minify_CSS_Compressor {
         $css = preg_replace('/[ \\t]*\\n+\\s*/', "\n", $css);
         
         // separate common descendent selectors w/ newlines (to limit line lengths)
-        $css = preg_replace('/([\\w#\\.\\*]+)\\s+([\\w#\\.\\*]+){/', "$1\n$2{", $css);
+        //$css = preg_replace('/([\\w#\\.\\*]+)\\s+([\\w#\\.\\*]+){/', "$1\n$2{", $css);
         
         // Use newline after 1st numeric value (to limit line lengths).
         $css = preg_replace('/
@@ -149,7 +149,7 @@ class Minify_CSS_Compressor {
             ,"$1\n", $css);
         
         // prevent triggering IE6 bug: http://www.crankygeek.com/ie6pebug/
-        $css = preg_replace('/:first-l(etter|ine)\\{/', ':first-l$1 {', $css);
+        //$css = preg_replace('/:first-l(etter|ine)\\{/', ':first-l$1 {', $css);
             
         return trim($css);
     }

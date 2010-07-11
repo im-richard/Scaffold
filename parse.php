@@ -35,7 +35,7 @@ $config['max_age'] = 3600;
  * Paths for Scaffold to search for files. It will use these paths to try and find
  * @import and url() paths (and others).
  */
-$config['load_paths'] = array(realpath('./'));
+$config['load_paths'] = array();
 
 /**
  * PHP gzip compression
@@ -72,7 +72,13 @@ $config['extensions'] = array(
 	//'Mixins'
 	//'Minify',
 	//'Constants',
-	'Sass'
+	//'Sass',
+	//'Functions',
+	//'Random',
+	//'Embed',
+	//'Properties',
+	//'ImageReplace',
+	//'YUICompressor'
 );
 
 /**

@@ -35,7 +35,6 @@ abstract class Scaffold_Extension extends Scaffold_Extension_Observer
 	
 	/**
 	 * Sets the configuration
-	 *
 	 * @param $engine object Scaffold_Engine
 	 * @param $config array Custom configration for this module
 	 * @param $path string The path to the module folder to use

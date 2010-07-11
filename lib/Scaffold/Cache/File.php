@@ -83,7 +83,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 * @return string The full path of the file that was just used as a cache
 	 * @access public
 	 */
-	public function set($id,$data,$last_modified = null,$encode = true)
+	public function set($id,$data,$last_modified = false,$expires = true,$encode = true)
 	{	
 		$target = $this->directory.$id;
 		
@@ -94,11 +94,14 @@ class Scaffold_Cache_File extends Scaffold_Cache
 		
 		if($encode === true)
 		{
+			// If max age or expires is false, the cache will never expire
+			$expires = ($expires === false OR $this->max_age === false) ? false : time() + $this->max_age;
+			
 			# Serialize the data
 			$data = json_encode((object) array(
 				'contents'  	=> (is_array($data)) ? serialize($data) : $data,
-				'last_modified'	=> (isset($last_modified)) ? $last_modified : time(),
-				'expires' 		=> ($this->max_age === false) ? false : time() + $this->max_age,
+				'last_modified'	=> ($last_modified === false) ? $last_modified : time(),
+				'expires' 		=> $expires,
 			));
 		}
 		

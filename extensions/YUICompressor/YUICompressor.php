@@ -10,7 +10,7 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold_Extension_Sass extends Scaffold_Extension
+class Scaffold_Extension_YUICompressor extends Scaffold_Extension
 {
 	/**
 	 * Default settings which are used if the configuration
@@ -18,31 +18,11 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 	 * @var array
 	 */
 	public $_defaults = array(
-		
+		'command' => 'java',
+		'jar' => false,
 		'params' => array(
-
-			// Use the CSS-superset SCSS syntax.
-			'scss' => true,
-			
-			// Output style. Can be nested (default), compact, compressed, or expanded.
-			'style' => 'compressed',
-			
-			// Don't cache to sassc files.
-			'no-cache' => true,
-			
-			// The path to put cached Sass files. Defaults to .sass-cache.
-			'cache-location' => false,
-			
-			// Add a sass import path.
-			'load-path' => false,
-			
-			// Emit extra information in the generated CSS that can be used by the FireSass Firebug plugin.
-			'debug-info' => false,
-			
-			// Emit comments in the generated CSS indicating the corresponding sass line.
-			'line-numbers' => false	
-		),
-		'command' => 'sass'
+			'type' => 'css'
+		)
 	);
 
 	/**
@@ -51,28 +31,33 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function process($source)
+	public function post_format($source)
 	{		
 		// The path to the cache file we'll use to temporary store the files
-		$path = $this->scaffold->cache->set('sass/'.$source->id,$source->contents,null,false,false);
+		$path = $this->scaffold->cache->set('yuicompressor/'.$source->id,$source->contents,null,false,false);
 		
-		// Temporary file to store the sass output
-		$temp = $this->scaffold->cache->find('/sass/'.$source->id.'.sass');
-
+		// Path to jar file
+		if($this->config['jar'] === false)
+		{
+			$jar = dirname(__FILE__) . '/yuicompressor-2.4.2.jar';
+		}
+		else
+		{
+			$jar = $this->config['jar'];
+		}
+		
 		// Sass will output the final file to the cache
-		$cmd = $this->config['command'].' '.$this->_build_sass_params($this->config['params']) . ' ' . escapeshellcmd($path) . ' '.$temp.' 2>&1';
+		$cmd = $this->config['command'].' -jar '.$jar.' '.$this->_build_params($this->config['params']) . ' ' . escapeshellcmd($path) . ' 2>&1';
 		exec($cmd,$output,$return);
 		
 		// There's an error
-		if($output !== array())
+		if($return == 1)
 		{
-			throw new Scaffold_Extension_Exception('Sass Error',$output[0]);
+			throw new Scaffold_Extension_Exception('YUI Compressor Error',$output[0]);
 		}
 		
-		$sass = file_get_contents($temp);
-		
 		// Set the contents to the source! We're all done!
-		$source->set($sass);		
+		$source->set($output[0]);		
 	}
 	
 	/**
@@ -84,7 +69,7 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 	 * @param $params
 	 * @return string
 	 */
-	private function _build_sass_params($params)
+	private function _build_params($params)
 	{
 		$return = '';
 	

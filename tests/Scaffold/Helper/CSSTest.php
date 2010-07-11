@@ -53,11 +53,11 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 		(
 			0 => array(
 					'string' => 'url( http://google.com )',
-					'param' => 'http://google.com '
+					'params' => array('http://google.com ')
 				),
 			1 => array(
 					'string' => 'url("images/bullet.png")',
-					'param' => '"images/bullet.png"'
+					'params' => array('"images/bullet.png"')
 				)
 		);
 	
@@ -197,7 +197,8 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			0 => array(
 					'string' => '#id5{color : red ;background:blue}',
 					'selector' => '#id5',
-					'property' => 'color : red ;'
+					'property' => 'color : red ;',
+					'value' => 'red'
 				)
 		);
 		$output = Scaffold_Helper_CSS::find_properties_with_value('color','red',$string);
@@ -208,7 +209,8 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			0 => array(
 					'string' => '#id3{background-color:red}',
 					'selector' => '#id3',
-					'property' => 'background-color:red'
+					'property' => 'background-color:red',
+					'value' => 'red'
 				)
 		);
 		$output = Scaffold_Helper_CSS::find_properties_with_value('background-color','red',$string);
@@ -219,12 +221,14 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			0 => array(
 					'string' => '#id{background:blue}',
 					'selector' => '#id',
-					'property' => 'background:blue'
+					'property' => 'background:blue',
+					'value' => 'blue'
 				),
 			1 => array(
 					'string' => '#id5{color : red ;background:blue}',
 					'selector' => '#id5',
-					'property' => 'background:blue'
+					'property' => 'background:blue',
+					'value' => 'blue'
 				)
 		);
 		$output = Scaffold_Helper_CSS::find_properties_with_value('background','blue',$string);
@@ -401,12 +405,14 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			0 => array(
 					'string' => 'id{background:blue}',
 					'selector' => 'id',
-					'property' => 'background:blue'
+					'property' => 'background:blue',
+					'value' => 'blue'
 				),
 			1 => array(
 					'string' => '#id5{color:red;background:blue}',
 					'selector' => '#id5',
-					'property' => 'background:blue'
+					'property' => 'background:blue',
+					'value' => 'blue'
 				),
 		);
 		$output = Scaffold_Helper_CSS::find_properties('background',$string);
