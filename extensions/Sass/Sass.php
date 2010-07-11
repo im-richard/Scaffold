@@ -57,7 +57,7 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 		$path = $this->scaffold->cache->set('sass/'.$source->id,$source->contents,null,false,false);
 		
 		// Temporary file to store the sass output
-		$temp = $this->scaffold->cache->find('sass_cache');
+		$temp = $this->scaffold->cache->find('/sass/'.$source->id.'.sass');
 
 		// Sass will output the final file to the cache
 		$cmd = $this->config['command'].' '.$this->_build_sass_params($this->config['params']) . ' ' . escapeshellcmd($path) . ' '.$temp.' 2>&1';

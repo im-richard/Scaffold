@@ -64,7 +64,7 @@ class Scaffold_Extension_Embed extends Scaffold_Extension
 			if($path !== false)
 			{
 				// File info
-				$id = md5($path);
+				$id = 'embeds/'.md5($path);
 				$ext = pathinfo($path, PATHINFO_EXTENSION);
 				$mod_time = filemtime($path);
 				$mime = $this->_get_mime($ext);
