@@ -85,6 +85,9 @@ class Scaffold extends Scaffold_Extension_Observable
 	 */
 	public function compile(Scaffold_Source $source)
 	{
+		# Hook before anything is done
+		$this->notify('pre_compile',array($source,$this));
+
 		# Try and load it from the cache
 		$cached = $this->cache->get($source->id);
 		
@@ -93,6 +96,9 @@ class Scaffold extends Scaffold_Extension_Observable
 		{
 			// Run it through the extensions
 			$source = $this->parse($source);
+			
+			// Hook before saving it to the cache
+			$this->notify('pre_cache',array($source,$this));
 			
 			// Save it to the cache
 			$this->save($source);
@@ -116,18 +122,19 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * don't have to clear the cache every time you make a request.
 	 *
 	 * @access public
-	 * @param $output 			string 		The contents to be output to the browser
-	 * @param $last_modified 	int 		Time to compare against the browser cache
+	 * @param $source
 	 * @return void
 	 */
 	public function render(Scaffold_Source $source)
 	{
-		$this->response->render(
-			$source->get(),
+		$this->response->set(
+			$source->contents,
 			$source->last_modified,
-			$this->production,
 			$this->_output_type
 		);
+		
+		$this->notify('pre_render',array($this->response));
+		$this->response->render($this->production);
 	}
 
 	/**
@@ -148,7 +155,7 @@ class Scaffold extends Scaffold_Extension_Observable
 	 */
 	public function parse(Scaffold_Source $source)
 	{
-		$params = array($source);
+		$params = array($source,$this);
 		$this->notify('initialize',$params);
 		$this->notify('pre_format',$params);
 		$this->notify('pre_process',$params);

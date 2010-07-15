@@ -41,12 +41,9 @@ abstract class Scaffold_Extension extends Scaffold_Extension_Observer
 	 * @access public
 	 * @return void
 	 */
-	public function __construct($config,$path)
+	public function __construct($config = array())
 	{
 		// Merge the default config with the custom config
 		$this->config = array_merge($this->_defaults,$config);
-		
-		// The path to the module folder
-		$this->path = $path;
 	}
 }

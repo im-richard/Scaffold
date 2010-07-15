@@ -90,7 +90,7 @@ class Environment
 	 * @return  boolean
 	 */
 	public static function exception_handler(Exception $e)
-	{
+	{		
 		try
 		{
 			# Exception text information
@@ -101,12 +101,18 @@ class Environment
 			$file    	= $e->getFile();
 			$line    	= $e->getLine();
 			
+			if($code == 4)
+			{
+				echo self::exception_text($e);
+				exit(1);
+			}
+			
 			# Server error status
 			if(!headers_sent())
 			{
 				header('Content-Type: text/html;', TRUE, 500);
 			}
-	
+			
 			// Use the human-readable error name
 			if($e instanceof ErrorException)
 			{
@@ -126,6 +132,7 @@ class Environment
 				include self::$_view;
 				echo ob_get_clean();
 			}
+			
 			return true;
 		}
 		catch (Exception $e)
@@ -136,7 +143,7 @@ class Environment
 			# Display the exception text
 			echo self::exception_text($e);
 
-			exit(1);
+			exit();
 		}
 	}
 	
@@ -181,14 +188,14 @@ class Environment
 	public static function shutdown_handler()
 	{
 		if ($error = error_get_last() AND (error_reporting() & $error['type']))
-		{
+		{			
 			# If an output buffer exists, clear it
 			ob_get_level() and ob_clean();
 
 			# Fake an exception for nice debugging
 			self::exception_handler(new ErrorException($error['message'], $error['type'], 0, $error['file'], $error['line']));
 
-			exit(1);
+			exit();
 		}
 	}
 

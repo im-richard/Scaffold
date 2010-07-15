@@ -25,7 +25,8 @@ $config['production'] = false;
  * Cache Lifetime
  *
  * This value, in seconds, determines how long the cache will last before it
- * tries to recompile the CSS again from the source.
+ * tries to recompile the CSS again from the source. This won't affect the
+ * the browser cache unless the file has actually changed.
  */
 $config['max_age'] = 3600;
 
@@ -48,15 +49,27 @@ $config['load_paths'] = array();
  */
 $config['output_compression'] = false;
 
-/**
- * Set far expires headers
+/** 
+ * Use ETag
  *
- * By settings the Expires header to a time well in the future it allows the browser
- * to keep the item cached, reducing HTTP requests over time. When the file is modified,
- * the cache will update and send a new etag to the browser, so they will still see
- * the new file.
+ * You can generate an ETag for the requests made to CSS files. This isn't entirely
+ * necessary as we're using the Last-Modified header. If you aren't planning on using
+ * ETags for any specific reason, it's best to leave this off.
+ *
+ * To completely turn off ETags, the .htaccess also contains 'FileETag none'. If you're
+ * switching this on, you'll need to remove or comment out that line in the .htaccess.
+ *
+ * @see http://developer.yahoo.com/performance/rules.html#etags
  */
-$config['far_future_expires_header'] = true;
+$config['set_etag'] = false;
+
+/**
+ * Set Content-Length
+ *
+ * You can set the content-length header. Most of the time, this will be sorted out
+ * for you by Apache, but you can have PHP set the content-length if need be.
+ */
+$config['set_content_length'] = false;
 
 // =========================================
 // = Extension Configuration =
@@ -66,17 +79,20 @@ $config['far_future_expires_header'] = true;
  * Enabled extensions
  */
 $config['extensions'] = array(
-	//'AbsoluteUrls',
-	//'Constants',
-	//'Embed',
-	//'Functions',
-	//'HSL',
-	//'ImageReplace',
-	//'Minify',
-	//'Properties',
-	//'Random',
+	'AbsoluteUrls',
+	'Constants',
+	'Embed',
+	'Functions',
+	'HSL',
+	'ImageReplace',
+	'Minify',
+	'Properties',
+	'Random',
+	'Import',
+	
+	# Process-heavy Extensions
 	//'Sass',
-	//'ServerImport',
+	//'CSSTidy',
 	//'YUICompressor'
 );
 

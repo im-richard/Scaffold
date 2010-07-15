@@ -45,7 +45,7 @@ class Scaffold_ContainerTest extends PHPUnit_Framework_TestCase
     public function testGetResponseEncoder()
     {
         $obj = $this->object->getResponseEncoder();
-        $this->assertEquals(get_class($obj),'Scaffold_Response_Compressor');
+        $this->assertEquals(get_class($obj),'Scaffold_Response_Encoder');
     }
 
     public function testGetResponseCache()
