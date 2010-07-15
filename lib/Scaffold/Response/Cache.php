@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Scaffold_Response_Cache
  *
@@ -16,29 +15,24 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
- 
 class Scaffold_Response_Cache 
 {
 	/**
 	 * The modified-since header from the browser
-	 *
 	 * @var int
 	 */
-	private $_modified_since = false;
+	private $_modified_since;
 	
 	/**
 	 * The clients etag list
-	 *
 	 * @var string
 	 */
-	private $_etag = false;
+	private $_etag;
 
 	/**
-	 * Constructor
-	 *
-	 * @author your name
+	 * @access public
 	 * @param $param
-	 * @return return type
+	 * @return void
 	 */
 	public function __construct()
 	{
@@ -46,7 +40,7 @@ class Scaffold_Response_Cache
 		$this->_modified_since = $this->_get_modified_since_header();
 		
 		// The client etags
-		$this->_etag = $this->_get_if_none_match();
+		$this->_etag = $this->_get_client_etags();
 	}
 	
 	// ============================
@@ -56,20 +50,18 @@ class Scaffold_Response_Cache
 	/**
 	 * Checks if the users cache is still valid by checking the last modified
 	 * time and etag against the browsers sent header.
-	 *
 	 * @access public
 	 * @param $last_modified
 	 * @param $etag
 	 * @return boolean
 	 */
-	public function valid($last_modified,$etag)
+	public function valid($last_modified,$etag = false)
 	{
 		return ($this->_is_modified($last_modified) === false AND $this->_matched_etag($etag) === true);
 	}
 	
 	/**
 	 * Gets the client etags
-	 *
 	 * @access public
 	 * @return string
 	 */
@@ -80,9 +72,7 @@ class Scaffold_Response_Cache
 	
 	/**
 	 * Gets the modified-since header
-	 *
 	 * @access public
-	 * @param $param
 	 * @return int
 	 */
 	public function get_modified_since()
@@ -96,7 +86,6 @@ class Scaffold_Response_Cache
 	
 	/**
 	 * Gets the HTTP_IF_MODIFIED_SINCE header
-	 *
 	 * @access private
 	 * @return int
 	 */
@@ -120,12 +109,11 @@ class Scaffold_Response_Cache
 	}
 	
 	/**
-	 * Gets the etag (if-none-match) header if available
-	 *
+	 * Gets the clients etags for this request
 	 * @access private
 	 * @return string
 	 */
-	private function _get_if_none_match()
+	private function _get_client_etags()
 	{
 		if(isset($_SERVER['HTTP_IF_NONE_MATCH']))
 		{
@@ -141,10 +129,9 @@ class Scaffold_Response_Cache
 
 	/**
 	 * ETags match
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
+	 * @access private
+	 * @param $etag
+	 * @return boolean
 	 */
 	private function _matched_etag($etag)
 	{
@@ -153,13 +140,12 @@ class Scaffold_Response_Cache
 	
 	/**
 	 * Has the resource been modified?
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
+	 * @access public
+	 * @param $last_modified
+	 * @return boolean
 	 */
 	private function _is_modified($last_modified)
 	{
-		return ($last_modified > $this->_modified_since);
+		return (strtotime($last_modified) > $this->_modified_since);
 	}
 }

@@ -2,7 +2,8 @@
 /**
  * Scaffold_Response
  *
- * - Renders content to the browser
+ * Sets the headers to use for a response. Uses the clients cache and
+ * encoding, if it's available, to send the request as best as possible.
  * 
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>
@@ -13,119 +14,85 @@
 class Scaffold_Response
 {
 	/**
-	 * Conditional Get headers
-	 * @var Scaffold_Reponse_Cache
+	 * @var Scaffold_Response_Cache
 	 */
-	private $_cache;
+	public $cache;
 	
 	/**
-	 * Content encoder
-	 * @var Scaffold_Reponse_Encoder
+	 * @var Scaffold_Response_Encoder
 	 */
-	private $_encoder;
+	public $encoder;
 	
 	/**
-	 * The headers to be sent to the browser
+	 * What will be rendered
+	 * @var string
+	 */
+	public $output;
+	
+	/**
+	 * Output encoding
+	 * @var mixed
+	 */
+	public $encoding;
+	
+	/**
 	 * @var array
 	 */
-	public $headers = array();
+	public $options;
 	
 	/**
-	 * if true, the Cache-Control header will contain 
-	 * "public", allowing proxies to cache the content. Otherwise "private" will 
-	 * be sent, allowing only browser caching.
-	 * @var boolean
+	 * @var array
 	 */
-	private $_scope;
+	public $headers = array
+	(
+		'Content-Length'	=> false,
+		'Content-Encoding' 	=> false,
+		'Vary'				=> false,
+		'Expires'			=> false,
+		'ETag'				=> false,
+		'Last-Modified'		=> false,
+		'Cache-Control'		=> false,
+	);
 	
 	/**
-	 * The max-age header
-	 * @var int
-	 */
-	private $_max_age;
-	
-	/**
-	 * When the cache expires
-	 * @var int
-	 */
-	private $_expires;
-	
-	/**
-	 * Status
-	 * @var int
-	 */
-	private $_status = 200;
-
-	/**
-	 * Last modified header
-	 * @var string
-	 */
-	private $_last_modified = 0;
-	
-	/**
-	 * If given, only the ETag header can be sent with
-	 * content (only HTTP1.1 clients can conditionally GET). The string is
-	 * an md5 hash of a string and changes whenever the resource changes. 
-	 * This is not needed/used if $_last_modified is set.
-	 * @var string
-	 */
-	private $_content_hash = false;
-	
-	/**
-	 * Default Options
 	 * @var array
 	 */
 	protected $_default_options = array
 	(
-		'scope' 		=> 'public',
-		'content_type' 	=> 'text/css',
-		'max_age'		=> 3600,
-		'far_future_expires_header' => true
+		/**
+		 * "public"  - allow proxies to cache the content.
+		 * "private" - only allow browser caching.
+		 */
+		'scope' => 'public',
+		
+		/**
+		 * Generate an ETag of the output
+		 */
+		'set_etag' => false,
+		
+		/**
+		 * Calculate the content-length
+		 */
+		'set_content_length' => true
 	);
 
 	/**
-	 * Constructor
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
+	 * @access public
+	 * @param $encoder Scaffold_Response_Encoder
+	 * @param $cache Scaffold_Response_Cache
+	 * @param $options
+	 * @return void
 	 */
-	public function __construct(Scaffold_Response_Compressor $encoder, Scaffold_Response_Cache $cache, $options = array())
+	public function __construct(Scaffold_Response_Encoder $encoder, Scaffold_Response_Cache $cache, $options = array())
 	{
-		// Set the dependencies
-		$this->_encoder = $encoder;
-		$this->_cache = $cache;
-		
+		$this->encoder 	= $encoder;
+		$this->cache 	= $cache;
+
 		// Get the default options
-		$options = array_merge($this->_default_options,$options);
+		$this->options = array_merge($this->_default_options,$options);
 		
-		// Max age of the cache
-		$this->_max_age = $options['max_age'];
-		
-		// Cache scope
-		$this->_scope = $options['scope'];
-
-		// Content type
-		$this->_set_content_type($options['content_type']);
-		
-		// Cache control
-		$this->_set_cache_control($this->_max_age,$this->_scope);
-		
-		// Expires Header
-		if($options['far_future_expires_header'] === true)
-		{
-			$this->_max_age = time() + 30;
-		}
-		
-		// If encoding is enabled
-		if($this->_encoder->get_encoding_method() !== false)
-		{
-			# This header must be sent with compressed content to prevent browser caches from breaking
-			$this->_add_header('Vary','Accept-Encoding');
-
-			# Send the content encoding header
-			$this->_add_header('Content-Encoding',$this->_encoder->get_encoding_type());
-		}
+		// Are we encoding the output?
+		$this->encoding = $this->encoder->get_encoding_type();
 	}
 	
 	/**
@@ -136,202 +103,104 @@ class Scaffold_Response
 	 * @param $compress
 	 * @return void
 	 */
-	public function render($content,$last_modified,$use_cache = true,$output_type = null)
+	public function render($use_cache = true)
 	{
-		// Compress the content if we can
-		// This will just return the content if we can't
-		$content = $this->_encoder->compress($content);
-		
-		// Set the content length header
-		$this->_set_content_length($content);
-		
-		// Set the last modified time
-		$this->_set_last_modified($last_modified);
-		
-		// Set expiration time for this file. The last modified time + lifetime
-		$this->_set_expires($last_modified + $this->_max_age);
+		// Is the client's browser cache valid?
+		$cache = $this->cache->valid(
+						$this->headers['Last-Modified'],
+						$this->headers['ETag']
+					);
 
-		// Set the etag for this file
-		$this->_set_etag($last_modified,$this->_encoder->get_encoding_type(),$this->_content_length);
-
-		// The clients cache is still fresh, so we don't
-		// need to display any content to the browser.
-		if($this->_valid_cache() === true AND $use_cache == true)
+		// Cache is still fresh
+		if($cache === true AND $use_cache === true)
 		{
-			$this->_not_modified();
-		}
-		else
-		{
-			$this->send_headers();
-			echo $content;
+			header('HTTP/1.1 304 Not Modified');
+			exit;
 		}
 		
+		// Send it all to the browser
+		$this->send_headers();
+		echo $this->output;
 		exit;
 	}
 	
 	/**
-	 * Sets a not modified header
-	 *
-	 * @access private
-	 * @return void
+	 * Sets the output for the response
+	 * @access public
+	 * @param $content
+	 * @param $last_modified
+	 * @param $type
+	 * @return array
 	 */
-	private function _not_modified()
+	public function set($content,$last_modified,$type = 'text/plain')
 	{
-		header('HTTP/1.1 304 Not Modified');
-	}
-	
-	/**
-	 * Checks to see if the client cache is valid
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return boolean
-	 */
-	private function _valid_cache()
-	{
-		return $this->_cache->valid($this->_last_modified,$this->_etag);
-	}
-	
-	/**
-	 * Sets the Content-Type header
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
-	 */
-	private function _set_content_type($type)
-	{
-		$this->_content_type = $type;
-		$this->_add_header('Content-Type',$type);
-	}
-	
-	/**
-	 * Sets the content length. Sending Content-Length in CGI can result in unexpected behavior
-	 *
-	 * @access private
-	 * @param $length
-	 * @return void
-	 */
-	private function _set_content_length($content)
-	{
-		if(stripos(PHP_SAPI, 'cgi') === FALSE)
+		$this->output 						= $content;
+		$this->headers['Content-Type'] 		= $type;
+		$this->headers['Expires'] 			= $this->_time(time() + 31536000);
+		$this->headers['Last-Modified'] 	= $this->_time($last_modified);
+		$this->headers['Cache-Control'] 	= $this->options['scope'];
+
+		# If we're manually encoding the content
+		if($this->encoding !== false)
 		{
-			$this->_content_length = strlen($content);
-			$this->_add_header('Content-Length',$this->_content_length);
+			$this->output = $this->encoder->encode($content);
+			$this->headers['Content-Encoding'] = $this->encoding;
+			$this->headers['Vary'] = 'Accept-Encoding';
+		}
+		
+		# If you're letting Apache doe the encoding, it will calculate this and override it
+		# Sending Content-Length in CGI can result in unexpected behavior
+		if($this->options['set_content_length'] === true AND stripos(PHP_SAPI, 'cgi') !== true)
+		{
+			$this->headers['Content-Length'] = strlen($content);
+		}
+		
+		# You may want to set an etag
+		if($this->options['set_etag'] === true)
+		{
+			$this->headers['ETag'] = $this->generate_etag(
+												$last_modified,
+												$this->headers['Content-Length'],
+												$this->encoding
+											);
 		}
 	}
 	
 	/**
-	 * Sets the etag
-	 *
-	 * @access private
-	 * @param $param
-	 * @return void
+	 * Generates an etag from an array of values
+	 * @access public
+	 * @param $array
+	 * @return string
 	 */
-	private function _set_etag()
+	public function generate_etag($last_modified,$length,$encoding = false)
 	{
-		// Get all the arguments and serialize them to create an etag
-		$etag = md5(serialize(func_get_args()));
-		$this->_etag = $etag;
-		$this->_add_header('ETag',$etag);
-	}
-	
-	/**
-	 * Sets the Cache control header
-	 *
-	 * @access private
-	 * @param $max_age
-	 * @return void
-	 */
-	private function _set_cache_control($age,$scope)
-	{
-		$this->_add_header('Cache-Control','max-age='.$age.', ' . $scope);
-	}
-	
-	/**
-	 * Sets the last_modified header
-	 *
-	 * @author your name
-	 * @param $last_modified
-	 * @return void
-	 */
-	private function _set_last_modified($last_modified)
-	{
-		$this->_last_modified = $last_modified;
-		$this->_add_header('Last-Modified', $this->_time($last_modified));
+		return '"' . md5(serialize(array($last_modified,$length,$encoding))) . '"';
 	}
 
-	/**
-	 * Sets expires header
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function _set_expires($expires)
-	{
-		$this->_expires = $expires;
-		$this->_add_header('Expires', $this->_time($expires));
-	}
-
-	// ============================
-	// = HTTP Header Methods =
-	// ============================
-	
-	/**
-	 * Stores a header to send
-	 *
-	 * @param $name
-	 * @param $value
-	 * @return void
-	 */
-	private function _add_header($name,$value)
-	{
-		$this->headers[$name] = $value;
-	}
-	
-	/**
-	 * Gets the value of a header
-	 *
-	 * @access private
-	 * @param $name
-	 * @return void
-	 */
-	public function header($name)
-	{
-		return isset($this->headers[$name]) ? $this->headers[$name] : false;
-	}
-	
 	/**
 	 * Sends all of the stored headers to the browser
-	 *
-	 * @access private
+	 * @access public
 	 * @return void
 	 */
-	public function send_headers()
+	public function send_headers($status = 200)
 	{
-		if (!headers_sent())
+		if(!headers_sent())
 		{
 			foreach($this->headers as $name => $value)
 			{
-				if (is_string($name))
-				{
-					// Combine the name and value to make a raw header
+				if($value === false)
+					continue;
+	
+				if(is_string($name))
 					$value = "{$name}: {$value}";
-				}
 
-				// Send the raw header
-				header($value, TRUE, $this->_status);
+				header($value,TRUE,$status);
 			}
 		}
 	}
-	
-	// ============================
-	// = Helper Methods =
-	// ============================
-	
+
 	/**
 	 * Valid time for headers
-	 *
 	 * @access public
 	 * @param $time
 	 * @return string
