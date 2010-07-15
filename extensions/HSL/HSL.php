@@ -35,7 +35,7 @@ class Scaffold_Extension_HSL extends Scaffold_Extension
 	 * @param $l Lightness
 	 * @return string
 	 */
-	function hsl($h,$s,$l)
+	public function hsl($h,$s,$l)
 	{
 		$values = $this->_convert_HSL_to_RGB($h,$s,$l);
 		return "rgb(".implode(',',$values).")";
@@ -51,7 +51,7 @@ class Scaffold_Extension_HSL extends Scaffold_Extension
 	 * @param $a Alpha
 	 * @return string
 	 */
-	function hsla($h,$s,$l,$a)
+	public function hsla($h,$s,$l,$a)
 	{
 		$values = $this->_convert_HSL_to_RGB($h,$s,$l);
 		return "rgba(".implode(',',$values).",$a)";

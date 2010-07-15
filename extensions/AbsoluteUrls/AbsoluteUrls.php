@@ -28,21 +28,18 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 	 * Takes a CSS string, rewrites all URL's using Scaffold's built-in find_file method
 	 * @author Anthony Short
 	 * @param $css
-	 * @return $css string
+	 * @return void
 	 */
-	public function post_format($source)
+	public function post_format($source,$scaffold)
 	{
 		# We can only process files
 		if($source->type != 'file') return;
 
 		// HOOK //
-		$this->scaffold->notify('absoluteurls_before');
+		$scaffold->notify('absoluteurls_before',array($source,$this));
 		
 		# Full path the the source file
 		$path = $source->path;
-		
-		# The CSS
-		$css = $source->get();
 	
 		# The absolute url to the directory of the current CSS file
 		$path = str_replace($_SERVER['DOCUMENT_ROOT'], '/', $path);
@@ -61,7 +58,7 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 			        ([a-zA-Z,\\s]*)?     # 2 = media list
 			        ;                    # end token
 			    /x'
-			    ,$css
+			    ,$source->contents
 			    ,$found
 			)
 		)
@@ -69,8 +66,7 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 			foreach($found[1] as $key => $value)
 			{			
 				# Should we skip it
-				if($this->skip($value))
-					continue;
+				if($this->skip($value)) continue;
 				
 				$media = ($found[2][$key] == "") ? '' : ' ' . preg_replace('/\s+/', '', $found[2][$key]);
 				
@@ -78,50 +74,45 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 				$absolute = $this->up_directory($path, substr_count($value, '..'.DIRECTORY_SEPARATOR , 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$value);
 				
 				# Try to find the file and throw an error if we want to 			
-				$this->scaffold->loader->find_file($absolute,$this->config['require_files']);
+				$scaffold->loader->find_file($absolute,$this->config['require_files']);
 					
 				# Rewrite it
-				$css = str_replace($found[0][$key], '@import \''.$absolute.'\'' . $media . ';', $css);
+				$source->contents = str_replace($found[0][$key], '@import \''.$absolute.'\'' . $media . ';', $source->contents);
 			}
 		}
 		
 		# Convert all url()'s to absolute paths if required
-		if( preg_match_all('/url\\(\\s*([^\\)\\s]+)\\s*\\)/', $css, $found) )
+		if( preg_match_all('/url\\(\\s*([^\\)\\s]+)\\s*\\)/', $source->contents, $found) )
 		{
 			foreach($found[1] as $key => $value)
 			{
 				$url = $this->unquote($value);
 	
-				# Absolute Path
-				if($this->skip($url))
-					continue;
+				# A path we don't want to touch
+				if($this->skip($url)) continue;
 				
 				# Absolute path				
 				$absolute = $this->up_directory($path, substr_count($url, '..'.DIRECTORY_SEPARATOR, 0)) . str_replace('..'.DIRECTORY_SEPARATOR,'',$url);
 
 				# Try to find the file and throw an error if we want to 			
-				$this->scaffold->loader->find_file($absolute,$this->config['require_files']);
+				$scaffold->loader->find_file($absolute,$this->config['require_files']);
 
 				# Rewrite it
-				$css = str_replace($found[0][$key], 'url('.$absolute.')', $css);
+				$source->contents = str_replace($found[0][$key], 'url('.$absolute.')', $source->contents);
 			}
 		}
-		
-		# Update the source
-		$source->set($css);
-		
+
 		// HOOK //
-		$this->scaffold->notify('absoluteurls_after');
+		$scaffold->notify('absoluteurls_after',array($source,$this));
 	}
 	
 	/**
 	 * Skip a path for rewriting
-	 *
-	 * @author Anthony Short
+	 * @access public
 	 * @param $url
 	 * @return boolean
 	 */
-	private static function skip($url)
+	private function skip($url)
 	{
 		return (
 			$url[0] == DIRECTORY_SEPARATOR || 
@@ -133,13 +124,12 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 	
 	/**
 	 * Takes a path, and goes back x number of directories.
-	 *
-	 * @author Anthony Short
+	 * @access public
 	 * @param $path The path
 	 * @param $n The number of directories to go back
 	 * @return string
 	 */
-	public static function up_directory($path,$n)
+	public function up_directory($path,$n)
 	{
 		$exploded = explode(DIRECTORY_SEPARATOR,$path);
 		$exploded = array_slice($exploded, 0, (count($exploded) - $n) );

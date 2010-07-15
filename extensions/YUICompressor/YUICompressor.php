@@ -31,10 +31,10 @@ class Scaffold_Extension_YUICompressor extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function post_format($source)
+	public function post_format($source,$scaffold)
 	{		
 		// The path to the cache file we'll use to temporary store the files
-		$path = $this->scaffold->cache->set('yuicompressor/'.$source->id,$source->contents,null,false,false);
+		$path = $scaffold->cache->set('yuicompressor/'.$source->id,$source->contents,null,false,false);
 		
 		// Path to jar file
 		if($this->config['jar'] === false)
