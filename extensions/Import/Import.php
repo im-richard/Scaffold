@@ -1,11 +1,11 @@
 <?php
 /**
- * Scaffold_Extension_ServerImport
+ * Scaffold_Extension_Import
  *
  * This allows you to include files before processing for compiling
- * into a single file and later cached. 
+ * into a single file and later cached. Uses the standard CSS syntax.
  * 
- * Usage: @server import 'path/to/file.css';
+ * Usage: @import 'path/to/file.css';
  *
  * @package 		Scaffold
  * @subpackage		Engine
@@ -14,15 +14,8 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold_Extension_ServerImport extends Scaffold_Extension
+class Scaffold_Extension_Import extends Scaffold_Extension
 {
-	/**
-	 * Default settings which are used if the configuration
-	 * settings from the file aren't set.
-	 * @var array
-	 */
-	public $_defaults = array();
-	
 	/**
 	 * Stores which files have already been included
 	 * @var array
@@ -35,15 +28,13 @@ class Scaffold_Extension_ServerImport extends Scaffold_Extension
 	 * @param $param
 	 * @return return type
 	 */
-	public function pre_process($source)
+	public function pre_process($source,$scaffold)
 	{
 		// Can only parse files, obviously
 		if($source->type != 'file') return;
 
 		// Replace all the imports
-		$source->set(
-			$this->find_and_replace($source->get(),$source->path)
-		);
+		$source->contents = $this->find_and_replace($source->contents,$source->path);
 	}
 	
 	/**
@@ -72,7 +63,20 @@ class Scaffold_Extension_ServerImport extends Scaffold_Extension
 	 */
 	public function find_rules($css)
 	{
-		preg_match_all('/\@server\s+import\s+(?:\'|\")([^\'\"]+)(?:\'|\")\;/', $css, $matches);
+		preg_match_all(
+		    '/
+		        @import\\s+
+		        (?:url\\(\\s*)?      # maybe url(
+		        [\'"]?               # maybe quote
+		        (.*?)                # 1 = URI
+		        [\'"]?               # maybe end quote
+		        (?:\\s*\\))?         # maybe )
+		        ([a-zA-Z,\\s]*)?     # 2 = media list
+		        ;                    # end token
+		    /x',
+		    $css,
+		    $matches);
+
 		return (count($matches[0]) > 0) ? $matches : false;
 	}
 
@@ -107,7 +111,7 @@ class Scaffold_Extension_ServerImport extends Scaffold_Extension
 			// Error message
 			$title = "Missing File";
 			$message = "<code>$include</code> cannot be found or doesn't exist.<pre><code> ".$rules[0][0]."</code></pre>";
-			$line = Scaffold_Helper_CSS::line_number($rules[0][0],$css);
+			$line = Scaffold_Helper_String::line_number($rules[0][0],$css);
 			
 			// Throw the error
 			throw new Scaffold_Extension_Exception($title,$message,$base,$line);
