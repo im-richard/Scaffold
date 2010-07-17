@@ -1,4 +1,4 @@
+# Gzipping 
 <IfModule mod_deflate.c>
 	SetOutputFilter DEFLATE
 </IfModule>
-

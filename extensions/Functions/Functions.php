@@ -24,9 +24,9 @@ class Scaffold_Extension_Functions extends Scaffold_Extension
 	 * @param $source Scaffold_Source
 	 * @return void
 	 */
-	public function initialize($source)
+	public function initialize($source,$scaffold)
 	{
-		$this->scaffold->notify('register_function',array($this));
+		$scaffold->notify('register_function',array($this));
 	}
 	
 	/**
@@ -46,19 +46,19 @@ class Scaffold_Extension_Functions extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function pre_process($source)
+	public function pre_process($source,$scaffold)
 	{
 		// Go through each custom function
 		foreach($this->functions as $name => $function)
 		{
+			$obj 	= $function[0];
+			$method = $function[1];
+
 			// Find them in the CSS
 			foreach(Scaffold_Helper_CSS::find_functions($name,$source->contents) as $found)
-			{
-				$obj 	= $function[0];
-				$method = $function[1];
-				
+			{				
 				// Call the hook method for this function
-				$result = call_user_func_array(array($obj,$method), $found['params']);
+				$result = call_user_func_array(array($obj,$method),$found['params']);
 				
 				// Replace it in the CSS
 				$source->contents = str_replace($found['string'],$result,$source->contents);

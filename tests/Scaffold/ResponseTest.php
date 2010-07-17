@@ -8,7 +8,7 @@ class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 
 	public function setUp()
 	{
-		$encoder = $this->getMock('Scaffold_Response_Compressor');
+		$encoder = $this->getMock('Scaffold_Response_Encoder');
 		$cache = $this->getMock('Scaffold_Response_Cache');
 		
 		// Make the encoding method return false
@@ -21,52 +21,88 @@ class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 		        ->will($this->returnValue('gzip'));
 		        
 		$encoder->expects($this->any())
-		        ->method('compress')
+		        ->method('encode')
 		        ->will($this->returnValue('foo'));
+		        
+		$cache->expects($this->any())
+		        ->method('valid')
+		        ->will($this->returnValue(false));
 		        
 		$this->time = time();
 		$this->content = 'foo';
 		
 		$this->object = new Scaffold_Response($encoder,$cache);		
 	}
-
+	
 	/**
-	 * Test get content type header
-	 * @author Anthony Short
 	 * @test
 	 */
-	public function Test_get_content_type_header()
+	public function Get_encoding()
 	{
-		$this->assertEquals($this->object->header('Content-Type'),'text/css');
+		$actual = $this->object->encoding;
+		$expected = 'gzip';
+		$this->assertEquals($expected,$actual);
 	}
 	
 	/**
-	 * Get cache control header
-	 * @author Anthony Short
 	 * @test
 	 */
-	public function Get_cache_control_header()
+	public function Check_default_scope()
 	{
-		$this->assertEquals($this->object->header('Cache-Control'),'max-age=3600, public');
+		$actual = $this->object->options['scope'];
+		$expected = 'public';
+		$this->assertEquals($expected,$actual);
 	}
 	
 	/**
-	 * Get vary header
-	 * @author Anthony Short
 	 * @test
 	 */
-	public function Get_vary_header()
+	public function Check_default_etag()
 	{
-		$this->assertEquals($this->object->header('Vary'),'Accept-Encoding');
-	} // Get vary header
+		$actual = $this->object->options['etag'];
+		$expected = false;
+		$this->assertEquals($expected,$actual);
+	}
 	
 	/**
-	 * Get content encoding
-	 * @author Anthony Short
 	 * @test
 	 */
-	public function Get_content_encoding()
+	public function Test_set_content_without_encoding()
 	{
-		$this->assertEquals($this->object->header('Content-Encoding'),'gzip');
-	} // Get content encoding
+		$this->object->encoding = false;
+		$this->object->set('foo',0);
+		
+		$actual = $this->object->output;
+		$expected = 'foo';
+		$this->assertEquals($expected,$actual);
+		
+		$actual = $this->object->headers['Content-Length'];
+		$expected = 3;
+		$this->assertEquals($expected,$actual);
+		
+		$actual = $this->object->headers['Content-Type'];
+		$expected = 'text/plain';
+		$this->assertEquals($expected,$actual);
+	}
+	
+	/**
+	 * @test
+	 */
+	public function Test_set_content_with_encoding()
+	{
+		$this->object->encoding = 'gzip';
+		$this->object->set('foo',0);
+		
+		$actual = $this->object->output;
+		$expected = 'foo';
+		$this->assertEquals($expected,$actual);
+		
+		$actual = $this->object->headers['Content-Length'];
+		$expected = 3;
+		$this->assertEquals($expected,$actual);
+		
+		$actual = $this->object->headers['Content-Type'];
+		$expected = 'text/plain';
+		$this->assertEquals($expected,$actual);
+	}
 }

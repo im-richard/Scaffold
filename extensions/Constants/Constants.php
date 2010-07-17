@@ -20,11 +20,7 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 * @var array
 	 */
 	public $_defaults = array(
-	
-		# Do we want to make all the file paths required?
-		# If true, an exception will be thrown on missing files
 		'constants' => array()
-
 	);
 
 	/**
@@ -38,33 +34,31 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 * @param Scaffold
 	 * @return void
 	 */
-	function process($source)
-	{
+	function process($source,$scaffold)
+	{	
 		// HOOK //
-		$this->scaffold->notify('constants_start');
+		$scaffold->notify('constants_start',array($source,$this));
+		
+		# Save any constants created in the options
+		$this->constants = array_merge($this->config['constants'],$this->constants);
 		
 		# Extract the constants from the source and save them
-		$css = $source->get();
-		$this->extract($css);
-		$this->constants = array_merge($this->config['constants'],$this->constants);
-		$this->scaffold->data['constants'] =& $this->constants;
+		$this->extract($source->contents);
 		
 		// HOOK //
-		$this->scaffold->notify('constants_before_remove');
+		$scaffold->notify('constants_before_remove',array($source,$this));
 		
-		# Remove the @constants rules and save them
-		$css = $this->remove_constant_rules($css);
-		$source->set($css);
+		# Remove the @constants rules
+		$source->contents = $this->remove_constant_rules($source->contents);
 		
 		// HOOK //
-		$this->scaffold->notify('constants_before_replace');
+		$scaffold->notify('constants_before_replace',array($source,$this));
 			
 		# Now replace each of the constants in the CSS string
-		$css = $this->replace($css);
-		$source->set($css);
+		$source->contents = $this->replace($source->contents);
 
 		// HOOK //
-		$this->scaffold->notify('constants_end');
+		$scaffold->notify('constants_end',array($source,$this));
 	}
 	
 	/**
@@ -130,13 +124,13 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	
 	/**
 	 * Returns the constant value
-	 * @author Anthony Short
+	 * @access public
 	 * @param $key
 	 * @return string
 	 */
 	public function get($key)
 	{
-		return $this->$constants[$key];
+		return $this->constants[$key];
 	}
 	
 	/**
@@ -144,7 +138,7 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 * with the constants defined in the member variable $constants
 	 * using PHP's interpolation.
 	 * @access public
-	 * @param $css string
+	 * @param $css
 	 * @return string
 	 */
 	public function replace($css)

@@ -1,11 +1,9 @@
 <?php
-
 /**
- * Scaffold_Response_Compressor
+ * Scaffold_Response_Encoder
  *
  * Determines the available encoding types of the requesting user agent.
- * It can encode/compress content and return it in a format the user agent
- * will understand.
+ * It can encode content and return it in a format the user agent will understand.
  *
  * It automatically disables compression for IE6, which has bugs with gzip compression.
  * 
@@ -16,26 +14,22 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-
-class Scaffold_Response_Compressor
+class Scaffold_Response_Encoder
 {
 	/**
 	 * The method of compression
-	 *
 	 * @var mixed
 	 */
-	private $_encoding_method = false;
+	private $_method = false;
 	
 	/**
 	 * Compression level
-	 *
 	 * @var mixed
 	 */
-	private $_compression_level = false;
-	
+	private $_level = false;
+
 	/**
-	 * Constructor
-	 *
+	 * Determine the compression level, and what type of encoding the user agent accepts
 	 * @access public
 	 * @param $compression_level mixed
 	 * @return void
@@ -44,12 +38,12 @@ class Scaffold_Response_Compressor
 	{
 		if(is_numeric($level) AND $level > 0)
 		{
-			$this->_compression_level = max(1, min($level, 9));
+			$this->_level = max(1, min($level, 9));
 		}
 
-		if($this->can_encode() AND $this->_compression_level !== false)
+		if($this->can_encode() AND $this->_level !== false)
 		{
-			$this->_encoding_method = $this->_encoding_method();
+			$this->_method = $this->_method();
 		}
 	}
 
@@ -57,55 +51,51 @@ class Scaffold_Response_Compressor
 	 * Encode the output using gzip compression if available. If no
 	 * compression is available, or it is disabled, it will just return
 	 * the content as normal.
-	 *
 	 * @access public
 	 * @param $content
 	 * @return string
 	 */
-	public function compress($content)
+	public function encode($content)
 	{
 		# Encoding method
-		$method = $this->_encoding_method;
+		$method = $this->_method;
 
 		# Compress the content if we can
-		return ($method !== false) ? $method($content, $this->_compression_level) : $content;
+		return ($method !== false) ? $method($content, $this->_level) : $content;
 	}
 	
 	/**
 	 * Gets the compression level
-	 *
 	 * @access public
 	 * @return mixed
 	 */
-	public function get_compression_level()
+	public function get_level()
 	{
-		return $this->_compression_level;
+		return $this->_level;
 	}
 	
 	/**
 	 * Returns the encoding type
-	 *
 	 * @access public
 	 * @return mixed
 	 */
-	public function get_encoding_method()
+	public function get_method()
 	{
-		return $this->_encoding_method;
+		return $this->_method;
 	}
 	
 	/**
 	 * Returns the type of encoding to use in the Content-Encoding header
 	 * based on the method that is being used to compress the content.
-	 *
 	 * @access public
 	 * @return mixed
 	 */
 	public function get_encoding_type()
 	{
-		if($this->_encoding_method == 'gzencode')
+		if($this->_method == 'gzencode')
 			return 'gzip';
 			
-		if($this->_encoding_method == 'gzdeflate')
+		if($this->_method == 'gzdeflate')
 			return 'deflate';
 			
 		return false;
@@ -133,12 +123,11 @@ class Scaffold_Response_Compressor
 	}
 	
 	/**
-	 * Determines the type of compression to use.
-	 *
+	 * Determines the type of encoding to use.
 	 * @access public
 	 * @return mixed
 	 */
-	private function _encoding_method()
+	private function _method()
 	{
 		// Check for gzip
 		if(strstr($_SERVER['HTTP_ACCEPT_ENCODING'],'gzip') !== false)
@@ -154,9 +143,6 @@ class Scaffold_Response_Compressor
 	/**
 	 * Detects if the UA is IE6 or below. These versions had buggy gzip implementations
 	 * even though they sent the correct Accepted Content header.
-	 *
-	 * Borrowed from Minify.
-	 *
 	 * @access private
 	 * @see http://code.google.com/p/minify/
 	 * @return boolean

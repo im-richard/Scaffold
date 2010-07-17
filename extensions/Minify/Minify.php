@@ -25,7 +25,7 @@ class Scaffold_Extension_Minify extends Scaffold_Extension
 	 * @param $source
 	 * @return void
 	 */
-	public function initialize($source)
+	public function initialize($source,$scaffold)
 	{
 		require dirname(__FILE__) . '/Compressor.php';
 	}
@@ -36,8 +36,8 @@ class Scaffold_Extension_Minify extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function post_format($source)
+	public function post_format($source,$scaffold)
 	{
-		$source->set( Minify_CSS_Compressor::process($source->get()) );
+		$source->contents = Minify_CSS_Compressor::process($source->contents);
 	}
 }

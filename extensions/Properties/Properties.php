@@ -23,9 +23,9 @@ class Scaffold_Extension_Properties extends Scaffold_Extension
 	 * @param $source Scaffold_Source
 	 * @return void
 	 */
-	public function initialize($source)
+	public function initialize($source,$scaffold)
 	{
-		$this->scaffold->notify('register_property',array($this));
+		$scaffold->notify('register_property',array($this));
 	}
 	
 	/**
@@ -50,12 +50,12 @@ class Scaffold_Extension_Properties extends Scaffold_Extension
 		// Go through each custom function
 		foreach($this->properties as $name => $property)
 		{
+			$obj 	= $property[0];
+			$method = $property[1];
+
 			// Find them in the CSS
 			foreach(Scaffold_Helper_CSS::find_properties($name,$source->contents) as $found)
 			{
-				$obj 	= $property[0];
-				$method = $property[1];
-				
 				// Call the hook method for this function
 				$result = call_user_func_array(array($obj,$method),array($found['value']));
 				

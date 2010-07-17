@@ -22,7 +22,7 @@ class Scaffold_Extension_ImageReplace extends Scaffold_Extension
 	 */
 	public function register_property($properties)
 	{
-		$properties->register('image-replace',array($this,'parse'));
+		$properties->register('image-replace',array($this,'image_replace'));
 	}
 	
 	/**
@@ -30,7 +30,7 @@ class Scaffold_Extension_ImageReplace extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function initialize($source)
+	public function initialize($source,$scaffold)
 	{
 		$this->source = $source;
 	}
@@ -41,7 +41,7 @@ class Scaffold_Extension_ImageReplace extends Scaffold_Extension
 	 * @param $url
 	 * @return string
 	 */
-	public function parse($value)
+	public function image_replace($value)
 	{
 		$url = preg_match('/url\((.*)\)/', $value,$match);
 		$url = $match[1];

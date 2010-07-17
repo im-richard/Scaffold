@@ -2,7 +2,7 @@
 /**
  * Scaffold_Extension_Sass
  *
- * Rewrites all URL's in the CSS to absolute paths.
+ * Parses the CSS through the Sass rubygem
  * 
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>
@@ -51,13 +51,13 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function process($source)
+	public function process($source,$scaffold)
 	{		
 		// The path to the cache file we'll use to temporary store the files
-		$path = $this->scaffold->cache->set('sass/'.$source->id,$source->contents,null,false,false);
+		$path = $scaffold->cache->set('sass/'.$source->id,$source->contents,null,false,false);
 		
 		// Temporary file to store the sass output
-		$temp = $this->scaffold->cache->find('/sass/'.$source->id.'.sass');
+		$temp = $scaffold->cache->find('/sass/'.$source->id.'.sass');
 
 		// Sass will output the final file to the cache
 		$cmd = $this->config['command'].' '.$this->_build_sass_params($this->config['params']) . ' ' . escapeshellcmd($path) . ' '.$temp.' 2>&1';

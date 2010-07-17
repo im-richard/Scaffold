@@ -39,6 +39,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	{
 		$this->directory 	= realpath($path) . DIRECTORY_SEPARATOR;
 		$this->max_age 		= $max_age;
+		$this->current_time	= time();
 	}
 
 	// =========================================
@@ -56,7 +57,7 @@ class Scaffold_Cache_File extends Scaffold_Cache
 	 */
 	public function get($id, $relative_time = false, $default = false)
 	{
-		$time = ($relative_time !== false) ? $relative_time : time();
+		$time = ($relative_time !== false) ? $relative_time : $this->current_time;
 		$file = $this->find($id);
 		
 		if(file_exists($file))
@@ -92,20 +93,24 @@ class Scaffold_Cache_File extends Scaffold_Cache
 			$this->create(dirname($id));
 		}
 		
+		// When to set the cache mod time
+		$last_modified = ($last_modified === false) ? $last_modified : $this->current_time;
+		
 		if($encode === true)
 		{
 			// If max age or expires is false, the cache will never expire
-			$expires = ($expires === false OR $this->max_age === false) ? false : time() + $this->max_age;
+			$expires = ($expires === false OR $this->max_age === false) ? false : $this->current_time + $this->max_age;
 			
 			# Serialize the data
 			$data = json_encode((object) array(
 				'contents'  	=> (is_array($data)) ? serialize($data) : $data,
-				'last_modified'	=> ($last_modified === false) ? $last_modified : time(),
+				'last_modified'	=> $last_modified,
 				'expires' 		=> $expires,
 			));
 		}
 		
 		file_put_contents($target,$data);
+		touch($target,$last_modified);
 		return $target;
 	}
 

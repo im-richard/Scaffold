@@ -55,17 +55,16 @@ class Scaffold_Container
 	
 	/**
 	 * Loads the extension files
-	 *
 	 * @author your name
 	 * @param $param
 	 * @return return type
 	 */
-	public function loadExtensions($path)
+	public function load_extensions($path,$scaffold)
 	{
 		$extensions = array();
 	
 		# Load each of the extensions
-		foreach(glob($path) as $ext)
+		foreach(glob($path.'/*/') as $ext)
 		{			
 			$ext .= DIRECTORY_SEPARATOR;
 		
@@ -86,11 +85,11 @@ class Scaffold_Container
 			if(file_exists($file))
 			{
 				require_once realpath($ext.$name.'.php');
-				$extensions[$name] = new $class($config,$ext);
+				$scaffold->attach($name,new $class($config,$ext));
 			}
 		}
 
-		return $extensions;
+		return $scaffold;
 	}
 
 	/**
@@ -111,14 +110,9 @@ class Scaffold_Container
 		# The main object
 		$scaffold = new Scaffold($cache,$response,$loader,$this->options['production']);
 		
-		# Load the extensions
-		$extensions = $this->loadExtensions($this->system.'/extensions/*/');
+		# Load extensions
+		$scaffold = $this->load_extensions($this->system.'/extensions/',$scaffold);
 		
-		foreach($extensions as $name => $ext)
-		{
-			$scaffold->attach($name,$ext);
-		}
-
 		return $scaffold;
 	}
 
@@ -156,14 +150,14 @@ class Scaffold_Container
 	/**
 	 * Gets the response encoder object
 	 * @access public
-	 * @return Scaffold_Response_Compressor
+	 * @return Scaffold_Response_Encoder
 	 */
 	public function getResponseEncoder()
 	{
 		if(isset($this->_response_encoder))
 			return $this->_response_encoder;
 		
-		return $this->_response_encoder = new Scaffold_Response_Compressor($this->options['output_compression']);
+		return $this->_response_encoder = new Scaffold_Response_Encoder($this->options['output_compression']);
 	}
 	
 	/**

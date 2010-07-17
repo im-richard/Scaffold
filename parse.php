@@ -19,15 +19,19 @@ $system = './';
  *		1. One of the files in the request has changed
  *		2. The cache lifetime has expired (set below)
  */
-$config['production'] = false;
+$config['production'] = true;
 
 /**
  * Cache Lifetime
  *
  * This value, in seconds, determines how long the cache will last before it
- * tries to recompile the CSS again from the source.
+ * tries to recompile the CSS again from the source. This won't affect the
+ * the browser cache unless the file has actually changed.
+ * 
+ * If an extension needs to have the cache remade after a certain amount of
+ * time, you'll probably want to set this.
  */
-$config['max_age'] = 3600;
+$config['max_age'] = false;
 
 /**
  * Load paths
@@ -49,14 +53,17 @@ $config['load_paths'] = array();
 $config['output_compression'] = false;
 
 /**
- * Set far expires headers
+ * Use ETag
  *
- * By settings the Expires header to a time well in the future it allows the browser
- * to keep the item cached, reducing HTTP requests over time. When the file is modified,
- * the cache will update and send a new etag to the browser, so they will still see
- * the new file.
+ * ETags are good for ensuring content is only re-downloaded when
+ * it needs to be, but when a file is delivered from many servers,
+ * like in a cluster server setup, it can actually cause files
+ * to be downloaded more than usual. 
+ *
+ * @see http://developer.yahoo.com/performance/rules.html#etags
+ * @see http://www.askapache.com/htaccess/apache-speed-etags.html
  */
-$config['far_future_expires_header'] = true;
+$config['set_etag'] = true;
 
 // =========================================
 // = Extension Configuration =
@@ -66,18 +73,20 @@ $config['far_future_expires_header'] = true;
  * Enabled extensions
  */
 $config['extensions'] = array(
-	//'AbsoluteUrls',
-	//'ServerImport',
-	//'NestedSelectors',
-	//'Mixins'
-	//'Minify',
-	//'Constants',
+	'AbsoluteUrls',
+	'Constants',
+	'Embed',
+	'Functions',
+	'HSL',
+	'ImageReplace',
+	'Minify',
+	'Properties',
+	'Random',
+	'Import',
+	
+	# Process-heavy Extensions
 	//'Sass',
-	//'Functions',
-	//'Random',
-	//'Embed',
-	//'Properties',
-	//'ImageReplace',
+	//'CSSTidy',
 	//'YUICompressor'
 );
 
