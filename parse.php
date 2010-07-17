@@ -19,7 +19,7 @@ $system = './';
  *		1. One of the files in the request has changed
  *		2. The cache lifetime has expired (set below)
  */
-$config['production'] = false;
+$config['production'] = true;
 
 /**
  * Cache Lifetime
@@ -27,8 +27,11 @@ $config['production'] = false;
  * This value, in seconds, determines how long the cache will last before it
  * tries to recompile the CSS again from the source. This won't affect the
  * the browser cache unless the file has actually changed.
+ * 
+ * If an extension needs to have the cache remade after a certain amount of
+ * time, you'll probably want to set this.
  */
-$config['max_age'] = 3600;
+$config['max_age'] = false;
 
 /**
  * Load paths
@@ -49,27 +52,18 @@ $config['load_paths'] = array();
  */
 $config['output_compression'] = false;
 
-/** 
+/**
  * Use ETag
  *
- * You can generate an ETag for the requests made to CSS files. This isn't entirely
- * necessary as we're using the Last-Modified header. If you aren't planning on using
- * ETags for any specific reason, it's best to leave this off.
- *
- * To completely turn off ETags, the .htaccess also contains 'FileETag none'. If you're
- * switching this on, you'll need to remove or comment out that line in the .htaccess.
+ * ETags are good for ensuring content is only re-downloaded when
+ * it needs to be, but when a file is delivered from many servers,
+ * like in a cluster server setup, it can actually cause files
+ * to be downloaded more than usual. 
  *
  * @see http://developer.yahoo.com/performance/rules.html#etags
+ * @see http://www.askapache.com/htaccess/apache-speed-etags.html
  */
-$config['set_etag'] = false;
-
-/**
- * Set Content-Length
- *
- * You can set the content-length header. Most of the time, this will be sorted out
- * for you by Apache, but you can have PHP set the content-length if need be.
- */
-$config['set_content_length'] = false;
+$config['set_etag'] = true;
 
 // =========================================
 // = Extension Configuration =
