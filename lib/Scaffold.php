@@ -102,14 +102,15 @@ class Scaffold extends Scaffold_Extension_Observable
 			
 			// Save it to the cache
 			$this->save($source);
+			
+			// Load it for reals this time
+			$cached = $this->cache->get($source->id);
 		}
-		else
-		{
-			// Update the source with the cache values
-			$source->contents = $cached->contents;
-			$source->last_modified = $cached->last_modified;
-			$source->expires = $cached->expires;
-		}
+
+		// Update the source with the cache values
+		$source->contents = $cached->contents;
+		$source->last_modified = $cached->last_modified;
+		$source->expires = $cached->expires;
 		
 		return $source;
 	}
@@ -175,7 +176,7 @@ class Scaffold extends Scaffold_Extension_Observable
 	{
 		$this->cache->set(
 			$source->id,
-			$source->get(),
+			$source->contents,
 			$source->last_modified
 		);
 	}
