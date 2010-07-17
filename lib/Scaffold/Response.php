@@ -27,7 +27,7 @@ class Scaffold_Response
 	 * What will be rendered
 	 * @var string
 	 */
-	public $output;
+	public $output = false;
 	
 	/**
 	 * Output encoding
@@ -41,11 +41,15 @@ class Scaffold_Response
 	public $options;
 	
 	/**
+	 * @var int
+	 */
+	public $status = 200;
+	
+	/**
 	 * @var array
 	 */
 	public $headers = array
 	(
-		'Content-Length'	=> false,
 		'Content-Encoding' 	=> false,
 		'Vary'				=> false,
 		'Expires'			=> false,
@@ -55,25 +59,21 @@ class Scaffold_Response
 	);
 	
 	/**
+	 * HTTP status codes and messages
+	 * @var array
+	 */
+	public $messages = array(
+		200 => 'OK',
+		304 => 'Not Modified',
+	);
+	
+	/**
 	 * @var array
 	 */
 	protected $_default_options = array
 	(
-		/**
-		 * "public"  - allow proxies to cache the content.
-		 * "private" - only allow browser caching.
-		 */
-		'scope' => 'public',
-		
-		/**
-		 * Generate an ETag of the output
-		 */
-		'set_etag' => false,
-		
-		/**
-		 * Calculate the content-length
-		 */
-		'set_content_length' => true
+		'cache_control' => 'max-age=31536000,must-revalidate,public',
+		'set_etag' 		=> true,
 	);
 
 	/**
@@ -85,36 +85,47 @@ class Scaffold_Response
 	 */
 	public function __construct(Scaffold_Response_Encoder $encoder, Scaffold_Response_Cache $cache, $options = array())
 	{
-		$this->encoder 	= $encoder;
-		$this->cache 	= $cache;
+		// This will handle encoding the output
+		$this->encoder = $encoder;
+		
+		// Lets us check the browsers cache
+		$this->cache = $cache;
 
 		// Get the default options
 		$this->options = array_merge($this->_default_options,$options);
 		
 		// Are we encoding the output?
 		$this->encoding = $this->encoder->get_encoding_type();
+		
+		// If we're encoding the output we need to set some headers
+		if($this->encoding !== false)
+		{
+			$this->headers['Content-Encoding'] 	= $this->encoding;
+			$this->headers['Vary'] 				= 'Accept-Encoding';
+		}
 	}
 	
 	/**
 	 * Renders content to the browsers.
 	 * If the clients cache isn't modified, it shouldn't send anything
 	 * @access public
-	 * @param $content
-	 * @param $compress
+	 * @param $use_cache boolean Use the browsers cache to determine if we should send the content
 	 * @return void
 	 */
 	public function render($use_cache = true)
 	{
-		// Is the client's browser cache valid?
-		$cache = $this->cache->valid(
-						$this->headers['Last-Modified'],
-						$this->headers['ETag']
-					);
-
+		// Is the browser cache older?
+		$not_modified = ($this->cache->modified($this->headers['Last-Modified']) === false);
+		
+		// Do the etags match?
+		$etags_match = $this->cache->matched($this->headers['ETag']);
+		
 		// Cache is still fresh
-		if($cache === true AND $use_cache === true)
+		if($not_modified AND $etags_match AND $use_cache)
 		{
-			header('HTTP/1.1 304 Not Modified');
+			$this->status = 304;
+			$this->headers = array();
+			$this->send_headers();
 			exit;
 		}
 		
@@ -138,31 +149,16 @@ class Scaffold_Response
 		$this->headers['Content-Type'] 		= $type;
 		$this->headers['Expires'] 			= $this->_time(time() + 31536000);
 		$this->headers['Last-Modified'] 	= $this->_time($last_modified);
-		$this->headers['Cache-Control'] 	= $this->options['scope'];
+		$this->headers['Cache-Control'] 	= $this->options['cache_control'];
 
-		# If we're manually encoding the content
 		if($this->encoding !== false)
 		{
 			$this->output = $this->encoder->encode($content);
-			$this->headers['Content-Encoding'] = $this->encoding;
-			$this->headers['Vary'] = 'Accept-Encoding';
 		}
-		
-		# If you're letting Apache doe the encoding, it will calculate this and override it
-		# Sending Content-Length in CGI can result in unexpected behavior
-		if($this->options['set_content_length'] === true AND stripos(PHP_SAPI, 'cgi') !== true)
-		{
-			$this->headers['Content-Length'] = strlen($content);
-		}
-		
-		# You may want to set an etag
+
 		if($this->options['set_etag'] === true)
 		{
-			$this->headers['ETag'] = $this->generate_etag(
-												$last_modified,
-												$this->headers['Content-Length'],
-												$this->encoding
-											);
+			$this->headers['ETag'] = $this->generate_etag($this->output);
 		}
 	}
 	
@@ -172,9 +168,9 @@ class Scaffold_Response
 	 * @param $array
 	 * @return string
 	 */
-	public function generate_etag($last_modified,$length,$encoding = false)
+	public function generate_etag()
 	{
-		return '"' . md5(serialize(array($last_modified,$length,$encoding))) . '"';
+		return '"' . hash('md5',serialize(func_get_args())) . '"';
 	}
 
 	/**
@@ -182,10 +178,24 @@ class Scaffold_Response
 	 * @access public
 	 * @return void
 	 */
-	public function send_headers($status = 200)
+	public function send_headers()
 	{
 		if(!headers_sent())
 		{
+			if (isset($_SERVER['SERVER_PROTOCOL']))
+			{
+				// Use the default server protocol
+				$protocol = $_SERVER['SERVER_PROTOCOL'];
+			}
+			else
+			{
+				// Default to using newer protocol
+				$protocol = 'HTTP/1.1';
+			}
+			
+			// HTTP status line
+			header($protocol.' '.$this->status.' '.$this->messages[$this->status]);
+
 			foreach($this->headers as $name => $value)
 			{
 				if($value === false)
@@ -194,7 +204,7 @@ class Scaffold_Response
 				if(is_string($name))
 					$value = "{$name}: {$value}";
 
-				header($value,TRUE,$status);
+				header($value,true,$this->status);
 			}
 		}
 	}

@@ -44,21 +44,8 @@ class Scaffold_Response_Cache
 	}
 	
 	// ============================
-	// = Public Methods =
+	// = Accessor Methods =
 	// ============================
-	
-	/**
-	 * Checks if the users cache is still valid by checking the last modified
-	 * time and etag against the browsers sent header.
-	 * @access public
-	 * @param $last_modified
-	 * @param $etag
-	 * @return boolean
-	 */
-	public function valid($last_modified,$etag = false)
-	{
-		return ($this->_is_modified($last_modified) === false AND $this->_matched_etag($etag) === true);
-	}
 	
 	/**
 	 * Gets the client etags
@@ -115,12 +102,7 @@ class Scaffold_Response_Cache
 	 */
 	private function _get_client_etags()
 	{
-		if(isset($_SERVER['HTTP_IF_NONE_MATCH']))
-		{
-		   return str_replace('"','',$_SERVER['HTTP_IF_NONE_MATCH']);
-		}
-		
-		return false;
+		return (isset($_SERVER['HTTP_IF_NONE_MATCH'])) ? $_SERVER['HTTP_IF_NONE_MATCH'] : null;
 	}
 	
 	// ============================
@@ -129,11 +111,11 @@ class Scaffold_Response_Cache
 
 	/**
 	 * ETags match
-	 * @access private
+	 * @access public
 	 * @param $etag
 	 * @return boolean
 	 */
-	private function _matched_etag($etag)
+	public function matched($etag)
 	{
 		return ($etag == $this->_etag);
 	}
@@ -144,7 +126,7 @@ class Scaffold_Response_Cache
 	 * @param $last_modified
 	 * @return boolean
 	 */
-	private function _is_modified($last_modified)
+	public function modified($last_modified)
 	{
 		return (strtotime($last_modified) > $this->_modified_since);
 	}
