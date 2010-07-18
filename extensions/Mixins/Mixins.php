@@ -109,7 +109,6 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 			// Now we need to replace them in the CSS
 			if(preg_match_all('/\@include\s+([0-9a-zA-Z_\-]+)(\((.*?)\))?\s*\;/sx', $css, $includes))
 			{
-				print_r($includes);exit;
 				foreach($includes[1] as $include_key => $include)
 				{
 					// If the mixin doesn't exist	
