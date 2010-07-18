@@ -46,7 +46,7 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 	 * @param $source
 	 * @return return type
 	 */
-	public function process($source)
+	public function process($source,$scaffold)
 	{	
 		// Find any mixins
 		if(preg_match_all('/\@mixin\s+([0-9a-zA-Z_\-]+) (\((.*?)\))? \s* \{/sx',$source->contents,$mixins))
@@ -55,39 +55,19 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 			
 			foreach($mixins[0] as $key => $mixin)
 			{
-				// Find the content of the mixins
+				// Position of the mixin in the CSS
 				$mixin_start = strpos($css,$mixin);
-				$pos = $start = $mixin_start + strlen($mixin);
-				$depth = 0;
-				$content = false;
 				
-				while($content == false)
-				{
-					$current = substr($css,$pos,1);
-		
-					if($current == '}')
-					{
-						if($depth == 0)
-						{
-							$content = substr($css, $start, $pos - $start);
-						}
-						else
-						{
-							$depth--;
-						}
-					}
-					if($current == '{')
-					{
-						$depth++;
-					}						
-					if($pos == strlen($css))
-					{
-						throw new Exception('Unmatched }');
-					}
-						
-					$pos++;
-				}
+				// The position of the opening brace
+				$start = $mixin_start + strlen($mixin) - 1;
 				
+				// Get the content within the braces
+				$content = $scaffold->helper->string->match_delimiter('{','}',$start,$css);
+				
+				// The content without the braces
+				$inner_content = trim($content,'{} ');
+				
+				// Parse the params
 				if($mixins[3][$key] != false)
 				{
 					$params = explode(',',$mixins[3][$key]);
@@ -95,6 +75,7 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 					
 					foreach($params as $param_key => $param)
 					{
+						// Set the default param if it exists
 						if(strstr($param, '='))
 						{
 							$equals = strpos($param, '=');
@@ -113,19 +94,22 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 					$default_params = false;
 				}
 				
+				// Build the mixin
 				$this->mixins[$mixins[1][$key]] = array
 				(
 					'params' 			=> $params,
 					'default_params' 	=> $default_params,
-					'content' 			=> trim($content)
+					'content' 			=> $inner_content
 				);
 				
-				$css = substr_replace($css, '', $mixin_start, $pos - $mixin_start);
+				// Remove it from the CSS
+				$css = substr_replace($css, '', $mixin_start, strlen($content) + strlen($mixin) - 1 );
 			}
 			
 			// Now we need to replace them in the CSS
 			if(preg_match_all('/\@include\s+([0-9a-zA-Z_\-]+)(\((.*?)\))?\s*\;/sx', $css, $includes))
 			{
+				print_r($includes);exit;
 				foreach($includes[1] as $include_key => $include)
 				{
 					// If the mixin doesn't exist	
