@@ -29,13 +29,30 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	public $constants = array();
 	
 	/**
+	 * @var Scaffold_Helper_CSS
+	 */
+	public $helper;
+	
+	/**
+	 * @access public
+	 * @param $source
+	 * @param $scaffold
+	 * @return void
+	 */
+	public function __construct($scaffold,$config)
+	{
+		$this->config = array_merge($this->_defaults,$config);
+		$this->helper = $scaffold->helper->css;
+	}
+	
+	/**
 	 * Scaffold's process hook
 	 * @access public
 	 * @param Scaffold
 	 * @return void
 	 */
-	function process($source,$scaffold)
-	{	
+	public function process($source,$scaffold)
+	{
 		// HOOK //
 		$scaffold->notify('constants_start',array($source,$this));
 		
@@ -69,11 +86,11 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 */
 	public function extract($css)
 	{
-		$constants = Scaffold_Helper_CSS::find_atrule('constants',$css);
-		
+		$constants = $this->helper->find_atrule('constants',$css);
+
 		foreach($constants as $key => $group)
 		{
-			foreach(Scaffold_Helper_CSS::ruleset_to_array($constants[$key][2]) as $key => $value)
+			foreach($this->helper->ruleset_to_array($constants[$key][2]) as $key => $value)
 			{
 				# This lets constants equal other constants.
 				$value = $this->replace($value);
@@ -90,7 +107,7 @@ class Scaffold_Extension_Constants extends Scaffold_Extension
 	 */
 	public function remove_constant_rules($css)
 	{
-		$rules = Scaffold_Helper_CSS::find_atrule('constants',$css);
+		$rules = $this->helper->find_atrule('constants',$css);
 		
 		foreach($rules as $rule)
 		{

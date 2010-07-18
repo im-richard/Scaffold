@@ -36,7 +36,7 @@ class Scaffold_Extension_Embed extends Scaffold_Extension
 		// We can only embed for file sources
 		if($source->type != 'file') return;
 		
-		foreach(Scaffold_Helper_CSS::find_functions('embed',$source->contents) as $found)
+		foreach($scaffold->helper->css->find_functions('embed',$source->contents) as $found)
 		{
 			// Get the full path to the file relative to the source
 			$path = $source->find($url);			
