@@ -5,6 +5,24 @@
  * Allows you to use SASS-style mixins, essentially assigning classes
  * to selectors from within your css. You can also pass arguments through
  * to the mixin.
+ *
+ *		@mixin table-base {
+		   th {
+		     text-align: center;
+		     font-weight: bold;
+		   }
+		   td, th {padding: 2px}
+		 }
+		 
+		 @mixin left($dist) {
+		   float: left;
+		   margin-left: $dist;
+		 }
+		 
+		 #data {
+		   @include left(10px);
+		   @include table-base;
+		 }
  * 
  * @author Anthony Short
  */
@@ -29,314 +47,120 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 	 * @return return type
 	 */
 	public function process($source)
-	{
-		print_r($source->get());exit;
-		
-		# Finds any selectors starting with =mixin-name
-		if( $found = Scaffold_Helper_CSS::find_selectors('\@mixin\s+([0-9a-zA-Z_]+) (\((.*?)\))?', $source->get(), false) )
+	{	
+		// Find any mixins
+		if(preg_match_all('/\@mixin\s+([0-9a-zA-Z_\-]+) (\((.*?)\))? \s* \{/sx',$source->contents,$mixins))
 		{
-			# Just to make life a little easier
-			$full_base 		= $found[0];
-			$base_names 	= $found['name'];
-			$base_args 		= $found['args'];
-			$base_props 	= $found['properties'];
-
-			# Puts the mixin bases into a more suitable array
-			foreach($base_names as $key => $value)
-			{	
-				$bases[$value]['properties'] = $base_props[$key];
-				
-				# If there are mixin arguments, add them
-				$bases[$value]['params'] = ( $base_args[$key] != "" ) ? explode(',', $base_args[$key]) : array();
-			}
-						
-			# Store this away for debugging
-			$this->mixins = $bases;
+			$css = $source->contents;
 			
-			# Remove all of the mixin bases
-			$source->set(
-				str_replace($full_base,'',$source->get())
-			);
-		}
-		
-		print_r($this->mixins);exit;
-	}
-
-	/**
-	 * The main processing function called by Scaffold. MUST return $css!
-	 *
-	 * @author Anthony Short
-	 * @return $css string
-	 */
-	public function replace($css)
-	{
-		# Find the mixins
-		if($mixins = $this->find_mixins($css->string))
-		{
-			# Loop through each of the found +mixins
-			foreach($mixins[2] as $mixin_key => $mixin_name)
+			foreach($mixins[0] as $key => $mixin)
 			{
-				$css->string = str_replace($mixins[0][$mixin_key], $this->build_mixins($mixin_key, $mixins), $css->string);
-			}
-		}
-	}
-	
-	/**
-	 * Replaces the mixins with their properties
-	 *
-	 * @author Anthony Short
-	 * @param $mixin_key - The bases array key corrosponding to the current mixin
-	 * @param $mixins - An array of found mixins
-	 * @return string
-	 */
-	public function build_mixins($mixin_key, $mixins, $already_mixed = array())
-	{
-		$bases =& $this->mixins;
-		
-		$mixin_name = $mixins[2][$mixin_key];
+				// Find the content of the mixins
+				$mixin_start = strpos($css,$mixin);
+				$pos = $start = $mixin_start + strlen($mixin);
+				$depth = 0;
+				$content = false;
 				
-		if(isset($bases[$mixin_name]))
-		{	
-			$base_properties = $bases[$mixin_name]['properties'];
-							
-			# If there is no base for that mixin and we aren't in a recursion loop
-			if(is_array($bases[$mixin_name]) AND !in_array($mixin_name, $already_mixed) )
-			{
-				$already_mixed[] = $mixin_name;
-
-				# Parse the parameters of the mixin
-				$params = $this->parse_params($mixins[0][$mixin_key], $mixins[4][$mixin_key], $bases[$mixin_name]['params']);
-
-				# Replace the param variables				
-				$new_properties = $this->replace_params($base_properties,$params,$mixin_name);
-				
-				# Parse conditionals if there are any in there
-				$new_properties = $this->parse_conditionals($new_properties);
-	
-				# Find nested mixins
-				if($inner_mixins = $this->find_mixins($new_properties))
+				while($content == false)
 				{
-					# Loop through all the ones we found, skipping on recursion by passing
-					# through the current mixin we're working on
-					foreach($inner_mixins[0] as $key => $value)
+					$current = substr($css,$pos,1);
+		
+					if($current == '}')
 					{
-						# Parse the mixin and replace it within the property string
-						$new_properties = str_replace($value, $this->build_mixins($key, $inner_mixins, $already_mixed), $new_properties);
+						if($depth == 0)
+						{
+							$content = substr($css, $start, $pos - $start);
+						}
+						else
+						{
+							$depth--;
+						}
 					}
-				}	
-							
-				# Clean up memory
-				unset($inner_mixins, $params, $mixins);
-
-				return preg_replace('/^(\s|\n|\r)*|(\n|\r|\s)*$/','',$new_properties);
+					if($current == '{')
+					{
+						$depth++;
+					}						
+					if($pos == strlen($css))
+					{
+						throw new Exception('Unmatched }');
+					}
+						
+					$pos++;
+				}
+				
+				if($mixins[3][$key] != false)
+				{
+					$params = explode(',',$mixins[3][$key]);
+					$default_params = array();
+					
+					foreach($params as $param_key => $param)
+					{
+						if(strstr($param, '='))
+						{
+							$equals = strpos($param, '=');
+							$default_params[$param_key] = substr($param, $equals + 1, strlen($param) - $equals);
+							$params[$param_key] = substr($param, 0, $equals - 1);
+						}
+						else
+						{
+							$default_params[$param_key] = false;
+						}
+					}
+				}
+				else
+				{
+					$params = false;
+					$default_params = false;
+				}
+				
+				$this->mixins[$mixins[1][$key]] = array
+				(
+					'params' 			=> $params,
+					'default_params' 	=> $default_params,
+					'content' 			=> trim($content)
+				);
+				
+				$css = substr_replace($css, '', $mixin_start, $pos - $mixin_start);
 			}
-			elseif(in_array($mixin_name, $already_mixed))
-			{
-				throw new Exception('Recursion in mixin ' . $mixin_name,1);
-			}
-		}
-		else
-		{
-			//throw new Scaffold_CSS_Exception('The mixin named <strong>' . $mixin_name . '</strong> doesn\'t exist.', 'myfile.css', 'css string');
-		}
-		
-	}
-	
-	/**
-	 * Replaces all of the params in a CSS string
-	 * with the constants defined in the member variable $constants
-	 * using PHP's interpolation.
-	 */
-	public function replace_params($css,$params,$mixin_name)
-	{
-		# Pull the constants into the local scope as variables
-		extract($params, EXTR_SKIP);
-		
-		try
-		{
-			$css = stripslashes( eval('return "' . addslashes($css) . '";') );
-		}
-		catch(Exception $e)
-		{
-			$trace = $e->getTrace();
-			$missing = str_replace('Undefined variable: ', '',$trace[0]['args'][1]);
-			//throw new Exception('Missing variable inside the mixin <strong>'.$mixin_name.'</strong> named <strong>$' . $missing . '</strong>');
-		}
-		
-		return $css;
-	}
-	
-	/**
-	 * Finds +mixins
-	 *
-	 * @author Anthony Short
-	 * @param $string
-	 * @return array
-	 */
-	public function find_mixins($string)
-	{
-		if(preg_match_all('/\+(([0-9a-zA-Z_-]*?)(\((.*?)\))?)\;/xs', $string, $found))
-			return $found;
-	}
-	
-	/**
-	 * Parses the parameters of the base
-	 *
-	 * @author Anthony Short
-	 * @param $params
-	 * @return array
-	 */
-	public function parse_params($mixin_name, $params, $function_args = array())
-	{
-		$parsed = array();
-		
-		# Make sure any commas inside ()'s, such as rgba(255,255,255,0.5) are encoded before exploding
-		# so that it doesn't break the rule.
-		if(preg_match_all('/\([^)]*?,[^)]*?\)/',$params, $matches))
-		{
-			foreach($matches as $key => $value)
-			{
-				$original = $value;
-				$new = str_replace(',','#COMMA#',$value);
-				$params = str_replace($original,$new,$params);
-			}
-		}
-
-		$mixin_params = ($params != "") ? explode(',', $params) : array();
-		
-		# Loop through each function arg and create the parsed params array
-		foreach($function_args as $key => $value)
-		{
-			$v = explode('=', $value);
 			
-			# Remove the $ so we can set it as a constants
-			$v[0] = str_replace('$','',$v[0]);
-
-			# If the user didn't include one of the params, we'll check to see if a default is available			
-			if(count($mixin_params) == 0 || !isset($mixin_params[$key]))
-			{	
-				# If there is a default value for the param			
-				if(strstr($value, '='))
-				{
-					//$parsed_value = Constants::replace(Scaffold_Utils::unquote( trim($v[1]) ));
-					//$parsed[trim($v[0])] = (string)$parsed_value;
-				}
-				
-				# Otherwise they've left one out
-				else
-				{
-					throw new Exception("Missing mixin parameter - " . $mixin_name);
-				}
-			}
-			else
+			// Now we need to replace them in the CSS
+			if(preg_match_all('/\@include\s+([0-9a-zA-Z_\-]+)(\((.*?)\))?\s*\;/sx', $css, $includes))
 			{
-				$value = (string)Scaffold_Utils::unquote(trim($mixin_params[$key]));
-				$parsed[trim($v[0])] = str_replace('#COMMA#',',',$value);
-			}		
-		}
-
-		return $parsed;
-	}
-	
-	/**
-	 * Parses a string for CSS-style conditionals
-	 *
-	 * @param $string A string of css
-	 * @return void
-	 **/
-	public function parse_conditionals($string = "")
-	{		
-		# Find all @if, @else, and @elseif's groups
-		if($found = $this->find_conditionals($string))
-		{
-			# Go through each one
-			foreach($found[1] as $key => $value)
-			{
-				$result = false;
-				
-				# Find which equals sign was used and explode it
-				preg_match("/\!=|\!==|===|==|\>|\<|\>=|\<=/", $value, $match); 
-
-				# Explode it out so we can test it.
-				$exploded = explode($match[0], $value);
-				$val = trim($exploded[0]);
-
-				if(preg_match('/[a-zA-Z]/', $val) && (strtolower($val) != "true" && strtolower($val) != "false") )
-				{					
-					$value = str_replace($val, "'$val'", $value);
-				}
-				
-				eval("if($value){ \$result = true;}");
-				
-				# When one of them is if true, replace the whole group with the contents of that if and continue
-				if($result)
+				foreach($includes[1] as $include_key => $include)
 				{
-					$string = str_replace($found[0][$key], $found[3][$key], $string);
-				}
-				# If there is an @else
-				elseif($found[5] != "")
-				{
-					$string = str_replace($found[0][$key], $found[7][$key], $string);
-				}
-				else
-				{
-					$string = str_replace($found[0][$key], '', $string);
-				}	
-			}
-		}
-		return $string;
-	}
-	
-	/**
-	 * Finds if statements in a string
-	 *
-	 * @author Anthony Short
-	 * @param $string
-	 * @return array
-	 */
-	public function find_conditionals($string = "")
-	{
-		$recursive = 2; 
-		
-		$regex = 
-			"/
+					// If the mixin doesn't exist	
+					if(!isset($this->mixins[$include]))
+						throw new Exception("Mixin does not exist - $include");
 				
-				# Find the @if's
-				(?:@(?:if))\((.*?)\)
-				
-				# Return all inner selectors and properties
-				(
-					(?:[0-9a-zA-Z\_\-\*&]*?)\s*
-					\{	
-						((?:[^{}]+|(?{$recursive}))*)
-					\}
-				)
-				
-				\s*
-				
-				(
-					# Find the @elses if they exist
-					(@else)
+					$mixin = $this->mixins[$include];
+					$params = ($includes[3][$include_key] != false) ? explode(',',$includes[3][$include_key]) : false;
+					$content = $mixin['content'];
+					
+					if($mixin['params'] !== false)
+					{
+						foreach($mixin['params'] as $key => $param)
+						{
+							// Missing a parameter
+							if(!isset($params[$key]))
+							{
+								// No default value
+								if($mixin['default_params'][$key] === false)
+								{
+									throw new Exception("Missing parameter $key from $include");
+								}
+								
+								$params[$key] = $mixin['default_params'][$key];
+							}
+							
+							$content = str_replace(trim($param),$params[$key],$content);
+						}
+					}
 
-					# Return all inner selectors and properties
-					(
-						(?:[0-9a-zA-Z\_\-\*&]*?)\s*
-						\{	
-							((?:[^{}]+|(?{$recursive}))*)
-						\}
-					)
-				)?
-				
-			/xs";
-		
-		if(preg_match_all($regex, $string, $match))
-		{
-			return $match;
-		}
-		else
-		{
-			return array();
+					$css = str_replace($includes[0][$include_key],$content,$css);
+				}
+			}	
+			
+			$source->contents = $css;
 		}
 	}
-
 }
