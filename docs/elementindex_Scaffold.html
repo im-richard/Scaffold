@@ -58,7 +58,6 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$_default_options">Scaffold_Response::$_default_options</a> in Response.php</div>
-							<div class="index-item-description">Default Options</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$_load_paths</span>
@@ -79,7 +78,6 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#method__construct">Scaffold_Response::__construct()</a> in Response.php</div>
-							<div class="index-item-description">Constructor</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
@@ -132,21 +130,20 @@
 						<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Compressor.html#method__construct">Scaffold_Response_Compressor::__construct()</a> in Compressor.php</div>
-							<div class="index-item-description">Constructor</div>
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Encoder.html#method__construct">Scaffold_Response_Encoder::__construct()</a> in Encoder.php</div>
+							<div class="index-item-description">Determine the compression level, and what type of encoding the user agent accepts</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Cache.html#method__construct">Scaffold_Response_Cache::__construct()</a> in Cache.php</div>
-							<div class="index-item-description">Constructor</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">__construct</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#method__construct">Scaffold_Source_Url::__construct()</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#method__construct">Scaffold_Source_Url::__construct()</a> in URL.php</div>
 							<div class="index-item-description">Constructor</div>
 					</dd>
 			<dt class="field">
@@ -216,6 +213,12 @@
 							<div class="index-item-description">Handles the caching of parsed sources</div>
 					</dd>
 			<dt class="field">
+						<span class="var-title">$cache</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$cache">Scaffold_Response::$cache</a> in Response.php</div>
+					</dd>
+			<dt class="field">
 						<span class="var-title">$config</span>
 					</dt>
 		<dd class="index-item-body">
@@ -258,15 +261,8 @@
 						<span class="method-title">can_encode</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Compressor.html#methodcan_encode">Scaffold_Response_Compressor::can_encode()</a> in Compressor.php</div>
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Encoder.html#methodcan_encode">Scaffold_Response_Encoder::can_encode()</a> in Encoder.php</div>
 							<div class="index-item-description">Checks to make sure that the user agent will  accept encoding. Also checks to make sure  that compression level isn't set to false.</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">compress</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Compressor.html#methodcompress">Scaffold_Response_Compressor::compress()</a> in Compressor.php</div>
-							<div class="index-item-description">Encode the output using gzip compression if available. If no  compression is available, or it is disabled, it will just return  the content as normal.</div>
 					</dd>
 			<dt class="field">
 						<span class="include-title">Cache.php</span>
@@ -275,16 +271,10 @@
 			<div class="index-item-details"><a href="Scaffold/Response/_Scaffold---Response---Cache.php.html">Cache.php</a> in Cache.php</div>
 					</dd>
 			<dt class="field">
-						<span class="include-title">Compressor.php</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/_Scaffold---Response---Compressor.php.html">Compressor.php</a> in Compressor.php</div>
-					</dd>
-			<dt class="field">
 						<span class="var-title">$contents</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$contents">Scaffold_Source_Url::$contents</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$contents">Scaffold_Source_Url::$contents</a> in URL.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$contents</span>
@@ -364,6 +354,19 @@
 	</div>
 	<dl>
 			<dt class="field">
+						<span class="var-title">$encoder</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$encoder">Scaffold_Response::$encoder</a> in Response.php</div>
+					</dd>
+			<dt class="field">
+						<span class="var-title">$encoding</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$encoding">Scaffold_Response::$encoding</a> in Response.php</div>
+							<div class="index-item-description">Output encoding</div>
+					</dd>
+			<dt class="field">
 						<span class="var-title">$expires</span>
 					</dt>
 		<dd class="index-item-body">
@@ -409,6 +412,19 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/_Scaffold---Extension.php.html">Extension.php</a> in Extension.php</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">encode</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Encoder.html#methodencode">Scaffold_Response_Encoder::encode()</a> in Encoder.php</div>
+							<div class="index-item-description">Encode the output using gzip compression if available. If no  compression is available, or it is disabled, it will just return  the content as normal.</div>
+					</dd>
+			<dt class="field">
+						<span class="include-title">Encoder.php</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Response/_Scaffold---Response---Encoder.php.html">Encoder.php</a> in Encoder.php</div>
 					</dd>
 			<dt class="field">
 						<span class="var-title">$expires</span>
@@ -487,6 +503,34 @@
 			<div class="index-item-details"><a href="Scaffold/_Scaffold---Cache---File.php.html">File.php</a> in File.php</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">find</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodfind">Scaffold_Source_Url::find()</a> in URL.php</div>
+							<div class="index-item-description">Finds a file relative to the source file from a URL</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">find</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_String.html#methodfind">Scaffold_Source_String::find()</a> in String.php</div>
+							<div class="index-item-description">Finds a file relative to the source file from a URL</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">find</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source.html#methodfind">Scaffold_Source::find()</a> in Source.php</div>
+							<div class="index-item-description">Finds a file relative to the source file from a URL</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">find</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_File.html#methodfind">Scaffold_Source_File::find()</a> in File.php</div>
+							<div class="index-item-description">Finds a file relative to the source file from a URL</div>
+					</dd>
+			<dt class="field">
 						<span class="include-title">File.php</span>
 					</dt>
 		<dd class="index-item-body">
@@ -500,6 +544,13 @@
 		<div style="clear: both"></div>
 	</div>
 	<dl>
+			<dt class="field">
+						<span class="method-title">generate_etag</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#methodgenerate_etag">Scaffold_Response::generate_etag()</a> in Response.php</div>
+							<div class="index-item-description">Generates an etag from an array of values</div>
+					</dd>
 			<dt class="field">
 						<span class="method-title">get</span>
 					</dt>
@@ -550,24 +601,10 @@
 							<div class="index-item-description">Gets the response encoder object</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">get_compression_level</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Compressor.html#methodget_compression_level">Scaffold_Response_Compressor::get_compression_level()</a> in Compressor.php</div>
-							<div class="index-item-description">Gets the compression level</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">get_encoding_method</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Compressor.html#methodget_encoding_method">Scaffold_Response_Compressor::get_encoding_method()</a> in Compressor.php</div>
-							<div class="index-item-description">Returns the encoding type</div>
-					</dd>
-			<dt class="field">
 						<span class="method-title">get_encoding_type</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Compressor.html#methodget_encoding_type">Scaffold_Response_Compressor::get_encoding_type()</a> in Compressor.php</div>
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Encoder.html#methodget_encoding_type">Scaffold_Response_Encoder::get_encoding_type()</a> in Encoder.php</div>
 							<div class="index-item-description">Returns the type of encoding to use in the Content-Encoding header  based on the method that is being used to compress the content.</div>
 					</dd>
 			<dt class="field">
@@ -576,6 +613,20 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Cache.html#methodget_etag">Scaffold_Response_Cache::get_etag()</a> in Cache.php</div>
 							<div class="index-item-description">Gets the client etags</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">get_level</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Encoder.html#methodget_level">Scaffold_Response_Encoder::get_level()</a> in Encoder.php</div>
+							<div class="index-item-description">Gets the compression level</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">get_method</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Encoder.html#methodget_method">Scaffold_Response_Encoder::get_method()</a> in Encoder.php</div>
+							<div class="index-item-description">Returns the encoding type</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">get_modified_since</span>
@@ -588,7 +639,7 @@
 						<span class="method-title">get</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodget">Scaffold_Source_Url::get()</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodget">Scaffold_Source_Url::get()</a> in URL.php</div>
 							<div class="index-item-description">Get the current contents of the source</div>
 					</dd>
 			<dt class="field">
@@ -625,14 +676,6 @@
 					</dt>
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$headers">Scaffold_Response::$headers</a> in Response.php</div>
-							<div class="index-item-description">The headers to be sent to the browser</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">header</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#methodheader">Scaffold_Response::header()</a> in Response.php</div>
-							<div class="index-item-description">Gets the value of a header</div>
 					</dd>
 		</dl>
 	<a name="i"></a>
@@ -653,7 +696,7 @@
 						<span class="method-title">id</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodid">Scaffold_Source_Url::id()</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodid">Scaffold_Source_Url::id()</a> in URL.php</div>
 							<div class="index-item-description">Return the unique id for this source</div>
 					</dd>
 			<dt class="field">
@@ -707,10 +750,10 @@
 							<div class="index-item-description">Get the line number of a certain string within the CSS</div>
 					</dd>
 			<dt class="field">
-						<span class="method-title">loadExtensions</span>
+						<span class="method-title">load_extensions</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Scaffold_Container.html#methodloadExtensions">Scaffold_Container::loadExtensions()</a> in Container.php</div>
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Container.html#methodload_extensions">Scaffold_Container::load_extensions()</a> in Container.php</div>
 							<div class="index-item-description">Loads the extension files</div>
 					</dd>
 			<dt class="field">
@@ -729,7 +772,7 @@
 						<span class="method-title">last_modified</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodlast_modified">Scaffold_Source_Url::last_modified()</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodlast_modified">Scaffold_Source_Url::last_modified()</a> in URL.php</div>
 							<div class="index-item-description">Get the last-modified time for this source</div>
 					</dd>
 			<dt class="field">
@@ -768,6 +811,27 @@
 			<div class="index-item-details"><a href="Scaffold/Scaffold_Cache_File.html#var$max_age">Scaffold_Cache_File::$max_age</a> in File.php</div>
 							<div class="index-item-description">The maximum age of cache files</div>
 					</dd>
+			<dt class="field">
+						<span class="var-title">$messages</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$messages">Scaffold_Response::$messages</a> in Response.php</div>
+							<div class="index-item-description">HTTP status codes and messages</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">matched</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Cache.html#methodmatched">Scaffold_Response_Cache::matched()</a> in Cache.php</div>
+							<div class="index-item-description">ETags match</div>
+					</dd>
+			<dt class="field">
+						<span class="method-title">modified</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Cache.html#methodmodified">Scaffold_Response_Cache::modified()</a> in Cache.php</div>
+							<div class="index-item-description">Has the resource been modified?</div>
+					</dd>
 		</dl>
 	<a name="n"></a>
 	<div class="index-letter-section">
@@ -795,8 +859,21 @@
 						<span class="var-title">$options</span>
 					</dt>
 		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$options">Scaffold_Response::$options</a> in Response.php</div>
+					</dd>
+			<dt class="field">
+						<span class="var-title">$options</span>
+					</dt>
+		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/Scaffold_Container.html#var$options">Scaffold_Container::$options</a> in Container.php</div>
 							<div class="index-item-description">The various options for different parts of the system</div>
+					</dd>
+			<dt class="field">
+						<span class="var-title">$output</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$output">Scaffold_Response::$output</a> in Response.php</div>
+							<div class="index-item-description">What will be rendered</div>
 					</dd>
 			<dt class="field">
 						<span class="include-title">Observable.php</span>
@@ -820,13 +897,13 @@
 						<span class="var-title">$original</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$original">Scaffold_Source_Url::$original</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$original">Scaffold_Source_Url::$original</a> in URL.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">original</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodoriginal">Scaffold_Source_Url::original()</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodoriginal">Scaffold_Source_Url::original()</a> in URL.php</div>
 							<div class="index-item-description">Returns the contents of the original source file</div>
 					</dd>
 			<dt class="field">
@@ -993,6 +1070,12 @@
 							<div class="index-item-description">Valid start of a selector</div>
 					</dd>
 			<dt class="field">
+						<span class="var-title">$status</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#var$status">Scaffold_Response::$status</a> in Response.php</div>
+					</dd>
+			<dt class="field">
 						<span class="var-title">$system</span>
 					</dt>
 		<dd class="index-item-body">
@@ -1138,6 +1221,13 @@
 							<div class="index-item-description">Set a value based on an id. Optionally add tags.</div>
 					</dd>
 			<dt class="field">
+						<span class="method-title">set</span>
+					</dt>
+		<dd class="index-item-body">
+			<div class="index-item-details"><a href="Scaffold/Scaffold_Response.html#methodset">Scaffold_Response::set()</a> in Response.php</div>
+							<div class="index-item-description">Sets the output for the response</div>
+					</dd>
+			<dt class="field">
 						Scaffold_Response_Cache
 					</dt>
 		<dd class="index-item-body">
@@ -1145,11 +1235,11 @@
 							<div class="index-item-description">Scaffold_Response_Cache</div>
 					</dd>
 			<dt class="field">
-						Scaffold_Response_Compressor
+						Scaffold_Response_Encoder
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Compressor.html">Scaffold_Response_Compressor</a> in Compressor.php</div>
-							<div class="index-item-description">Scaffold_Response_Compressor</div>
+			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Encoder.html">Scaffold_Response_Encoder</a> in Encoder.php</div>
+							<div class="index-item-description">Scaffold_Response_Encoder</div>
 					</dd>
 			<dt class="field">
 						<span class="include-title">String.php</span>
@@ -1188,14 +1278,14 @@
 						Scaffold_Source_Url
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html">Scaffold_Source_Url</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html">Scaffold_Source_Url</a> in URL.php</div>
 							<div class="index-item-description">Scaffold_Source_Url</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">set</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodset">Scaffold_Source_Url::set()</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodset">Scaffold_Source_Url::set()</a> in URL.php</div>
 							<div class="index-item-description">Set the current contents of the source</div>
 					</dd>
 			<dt class="field">
@@ -1231,7 +1321,7 @@
 						<span class="var-title">$type</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$type">Scaffold_Source_Url::$type</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$type">Scaffold_Source_Url::$type</a> in URL.php</div>
 							<div class="index-item-description">The type of source</div>
 					</dd>
 			<dt class="field">
@@ -1273,20 +1363,20 @@
 						<span class="var-title">$url</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$url">Scaffold_Source_Url::$url</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#var$url">Scaffold_Source_Url::$url</a> in URL.php</div>
 							<div class="index-item-description">The url to the source file</div>
 					</dd>
 			<dt class="field">
-						<span class="include-title">Url.php</span>
+						<span class="include-title">URL.php</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/_Scaffold---Source---Url.php.html">Url.php</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/_Scaffold---Source---URL.php.html">URL.php</a> in URL.php</div>
 					</dd>
 			<dt class="field">
 						<span class="method-title">url</span>
 					</dt>
 		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodurl">Scaffold_Source_Url::url()</a> in Url.php</div>
+			<div class="index-item-details"><a href="Scaffold/Source/Scaffold_Source_Url.html#methodurl">Scaffold_Source_Url::url()</a> in URL.php</div>
 							<div class="index-item-description">Return the URL of the source</div>
 					</dd>
 		</dl>
@@ -1303,13 +1393,6 @@
 		<dd class="index-item-body">
 			<div class="index-item-details"><a href="Scaffold/Scaffold_Helper_CSS.html#methodvalid_selector">Scaffold_Helper_CSS::valid_selector()</a> in CSS.php</div>
 							<div class="index-item-description">Checks if a selector is valid</div>
-					</dd>
-			<dt class="field">
-						<span class="method-title">valid</span>
-					</dt>
-		<dd class="index-item-body">
-			<div class="index-item-details"><a href="Scaffold/Response/Scaffold_Response_Cache.html#methodvalid">Scaffold_Response_Cache::valid()</a> in Cache.php</div>
-							<div class="index-item-description">Checks if the users cache is still valid by checking the last modified  time and etag against the browsers sent header.</div>
 					</dd>
 		</dl>
 

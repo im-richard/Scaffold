@@ -122,9 +122,9 @@
 											(<span class="var-type">$id</span>&nbsp;<span class="var-name">$id</span>, [<span class="var-type">$relative_time</span>&nbsp;<span class="var-name">$relative_time</span> = <span class="var-default">false</span>], [<span class="var-type">$default</span>&nbsp;<span class="var-name">$default</span> = <span class="var-default">false</span>])
 									</div>
 																<div class="method-definition">
-											<span class="method-result">boolean</span>
+											<span class="method-result">string</span>
 										<a href="#set" title="details" class="method-name">set</a>
-											(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$last_modified</span> = <span class="var-default">null</span>])
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$last_modified</span> = <span class="var-default">false</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$expires</span> = <span class="var-default">true</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$encode</span> = <span class="var-default">true</span>])
 									</div>
 								</div>
 		</div>
@@ -144,7 +144,7 @@
 					</div>
 		<div class="info-box-body">
 			<a name="var$directory" id="$directory"><!-- --></A>
-<div class="oddrow">
+<div class="evenrow">
 
 	<div class="var-header">
 		<span class="var-title">
@@ -172,7 +172,7 @@
 
 </div>
 <a name="var$max_age" id="$max_age"><!-- --></A>
-<div class="evenrow">
+<div class="oddrow">
 
 	<div class="var-header">
 		<span class="var-title">
@@ -218,7 +218,7 @@
 			<A NAME='method_detail'></A>
 
 <a name="method__construct" id="__construct"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
 		<span class="method-title">Constructor __construct</span> (line <span class="line-number">38</span>)
@@ -250,10 +250,10 @@
 			
 	</div>
 <a name="methodcreate" id="create"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">create</span> (line <span class="line-number">199</span>)
+		<span class="method-title">create</span> (line <span class="line-number">211</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -279,10 +279,10 @@
 			
 	</div>
 <a name="methoddelete" id="delete"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">delete</span> (line <span class="line-number">111</span>)
+		<span class="method-title">delete</span> (line <span class="line-number">123</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -314,10 +314,10 @@
 			
 	</div>
 <a name="methoddelete_all" id="delete_all"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">delete_all</span> (line <span class="line-number">151</span>)
+		<span class="method-title">delete_all</span> (line <span class="line-number">163</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -344,10 +344,10 @@
 			
 	</div>
 <a name="methodexists" id="exists"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">exists</span> (line <span class="line-number">165</span>)
+		<span class="method-title">exists</span> (line <span class="line-number">177</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -373,10 +373,10 @@
 			
 	</div>
 <a name="methodexpires" id="expires"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">expires</span> (line <span class="line-number">177</span>)
+		<span class="method-title">expires</span> (line <span class="line-number">189</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -402,10 +402,10 @@
 			
 	</div>
 <a name="methodfind" id="find"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">find</span> (line <span class="line-number">188</span>)
+		<span class="method-title">find</span> (line <span class="line-number">200</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -431,10 +431,10 @@
 			
 	</div>
 <a name="methodget" id="get"><!-- --></a>
-<div class="evenrow">
+<div class="oddrow">
 	
 	<div class="method-header">
-		<span class="method-title">get</span> (line <span class="line-number">57</span>)
+		<span class="method-title">get</span> (line <span class="line-number">58</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
@@ -472,24 +472,25 @@
 			
 	</div>
 <a name="methodset" id="set"><!-- --></a>
-<div class="oddrow">
+<div class="evenrow">
 	
 	<div class="method-header">
-		<span class="method-title">set</span> (line <span class="line-number">86</span>)
+		<span class="method-title">set</span> (line <span class="line-number">87</span>)
 	</div> 
 	
 	<!-- ========== Info from phpDoc block ========= -->
 <p class="short-description">Set a value based on an id.</p>
 	<ul class="tags">
+				<li><span class="field">return:</span> The full path of the file that was just used as a cache</li>
 				<li><span class="field">access:</span> public</li>
 			</ul>
 	
 	<div class="method-signature">
-		<span class="method-result">boolean</span>
+		<span class="method-result">string</span>
 		<span class="method-name">
 			set
 		</span>
-					(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$last_modified</span> = <span class="var-default">null</span>])
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$data</span>, [<span class="var-type">integer</span>&nbsp;<span class="var-name">$last_modified</span> = <span class="var-default">false</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$expires</span> = <span class="var-default">true</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$encode</span> = <span class="var-default">true</span>])
 			</div>
 	
 			<ul class="parameters">
@@ -502,6 +503,12 @@
 					<li>
 				<span class="var-type">integer</span>
 				<span class="var-name">$last_modified</span><span class="var-description">: When the source file was last modified</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$expires</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$encode</span>			</li>
 				</ul>
 		
 			<hr class="separator" />
@@ -529,7 +536,7 @@
 
 
 	<p class="notes" id="credit">
-		Documentation generated on Wed, 07 Jul 2010 00:14:54 +1000 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+		Documentation generated on Sun, 18 Jul 2010 11:44:54 +1000 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
 	</p>
 	</div></body>
 </html>
