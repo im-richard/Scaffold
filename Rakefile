@@ -28,4 +28,9 @@ desc "Opens the reports log"
 task :report do
 	system("open #{DIRTESTS}/log/report/index.html")
 end
-	
+
+desc "Creates a new release from the current tag"
+task :release, :tag do |t, args|
+	tag = args[:tag]
+	system("git archive #{tag} --prefix=scaffold/ --format=zip > ../Releases/scaffold-#{tag}.zip")
+end
