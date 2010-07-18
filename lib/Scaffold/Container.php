@@ -85,7 +85,7 @@ class Scaffold_Container
 			if(file_exists($file))
 			{
 				require_once realpath($ext.$name.'.php');
-				$scaffold->attach($name,new $class($config,$ext));
+				$scaffold->attach($name,new $class($scaffold,$config));
 			}
 		}
 
@@ -107,13 +107,34 @@ class Scaffold_Container
 		# Loading files and directories
 		$loader = $this->getLoader();
 		
+		# Helper methods
+		$helper = $this->getHelper();
+		
 		# The main object
-		$scaffold = new Scaffold($cache,$response,$loader,$this->options['production']);
+		$scaffold = new Scaffold($cache,$response,$loader,$helper,$this->options['production']);
 		
 		# Load extensions
 		$scaffold = $this->load_extensions($this->system.'/extensions/',$scaffold);
 		
 		return $scaffold;
+	}
+	
+	/**
+	 * Gets the helper object
+	 * @access public
+	 * @return Scaffold_Helper
+	 */
+	public function getHelper()
+	{
+		if(isset($this->_helper))
+			return $this->_helper;
+			
+		$helper = new Scaffold_Helper();
+		$helper->add('string',new Scaffold_Helper_String());
+		$helper->add('css',new Scaffold_Helper_CSS());
+		$this->_helper = $helper;
+		
+		return $this->_helper; 
 	}
 
 	/**

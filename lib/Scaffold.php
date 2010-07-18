@@ -42,6 +42,13 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * @var Scaffold_Loader
 	 */
 	 public $loader;
+	 
+	 /**
+	  * Optional objects with helper methods
+	  * @access public
+	  * @var Scaffold_Helper
+	  */
+	 public $helper;
 	
 	// =========================================
 	// = Protected Variables =
@@ -65,11 +72,12 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * @param $production 	boolean
 	 * @return void
 	 */
-	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, Scaffold_Loader $loader, $production = false)
+	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, Scaffold_Loader $loader, Scaffold_Helper $helper, $production = false)
 	{		
 		$this->cache = $cache;
 		$this->response = $response;
 		$this->loader = $loader;
+		$this->helper = $helper;
 		$this->production = $production;
 	}
 	

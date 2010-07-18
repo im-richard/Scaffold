@@ -16,13 +16,13 @@ class Scaffold_Helper_CSS
 	 * Valid start of a selector
 	 * @var string
 	 */
-	public static $selector_start = '[0-9A-Za-z\_\#\.\*\:\&\=]';
+	public $selector_start = '[0-9A-Za-z\_\#\.\*\:\&\=]';
 
 	/**
 	 * Regex for a valid selector
 	 * @var string
 	 */
-	public static $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s]';
+	public $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s]';
 
 	/**
 	 * Removes single-line comments from a string
@@ -30,7 +30,7 @@ class Scaffold_Helper_CSS
 	 * @param string
 	 * @return string
 	 */
-	public static function remove_inline_comments($string)
+	public function remove_inline_comments($string)
 	{
 		 return preg_replace('#($|\s)//.*$#Umsi', '', $string);
 	}
@@ -41,7 +41,7 @@ class Scaffold_Helper_CSS
 	 * @param $string
 	 * @return string
 	 */
-	public static function remove_newlines($string)
+	public function remove_newlines($string)
 	{
 		return preg_replace('/\n+|\r+|\t+/', '', $string);
 	}
@@ -52,7 +52,7 @@ class Scaffold_Helper_CSS
 	 * @param $string
 	 * @return string
 	 */
-	public static function remove_comments($string)
+	public function remove_comments($string)
 	{
 		return preg_replace('#/\*[^*]*\*+([^/*][^*]*\*+)*/#', '', $string);
 	}
@@ -63,7 +63,7 @@ class Scaffold_Helper_CSS
 	 * @param $selector
 	 * @return string
 	 */
-	public static function escape_regex($selector)
+	public function escape_regex($selector)
 	{
 		$selector = preg_quote($selector,'-');
 		$selector = str_replace('#','\#',$selector);
@@ -85,7 +85,7 @@ class Scaffold_Helper_CSS
 	 * @param $type int Which array to return
 	 * @return array
 	 */
-	public static function find_functions($name,$string)
+	public function find_functions($name,$string)
 	{
 		$return = array();
 		$regex ="/{$name}(\s*\(\s*((?:(?0)|(?1)|[^()]+)*)\s*\)\s*)/sx";
@@ -144,7 +144,7 @@ class Scaffold_Helper_CSS
 	 * @param $string
 	 * @return array
 	 */
-	public static function ruleset_to_array($string)
+	public function ruleset_to_array($string)
 	{
 		$return = array();
 
@@ -179,7 +179,7 @@ class Scaffold_Helper_CSS
 	 * @param $css string
 	 * @return array
 	 */
-	public static function find_selectors_with_property($property,$css)
+	public function find_selectors_with_property($property,$css)
 	{
 		$return = array();
 		$regex = "/([^{}]*)\s*\{\s*($property|[^}]*[\s\;]$property)\s*:[^}]*}/sx";
@@ -205,7 +205,7 @@ class Scaffold_Helper_CSS
 	 * @param $string string
 	 * @todo This will break if the selector they try and find is actually part of another selector
 	 */
-	public static function find_selectors($selector,$string,$escape = true)
+	public function find_selectors($selector,$string,$escape = true)
 	{
 		$selector = ($escape) ? self::escape_regex($selector) : $selector;
 		$regex = "/(^|[\}\s\;])* ( ($selector) \s*\{[^}]*\} )/sx";
@@ -218,7 +218,7 @@ class Scaffold_Helper_CSS
 	 * @param $string
 	 * @return boolean
 	 */
-	public static function selector_exists($name,$string)
+	public function selector_exists($name,$string)
 	{
 		return preg_match('/(^|})\s*'.$name.'\s*\{/', $string) ? true : false;
 	}
@@ -228,7 +228,7 @@ class Scaffold_Helper_CSS
 	 * @param $string
 	 * @return boolean
 	 */
-	public static function valid_selector($string)
+	public function valid_selector($string)
 	{
 		return preg_match(self::$_identifier,$string);
 	}
@@ -245,7 +245,7 @@ class Scaffold_Helper_CSS
 	 * @param $css
 	 * @return array
 	 */
-	public static function find_properties_with_value($property,$value,$css,$escape_value=true)
+	public function find_properties_with_value($property,$value,$css,$escape_value=true)
 	{
 		$return = array();
 		$escaped_property = self::escape_regex($property);
@@ -301,7 +301,7 @@ class Scaffold_Helper_CSS
 	 * @param $value string
 	 * @param $css string
 	 */
-	public static function remove_properties_with_value($property,$value,$string,$escape_value=true)
+	public function remove_properties_with_value($property,$value,$string,$escape_value=true)
 	{
 		# Prepare
 		$escaped_property = self::escape_regex($property);
@@ -340,7 +340,7 @@ class Scaffold_Helper_CSS
 	 * @param $property string Regex formatted string
 	 * @param $string string
 	 */
-	public static function find_properties($property,$string)
+	public function find_properties($property,$string)
 	{
 		return self::find_properties_with_value($property,'[^;}]*',$string,false);
 	}
@@ -351,7 +351,7 @@ class Scaffold_Helper_CSS
 	 * @param $property string
 	 * @param $string string
 	 */
-	public static function remove_properties($property,$string)
+	public function remove_properties($property,$string)
 	{
 		return self::remove_properties_with_value($property,'[^;}]*',$string,false);
 	}
@@ -368,7 +368,7 @@ class Scaffold_Helper_CSS
 	 * @param $string
 	 * @return array
 	 */
-	public static function find_atrule($name,$string)
+	public function find_atrule($name,$string)
 	{
 		$name = self::escape_regex($name);
 		$regex = "/
@@ -394,7 +394,7 @@ class Scaffold_Helper_CSS
 	 * @param $css
 	 * @return string
 	 */
-	public static function remove_atrule($name,$css)
+	public function remove_atrule($name,$css)
 	{
 		$rules = self::find_atrule($name,$css);
 		return str_replace($rules[0],'',$css);

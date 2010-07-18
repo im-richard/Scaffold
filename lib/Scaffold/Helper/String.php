@@ -19,7 +19,7 @@ class Scaffold_Helper_String
 	 * @param $string
 	 * @return return type
 	 */
-	public static function line_number($find,$string)
+	public function line_number($find,$string)
 	{	
 		if(strstr($string,$find))
 		{
@@ -39,7 +39,7 @@ class Scaffold_Helper_String
 	 * @param $content boolean
 	 * @return return type
 	 */
-	public static function line_contents($line,$string,$context = false)
+	public function line_contents($line,$string,$context = false)
 	{
 		$string = explode("\n",$string);
 		
