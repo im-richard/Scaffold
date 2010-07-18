@@ -1,5 +1,6 @@
 /tests export-ignore
 /docs export-ignore
+/releases export-ignore
 Rakefile export-ignore
 README.markdown export-ignore
 .gitattributes export-ignore
