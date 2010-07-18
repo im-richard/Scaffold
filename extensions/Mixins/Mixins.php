@@ -6,35 +6,14 @@
  * to selectors from within your css. You can also pass arguments through
  * to the mixin.
  *
- *		@mixin table-base {
-		   th {
-		     text-align: center;
-		     font-weight: bold;
-		   }
-		   td, th {padding: 2px}
-		 }
-		 
-		 @mixin left($dist) {
-		   float: left;
-		   margin-left: $dist;
-		 }
-		 
-		 #data {
-		   @include left(10px);
-		   @include table-base;
-		 }
- * 
- * @author Anthony Short
+ * @package 		Scaffold
+ * @author 			Anthony Short <anthonyshort@me.com>
+ * @copyright 		2009-2010 Anthony Short. All rights reserved.
+ * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
+ * @link 			https://github.com/anthonyshort/csscaffold/master
  */
 class Scaffold_Extension_Mixins extends Scaffold_Extension
 {
-	/**
-	 * Default settings which are used if the configuration
-	 * settings from the file aren't set.
-	 * @var array
-	 */
-	public $_defaults = array();
-
 	/**
 	 * Stores the mixins for debugging purposes
 	 * @var array
