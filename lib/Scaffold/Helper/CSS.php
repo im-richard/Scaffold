@@ -22,7 +22,7 @@ class Scaffold_Helper_CSS
 	 * Regex for a valid selector
 	 * @var string
 	 */
-	public $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s]';
+	public $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s\,]';
 
 	/**
 	 * Removes single-line comments from a string

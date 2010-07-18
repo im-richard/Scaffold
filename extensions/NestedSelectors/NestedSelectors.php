@@ -11,33 +11,49 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 * The character used to represent the parent selector
 	 */
 	const PARENT = '&';
-
-	/**
-	 * Array of selectors to skip and keep them nested.
-	 * It just checks if the string is present, so it can
-	 * just be part of a string, like the @media rule is below.
-	 * @var array
-	 */
-	protected $skip = array
-	(
-		'@media'
-	);
 	
 	/**
 	 * Stores the CSS comments so they don't break processing
 	 * @var array
 	 */
 	private $comments = array();
+	
+	/**
+	 * @var Scaffold_Helper_String
+	 */
+	public $string;
+	
+	/**
+	 * @var Scaffold_Helper_CSS
+	 */
+	public $css;
+	
+	/**
+	 * @access public
+	 * @param $source
+	 * @param $scaffold
+	 * @return void
+	 */
+	public function __construct($scaffold,$config)
+	{
+		$this->config = array_merge($this->_defaults,$config);
+		$this->string = $scaffold->helper->string;
+		$this->css = $scaffold->helper->css;
+	}
 
 	/**
 	 * @access public
 	 * @return $source Scaffold_Source
 	 */
-	public function pre_process($source)
+	public function pre_process($source,$scaffold)
 	{
+		$this->selector_start = $this->css->selector_start;
+		$this->selector = $this->css->selector;
+	
 		$output = "";
-		$css = $source->get();
-		$xml = $this->to_xml($css);
+		$xml = $this->to_xml($source->contents);
+		
+		print_r($xml);exit;
 
 		foreach($xml->children() as $key => $value)
 		{
@@ -212,7 +228,6 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 		# If the child references the parent selector
 		elseif (strstr($child, self::PARENT))
 		{
-							
 			$parent = str_replace(self::PARENT, $parent, $child);
 		}
 		
@@ -259,65 +274,45 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 * @return string $css
 	 */
 	public function to_xml($css)
-	{		
+	{	
 		# Convert comments
-		$this->comments = array();
 		$xml = preg_replace_callback('/\/\*(.*?)\*\//sx', array($this,'encode_comment') ,$css);
-
-		# Convert imports
-		$xml = preg_replace(
-		    '/
-		        @import\\s+
-		        (?:url\\(\\s*)?      # maybe url(
-		        [\'"]?               # maybe quote
-		        (.*?)                # 1 = URI
-		        [\'"]?               # maybe end quote
-		        (?:\\s*\\))?         # maybe )
-		        ([a-zA-Z,\\s]*)?     # 2 = media list
-		        ;                    # end token
-		    /x',
-		    "<import url=\"$1\" media=\"$2\" />",
-		    $xml
-		);
 		
-		# Convert other at-rules
+		# Convert single line at-rules
+		$xml = preg_replace('/@(' . $this->selector . '+?)\s(.*?);/',"<at-rule name=\"$1\" params=\"$2\" />",$xml);
+		
+		# Convert at-rules with blocks
+		if(preg_match_all('/@(' . $this->selector . '+?)\s(.*?){/',$xml,$atrules))
+		{
+			foreach($atrules[0] as $atrule_key => $atrule)
+			{
+				$start = strpos($xml,$atrule) + strlen($atrule) - 1;
+				$contents = $this->string->match_delimiter('{','}',$start,$xml);
+				$inner_contents = trim($contents,'{}');
+				$replace = "<at-rule name=\"".htmlentities($atrules[1][$atrule_key])."\" params=\"".trim(htmlentities($atrules[2][$atrule_key]))."\">" . htmlentities($inner_contents) . "</at-rule>";
+				$xml = substr_replace($xml,$replace,strpos($xml,$atrule), strlen($atrule) - 1 + strlen($contents));
+			}
+		}
 
 		# Add semi-colons to the ends of property lists which don't have them
 		$xml = preg_replace('/((\:|\+)[^;])*?\}/', "$1;}", $xml);
+		
 
 		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.trim('$1').'\" value=\"'.trim('$2').'\" />\n'", $xml);
+		$xml = preg_replace('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.htmlentities(trim('$1')).'\" value=\"'.htmlentities(trim('$2')).'\" />\n'", $xml);
 		
-		# Transform selectors
-		$start = Scaffold_Helper_CSS::$selector_start;
-		$selector = Scaffold_Helper_CSS::$selector;
-		
-		$xml = preg_replace('/(\s*)('.$start.$selector.'*?)\{/me', "'$1\n<rule selector=\"'.htmlentities(preg_replace('/\s+/', ' ', trim('$2'))).'\">\n'", $xml);
-
 		# Close rules
 		$xml = preg_replace('/\;?\s*\}/', "\n</rule>", $xml);
 		
-		# Indent everything one tab
-		$xml = preg_replace('/\n/', "\r\t", $xml);
-				
-		# Tie it up with a bow
-		$xml = '<?xml version="1.0" ?'.">\r<css>\r\t$xml\r</css>\r";
+		# Transform selectors
+		$start = $this->selector_start;
+		$selector = $this->selector;
 		
-		try
-		{
-			$xml = simplexml_load_string($xml);
-		}
-		catch(Exception $e)
-		{
-			// Error message
-			$title 			= "Nested Selectors Syntax Error";
-			$message 		= 'There was an error when the Nested Selectors extension tried to convert the CSS into XML.<pre><code>'.htmlentities($xml).'</code></pre>';
-			
-			// Throw the error
-			throw new Scaffold_Extension_Exception($title,$message);
-		}
+		$xml = preg_replace('/(>\s*|^)('.$start.$selector.'*?)\{/me', "'$1\n<rule selector=\"'.htmlentities(trim('$2')).'\">\n'", $xml);
 		
-		return $xml;
+		$xml = '<?xml version="1.0" ?><css>'.$xml.'</css>';
+
+		return simplexml_load_string($xml);
 	}
 	
 	/**
@@ -328,13 +323,7 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 */
 	protected function encode_comment($comment)
 	{
-		// Encode new lines
-		$comment = preg_replace('/\n|\r/', '#NEWLINE#',$comment[1]);
-		
-		// Save it
-		$this->comments[] = $comment;
-
-		return "<property name=\"comment\" value=\"" . (count($this->comments) - 1) . "\" />";
+		return "<comment-block>".htmlentities($comment[1])."</comment-block>";
 	}
 
 }
