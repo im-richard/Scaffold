@@ -8,17 +8,6 @@
 class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 {
 	/**
-	 * The character used to represent the parent selector
-	 */
-	const PARENT = '&';
-	
-	/**
-	 * Stores the CSS comments so they don't break processing
-	 * @var array
-	 */
-	private $comments = array();
-	
-	/**
 	 * @var Scaffold_Helper_String
 	 */
 	public $string;
@@ -53,59 +42,97 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 		$output = "";
 		$xml = $this->to_xml($source->contents);
 		
-		print_r($xml);exit;
-
-		foreach($xml->children() as $key => $value)
-		{
-			$attributes = (array)$value->attributes();
-			$attributes = $attributes['@attributes'];
-	
-			# Parse properties
-			if($key == 'property')
-			{
-				if($attributes['name'] == 'comment')
-				{		
-					$output .= $this->parse_comment($attributes['value']);
-				}
-			}
-			
-			# Parse imports
-			elseif($key == 'import')
-			{
-				$imports[] = array
-				(
-					'url' => $attributes['url'],
-					'media' => $attributes['media']
-				);
-			}
-			
-			# Parse normal rules
-			else
-			{
-				$output .= $this->parse_rule($value);
-			}
-		}
+		$source->contents = $this->parse_children($xml->children());
 		
-		if(isset($imports))
-		{
-			foreach(array_reverse($imports) as $import)
-			{
-				$output = "@import '{$import['url']}' " . $import['media'] . ";" . $output;
-			}
-		}
+		print_r($source->contents);exit;
 
 		$source->set( str_replace('#NEWLINE#', "\n", $output) );
 	}
 	
 	/**
-	 * Parses the comment nodes
+	 * Parse XML nodes
 	 *
-	 * @param $comment
-	 * @return string
+	 * @author your name
+	 * @param $param
+	 * @return return type
 	 */
-	private function parse_comment($comment)
+	public function parse_children(SimpleXMLElement $children, $parent = null)
 	{
-		return '/*'. $this->comments[$comment] .'*/';
+		$output = '';
+		$content = '';
+
+		foreach($children as $key => $value)
+		{						
+			# Selectors
+			if($key == 'rule')
+			{
+				# Selector name
+				$selector = (string)$value->attributes()->selector;
+				
+				# We're in a nested rule
+				if($parent !== null)
+				{		
+					# We need to append each parent to each child selector
+					$parents 	= explode(',',$parent);
+					$child 		= explode(',',htmlentities($selector));
+					$new		= array();
+					
+					foreach($child as $sv)
+					{						
+						foreach($parents as $pv)
+						{
+							if(strstr($sv,'&'))
+							{
+								$new[] = str_replace(htmlentities('&'), $pv, $sv);
+							}
+							else
+							{
+								$new[] = $pv.' '.$sv;
+							}
+						}
+					}
+
+					$selector = implode(',',$new);
+					
+					
+				}
+
+				# Parse the nested selectors
+				$content = $this->parse_children($value->rule,$selector);
+				
+				# Remove the rules
+				unset($value->rule);
+				
+				# Parse the inner content
+				$output .= $selector . '{' . $this->parse_children($value->children()) . '}';
+				
+				# Add the extracted nested selectors
+				$output .= $content;
+			}
+	
+			# Properties
+			elseif($key == 'property')
+			{
+				$output .= $value->name . ':' . $value->value . ';';
+			}
+			
+			# @ rules
+			elseif($key == 'at_rule')
+			{
+				$output .= '@'.(string) $value->attributes()->name.' '.(string) $value->attributes()->params;
+				
+				# With block
+				if((array)$value->children() !== array())
+				{
+					$output .= '{' . $this->parse_children($value) . '}';
+				}
+				
+				# Without block
+				else { $output .= ';'; }
+			}
+		}
+		
+		return $output;
 	}
 	
 	/**
@@ -115,12 +142,11 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 * @param $rule
 	 * @return return type
 	 */
-	public function parse_rule($rule, $parent = '')
+	public function parse_rulez($rule, $parent = '')
 	{
 		$css_string = "";
 		$property_list = "";
 		$parent = trim($parent);
-		$skip = false;
 	
 		# Get the selector and store it away
 		foreach($rule->attributes() as $type => $value)
@@ -274,32 +300,39 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 * @return string $css
 	 */
 	public function to_xml($css)
-	{	
+	{
+		# So it won't break the XML
+		$css = htmlentities($css);
+		
 		# Convert comments
 		$xml = preg_replace_callback('/\/\*(.*?)\*\//sx', array($this,'encode_comment') ,$css);
 		
 		# Convert single line at-rules
-		$xml = preg_replace('/@(' . $this->selector . '+?)\s(.*?);/',"<at-rule name=\"$1\" params=\"$2\" />",$xml);
-		
+		$xml = preg_replace('/@(' . $this->selector . '+?)\s(.*?);/',"<at_rule name=\"$1\" params=\"$2\" />",$xml);
+		print_r($xml);exit;
 		# Convert at-rules with blocks
 		if(preg_match_all('/@(' . $this->selector . '+?)\s(.*?){/',$xml,$atrules))
 		{
 			foreach($atrules[0] as $atrule_key => $atrule)
 			{
-				$start = strpos($xml,$atrule) + strlen($atrule) - 1;
-				$contents = $this->string->match_delimiter('{','}',$start,$xml);
-				$inner_contents = trim($contents,'{}');
-				$replace = "<at-rule name=\"".htmlentities($atrules[1][$atrule_key])."\" params=\"".trim(htmlentities($atrules[2][$atrule_key]))."\">" . htmlentities($inner_contents) . "</at-rule>";
+				$start 				= strpos($xml,$atrule) + strlen($atrule) - 1;
+				$contents 			= $this->string->match_delimiter('{','}',$start,$xml);
+				$inner_contents 	= trim($contents,'{}');
+				
+				$replace = "<at_rule 
+								name=\"".htmlentities($atrules[1][$atrule_key])."\" 
+								params=\"".trim(htmlentities($atrules[2][$atrule_key]))."\">" . htmlentities($inner_contents) . 
+							"</at_rule>";
+
 				$xml = substr_replace($xml,$replace,strpos($xml,$atrule), strlen($atrule) - 1 + strlen($contents));
 			}
 		}
 
 		# Add semi-colons to the ends of property lists which don't have them
 		$xml = preg_replace('/((\:|\+)[^;])*?\}/', "$1;}", $xml);
-		
 
 		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property name=\"'.htmlentities(trim('$1')).'\" value=\"'.htmlentities(trim('$2')).'\" />\n'", $xml);
+		$xml = preg_replace('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property><name>'.htmlentities(trim('$1')).'</name><value>'.htmlentities(trim('$2')).'</value></property>'", $xml);
 		
 		# Close rules
 		$xml = preg_replace('/\;?\s*\}/', "\n</rule>", $xml);
@@ -308,10 +341,11 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 		$start = $this->selector_start;
 		$selector = $this->selector;
 		
-		$xml = preg_replace('/(>\s*|^)('.$start.$selector.'*?)\{/me', "'$1\n<rule selector=\"'.htmlentities(trim('$2')).'\">\n'", $xml);
+		$xml = preg_replace('/(\s*|^)('.$start.$selector.'*?)\{/me', "'$1\n<rule selector=\"'.htmlentities(trim('$2')).'\">\n'", $xml);
 		
 		$xml = '<?xml version="1.0" ?><css>'.$xml.'</css>';
-
+		
+		print_r($xml);exit;
 		return simplexml_load_string($xml);
 	}
 	
