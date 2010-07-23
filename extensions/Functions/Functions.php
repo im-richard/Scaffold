@@ -55,7 +55,7 @@ class Scaffold_Extension_Functions extends Scaffold_Extension
 			$method = $function[1];
 
 			// Find them in the CSS
-			foreach(Scaffold_Helper_CSS::find_functions($name,$source->contents) as $found)
+			foreach($scaffold->helper->css->find_functions($name,$source->contents) as $found)
 			{				
 				// Call the hook method for this function
 				$result = call_user_func_array(array($obj,$method),$found['params']);

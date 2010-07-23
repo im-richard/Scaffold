@@ -6,35 +6,14 @@
  * to selectors from within your css. You can also pass arguments through
  * to the mixin.
  *
- *		@mixin table-base {
-		   th {
-		     text-align: center;
-		     font-weight: bold;
-		   }
-		   td, th {padding: 2px}
-		 }
-		 
-		 @mixin left($dist) {
-		   float: left;
-		   margin-left: $dist;
-		 }
-		 
-		 #data {
-		   @include left(10px);
-		   @include table-base;
-		 }
- * 
- * @author Anthony Short
+ * @package 		Scaffold
+ * @author 			Anthony Short <anthonyshort@me.com>
+ * @copyright 		2009-2010 Anthony Short. All rights reserved.
+ * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
+ * @link 			https://github.com/anthonyshort/csscaffold/master
  */
 class Scaffold_Extension_Mixins extends Scaffold_Extension
 {
-	/**
-	 * Default settings which are used if the configuration
-	 * settings from the file aren't set.
-	 * @var array
-	 */
-	public $_defaults = array();
-
 	/**
 	 * Stores the mixins for debugging purposes
 	 * @var array
@@ -46,7 +25,7 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 	 * @param $source
 	 * @return return type
 	 */
-	public function process($source)
+	public function process($source,$scaffold)
 	{	
 		// Find any mixins
 		if(preg_match_all('/\@mixin\s+([0-9a-zA-Z_\-]+) (\((.*?)\))? \s* \{/sx',$source->contents,$mixins))
@@ -55,39 +34,19 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 			
 			foreach($mixins[0] as $key => $mixin)
 			{
-				// Find the content of the mixins
+				// Position of the mixin in the CSS
 				$mixin_start = strpos($css,$mixin);
-				$pos = $start = $mixin_start + strlen($mixin);
-				$depth = 0;
-				$content = false;
 				
-				while($content == false)
-				{
-					$current = substr($css,$pos,1);
-		
-					if($current == '}')
-					{
-						if($depth == 0)
-						{
-							$content = substr($css, $start, $pos - $start);
-						}
-						else
-						{
-							$depth--;
-						}
-					}
-					if($current == '{')
-					{
-						$depth++;
-					}						
-					if($pos == strlen($css))
-					{
-						throw new Exception('Unmatched }');
-					}
-						
-					$pos++;
-				}
+				// The position of the opening brace
+				$start = $mixin_start + strlen($mixin) - 1;
 				
+				// Get the content within the braces
+				$content = $scaffold->helper->string->match_delimiter('{','}',$start,$css);
+				
+				// The content without the braces
+				$inner_content = trim($content,'{} ');
+				
+				// Parse the params
 				if($mixins[3][$key] != false)
 				{
 					$params = explode(',',$mixins[3][$key]);
@@ -95,6 +54,7 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 					
 					foreach($params as $param_key => $param)
 					{
+						// Set the default param if it exists
 						if(strstr($param, '='))
 						{
 							$equals = strpos($param, '=');
@@ -113,14 +73,16 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 					$default_params = false;
 				}
 				
+				// Build the mixin
 				$this->mixins[$mixins[1][$key]] = array
 				(
 					'params' 			=> $params,
 					'default_params' 	=> $default_params,
-					'content' 			=> trim($content)
+					'content' 			=> $inner_content
 				);
 				
-				$css = substr_replace($css, '', $mixin_start, $pos - $mixin_start);
+				// Remove it from the CSS
+				$css = substr_replace($css, '', $mixin_start, strlen($content) + strlen($mixin) - 1 );
 			}
 			
 			// Now we need to replace them in the CSS

@@ -49,6 +49,9 @@ class Environment
 		# Check if class is already loaded
 		if (class_exists($class,false)) 
 			return true;
+		
+		# Remove PHP prefix	
+		$class = str_replace('PHP_','',$class);
 
 		# Transform the class name into a path
 		$file = str_replace('_', '/', ucfirst($class)) . '.php';

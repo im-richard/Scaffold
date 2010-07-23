@@ -19,7 +19,7 @@ class Scaffold_Helper_String
 	 * @param $string
 	 * @return return type
 	 */
-	public static function line_number($find,$string)
+	public function line_number($find,$string)
 	{	
 		if(strstr($string,$find))
 		{
@@ -39,7 +39,7 @@ class Scaffold_Helper_String
 	 * @param $content boolean
 	 * @return return type
 	 */
-	public static function line_contents($line,$string,$context = false)
+	public function line_contents($line,$string,$context = false)
 	{
 		$string = explode("\n",$string);
 		
@@ -62,5 +62,47 @@ class Scaffold_Helper_String
 			$lines[] = $string[$i];
 		
 		return implode("\n",$lines);
+	}
+	
+	/**
+	 * Matches a custom delimiter in a string and returns the contents
+	 * @access public
+	 * @param $open The opening delimiter character
+	 * @param $close The closing delimiter character
+	 * @param $first The position of the first opening character in the string
+	 * @param $string
+	 * @return $string
+	 */
+	public function match_delimiter($open,$close,$first,$string)
+	{
+		$start = $pos = $first + 1;
+		$depth = 0;
+		$content = false;
+		
+		while($content == false)
+		{
+			$current = $string[$pos];
+
+			// We've found the closing brace
+			if($current == $close AND $depth == 0)
+			{
+				$content = substr($string,$first,$pos - $first + 1);
+			}
+			
+			// We've closed a nested brace			
+			if($current == $close) $depth--;
+
+			// There's a nested brace
+			if($current == $open) $depth++;	
+
+			// We've reached the end of the string
+			if($pos == strlen($string))
+				throw new Exception('Unmatched ' . $open);
+	
+			// Go to the next character
+			$pos++;
+		}
+		
+		return $content;
 	}
 }
