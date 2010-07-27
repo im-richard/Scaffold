@@ -1,297 +1,113 @@
 <?php
-
 /**
- * NestedSelectors
+ * Scaffold_Extension_NestedSelectors
  *
- * @author Anthony Short
+ * Allows the use of nested selectors
+ * 
+ * @package 		Scaffold
+ * @author 			Anthony Short <anthonyshort@me.com>
+ * @copyright 		2009-2010 Anthony Short. All rights reserved.
+ * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
+ * @link 			https://github.com/anthonyshort/csscaffold/master
  */
 class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
-{
-	/**
-	 * @var Scaffold_Helper_String
-	 */
-	public $string;
-	
-	/**
-	 * @var Scaffold_Helper_CSS
-	 */
-	public $css;
-	
+{	
 	/**
 	 * @access public
-	 * @param $source
-	 * @param $scaffold
+	 * @param $source Scaffold_Source
+	 * @param $scaffold Scaffold
 	 * @return void
 	 */
-	public function __construct($scaffold,$config)
+	public function post_process($source,$scaffold)
 	{
-		$this->config = array_merge($this->_defaults,$config);
-		$this->string = $scaffold->helper->string;
-		$this->css = $scaffold->helper->css;
+		$xml = $this->to_xml($source->contents);		
+		$source->contents = html_entity_decode($this->_parse_children($xml->children()));
 	}
 
-	/**
-	 * @access public
-	 * @return $source Scaffold_Source
-	 */
-	public function pre_process($source,$scaffold)
-	{
-		$this->selector_start = $this->css->selector_start;
-		$this->selector = $this->css->selector;
-	
-		$output = "";
-		$xml = $this->to_xml($source->contents);
-		
-		$source->contents = $this->parse_children($xml->children());
-		
-		print_r($source->contents);exit;
-
-		$source->set( str_replace('#NEWLINE#', "\n", $output) );
-	}
-	
 	/**
 	 * Parse XML nodes
-	 *
-	 * @author your name
-	 * @param $param
-	 * @return return type
+	 * @access public
+	 * @param $children SimpleXMLElement
+	 * @return string
 	 */
-	public function parse_children(SimpleXMLElement $children, $parent = null)
+	private function _parse_children(SimpleXMLElement $children, $parent = null)
 	{
 		$output = '';
-		$content = '';
 
 		foreach($children as $key => $value)
 		{						
 			# Selectors
-			if($key == 'rule')
+			if($key == 'block')
 			{
-				# Selector name
-				$selector = (string)$value->attributes()->selector;
+				# Type of block
+				$type = (string)$value->attributes()->type;
 				
-				# We're in a nested rule
-				if($parent !== null)
-				{		
-					# We need to append each parent to each child selector
-					$parents 	= explode(',',$parent);
-					$child 		= explode(',',htmlentities($selector));
-					$new		= array();
+				# Content (including properties and anything else that isn't a block)
+				$content = (string)$value;
+				
+				if($type == 'selector')
+				{
+					# Selector name
+					$selector = (string)$value->attributes()->rule;
 					
-					foreach($child as $sv)
-					{						
-						foreach($parents as $pv)
-						{
-							if(strstr($sv,'&'))
+					# We're in a nested rule
+					if($parent !== null)
+					{
+						# We need to append each parent to each child selector
+						$parents 	= explode(',',$parent);
+						$child 		= explode(',',htmlentities($selector));
+						$new		= array();
+						
+						foreach($child as $sv)
+						{						
+							foreach($parents as $pv)
 							{
-								$new[] = str_replace(htmlentities('&'), $pv, $sv);
-							}
-							else
-							{
-								$new[] = $pv.' '.$sv;
+								if(strstr($sv,htmlentities('&')))
+								{
+									$new[] = str_replace(htmlentities('&'), $pv, $sv);
+								}
+								else
+								{
+									$new[] = $pv.' '.$sv;
+								}
 							}
 						}
-					}
-
-					$selector = implode(',',$new);
-					
-					
-				}
-
-				# Parse the nested selectors
-				$content = $this->parse_children($value->rule,$selector);
-				
-				# Remove the rules
-				unset($value->rule);
-				
-				# Parse the inner content
-				$output .= $selector . '{' . $this->parse_children($value->children()) . '}';
-				
-				# Add the extracted nested selectors
-				$output .= $content;
-			}
 	
-			# Properties
-			elseif($key == 'property')
-			{
-				$output .= $value->name . ':' . $value->value . ';';
+						$selector = implode(',',$new);
+					}
+					
+					# Parse the inner content
+					$output .= $selector . '{' . $content . '}';
+					
+					# Add the nested selectors after it
+					$output .= $this->_parse_children($value->block,$selector);
+				}
+				
+				# Block directive
+				elseif($type == 'directive')
+				{	
+					# The directive
+					$output .= '@'.(string) $value->attributes()->name.' '.(string) $value->attributes()->params;
+					
+					# Properties and other content
+					$output .= '{' . $content . $this->_parse_children($value->children()) . '}';
+				}
 			}
 			
-			# @ rules
-			elseif($key == 'at_rule')
+			# Single line directives
+			elseif($key == 'directive')
 			{
-				$output .= '@'.(string) $value->attributes()->name.' '.(string) $value->attributes()->params;
-				
-				# With block
-				if((array)$value->children() !== array())
-				{
-					$output .= '{' . $this->parse_children($value) . '}';
-				}
-				
-				# Without block
-				else { $output .= ';'; }
+				$output .= '@'.(string) $value->attributes()->name.' '.(string) $value->attributes()->params . ';';
+			}
+			
+			# Comments
+			elseif($key == 'comment_block')
+			{
+				$output .= '/*' . (string)$value . '*/';
 			}
 		}
 		
 		return $output;
-	}
-	
-	/**
-	 * Parse the css selector rule
-	 *
-	 * @author Anthony Short
-	 * @param $rule
-	 * @return return type
-	 */
-	public function parse_rulez($rule, $parent = '')
-	{
-		$css_string = "";
-		$property_list = "";
-		$parent = trim($parent);
-	
-		# Get the selector and store it away
-		foreach($rule->attributes() as $type => $value)
-		{
-			$child = (string)$value;
-			
-			# if its NOT a root selector and has parents
-			if($parent != "")
-			{				
-				$parent = explode(",", $parent);
-
-				foreach($parent as $parent_key => $parent_value)
-				{
-					$parent[$parent_key] = $this->parse_selector(trim($parent_value), $child);
-				}
-				
-				$parent = implode(",", $parent);
-			}
-			
-			elseif( strstr($child,'@media') )
-			{
-				$skip = true;
-				$parent = $child;
-			}
-			
-			# Otherwise it's a root selector
-			else
-			{
-				$parent = $child;
-			}
-		}
-
-		foreach($rule->property as $p)
-		{
-			$property = (array)$p->attributes(); 
-			$property = $property['@attributes'];
-			
-			if($property['name'] == 'comment')
-			{
-				$property_list .= $this->parse_comment($property['value']);
-			}
-			else
-			{
-				$property_list .= $property['name'].":".$property['value'].";";
-			}
-		}
-		
-		# Create the css string
-		if($property_list != "" && $skip !== true)
-		{
-			$css_string .= $parent . "{" . $property_list . "}";
-		}
-
-		foreach($rule->rule as $inner_rule)
-		{			
-			# If the selector is in our skip array in the 
-			# member variable, we'll leave the selector as nested.
-			foreach($this->skip as $selector)
-			{				
-				if(strstr($parent, $selector))
-				{
-					$skip = true;
-					continue;
-				}
-			}
-			
-			# We don't want the selectors inside @media to have @media before them
-			if($skip)
-			{
-				$css_string .= $this->parse_rule($inner_rule, '');
-			}
-			else
-			{
-				$css_string .= $this->parse_rule($inner_rule, $parent);
-			}
-		}
-		
-		# Build our @media string full of these properties if we need to
-		if($skip)
-		{
-			$css_string = $parent . "{" . $css_string . "}";
-		}
-
-		return $css_string;
-	}
-		
-	/**
-	 * Parses the parent and child to find the next parent
-	 * to pass on to the function
-	 *
-	 * @author Anthony Short
-	 * @param $parent
-	 * @param $child
-	 * @param $atmedia Is this an at media group?
-	 * @return string
-	 */
-	public function parse_selector($parent, $child)
-	{
-		# If there are listed parents eg. #id, #id2, #id3
-		if(strstr($child, ","))
-		{
-			$parent = $this->split_children($child, $parent);
-		}
-		
-		# If the child references the parent selector
-		elseif (strstr($child, self::PARENT))
-		{
-			$parent = str_replace(self::PARENT, $parent, $child);
-		}
-		
-		# Otherwise, do it normally
-		else
-		{
-			$parent = "$parent $child";
-		}
-		
-		return $parent;
-	}
-	
-	/**
-	 * Splits selectors with , and adds the parent to each
-	 *
-	 * @author Anthony Short
-	 * @param $children
-	 * @param $parent
-	 * @return string
-	 */
-	public function split_children($children, $parent)
-	{
-		$children = explode(",", $children);
-												
-		foreach($children as $key => $child)
-		{
-			# If the child references the parent selector
-			if (strstr($child, self::PARENT))
-			{
-				$children[$key] = str_replace(self::PARENT, $parent, $child);	
-			}
-			else
-			{
-				$children[$key] = "$parent $child";
-			}
-		}
-		
-		return implode(",",$children);
 	}
 
 	/**
@@ -301,63 +117,58 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 */
 	public function to_xml($css)
 	{
-		# So it won't break the XML
-		$css = htmlentities($css);
-		
 		# Convert comments
 		$xml = preg_replace_callback('/\/\*(.*?)\*\//sx', array($this,'encode_comment') ,$css);
 		
+		# Selectors
+		$xml = preg_replace_callback('/(\;|^|{|}|\s*)\s*([^{};]*?)\{/sx', array($this,'_rule'), $xml);
+
 		# Convert single line at-rules
-		$xml = preg_replace('/@(' . $this->selector . '+?)\s(.*?);/',"<at_rule name=\"$1\" params=\"$2\" />",$xml);
-		print_r($xml);exit;
-		# Convert at-rules with blocks
-		if(preg_match_all('/@(' . $this->selector . '+?)\s(.*?){/',$xml,$atrules))
-		{
-			foreach($atrules[0] as $atrule_key => $atrule)
-			{
-				$start 				= strpos($xml,$atrule) + strlen($atrule) - 1;
-				$contents 			= $this->string->match_delimiter('{','}',$start,$xml);
-				$inner_contents 	= trim($contents,'{}');
-				
-				$replace = "<at_rule 
-								name=\"".htmlentities($atrules[1][$atrule_key])."\" 
-								params=\"".trim(htmlentities($atrules[2][$atrule_key]))."\">" . htmlentities($inner_contents) . 
-							"</at_rule>";
-
-				$xml = substr_replace($xml,$replace,strpos($xml,$atrule), strlen($atrule) - 1 + strlen($contents));
-			}
-		}
-
+		$xml = preg_replace_callback('/@([^\s]+)\s(.*?);/',array($this,'single_line_directive'),$xml);
+		
 		# Add semi-colons to the ends of property lists which don't have them
 		$xml = preg_replace('/((\:|\+)[^;])*?\}/', "$1;}", $xml);
-
-		# Transform properties
-		$xml = preg_replace('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/ie', "'<property><name>'.htmlentities(trim('$1')).'</name><value>'.htmlentities(trim('$2')).'</value></property>'", $xml);
 		
 		# Close rules
-		$xml = preg_replace('/\;?\s*\}/', "\n</rule>", $xml);
+		$xml = preg_replace('/\;?\s*\}/', "\n</block>", $xml);
 		
-		# Transform selectors
-		$start = $this->selector_start;
-		$selector = $this->selector;
-		
-		$xml = preg_replace('/(\s*|^)('.$start.$selector.'*?)\{/me', "'$1\n<rule selector=\"'.htmlentities(trim('$2')).'\">\n'", $xml);
-		
+		# Transform properties
+		//$xml = preg_replace_callback('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/sx', array($this,'_property'), $xml);
+
 		$xml = '<?xml version="1.0" ?><css>'.$xml.'</css>';
 		
-		print_r($xml);exit;
 		return simplexml_load_string($xml);
 	}
-	
-	/**
-	 * Turns CSS comments into an xml format
-	 *
-	 * @param $comment
-	 * @return return type
-	 */
+
 	protected function encode_comment($comment)
 	{
-		return "<comment-block>".htmlentities($comment[1])."</comment-block>";
+		return "<comment_block>".htmlentities($comment[1])."</comment_block>";
 	}
-
+	
+	protected function single_line_directive($rule)
+	{
+		return '<directive name="'.$rule[1].'" params="'.$rule[2].'" />';
+	}
+	
+	protected function _property($property)
+	{
+		$name 	= htmlentities(trim($property[1]));
+		$value 	= htmlentities(trim($property[2]));
+		return '<property name="'.$name.'">'.$value.'</property>';
+	}
+	
+	protected function _rule($rule)
+	{
+		$selector = htmlentities(trim($rule[2]));
+		
+		if($selector[0] != '@')
+		{
+			return $rule[1] . "\n<block type=\"selector\" rule=\"$selector\">";
+		}
+		else
+		{
+			preg_match('/@([^\s]+)\s*(.*)/sx',$selector,$match);
+			return $rule[1] . "<block type=\"directive\" name=\"{$match[1]}\" params=\"{$match[2]}\">";
+		}
+	}
 }

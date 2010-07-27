@@ -22,8 +22,33 @@ class Scaffold_Helper_CSS
 	 * Regex for a valid selector
 	 * @var string
 	 */
-	public $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s\,]';
-
+	public $selector = '[0-9a-zA-Z\_\-\*\&\#\[\]\~\=\|\"\'\^\$\:\>\+\(\)\.\s\,]*';
+	
+	/**
+	 * Regex for a block
+	 * @var string
+	 */
+	public $block = '\{([^}]*)\}';
+	
+	/**
+	 * Create a regex string from a string of pseudo-regex. Yep.
+	 * String variables that can be used:
+	 *
+	 * - IDENTIFIER
+	 * - BLOCK
+	 * 
+	 * @access public
+	 * @param string
+	 * @return string
+	 */
+	public function create_regex($str)
+	{
+		$str = str_replace(" ", '\s+', $str);
+		$str = str_replace('IDENTIFIER', $this->selector_start . $this->selector, $str);
+		$str = str_replace('BLOCK', $this->block, $str);
+		return $str;
+	}
+	 
 	/**
 	 * Removes single-line comments from a string
 	 * @access public
