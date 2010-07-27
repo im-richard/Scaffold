@@ -10,7 +10,7 @@
  * @copyright 		2009-2010 Anthony Short. All rights reserved.
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
- * @see				http://oocss.org/spec/css-variables.html
+ * @link			http://oocss.org/spec/css-variables.html
  */
 class Scaffold_Extension_Variables extends Scaffold_Extension
 {
