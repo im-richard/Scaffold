@@ -68,11 +68,11 @@ if(isset($_GET['file']))
 {
 	$source = new Scaffold_Source_File( $scaffold->loader->find_file($_GET['file']) );
 }
-elseif(isset($_GET['url']))
+elseif(isset($_GET['url']) AND $config['enable_url'] === true)
 {
 	$source = new Scaffold_Source_Url($_GET['url']);
 }
-elseif(isset($_GET['string']))
+elseif(isset($_GET['string']) AND $config['enable_string'] === true)
 {
 	$source = new Scaffold_Source_String($_GET['string']);
 }
