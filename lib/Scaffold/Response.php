@@ -170,7 +170,8 @@ class Scaffold_Response
 	 */
 	public function generate_etag()
 	{
-		return '"' . hash('md5',serialize(func_get_args())) . '"';
+		$args = func_get_args();
+		return '"' . hash('md5',serialize($args)) . '"';
 	}
 
 	/**
