@@ -1,8 +1,13 @@
 <?php
+
+require_once dirname(__FILE__) . '/csstidy-1.3/data.inc.php';
+require_once dirname(__FILE__) . '/csstidy-1.3/lang.inc.php';
+require_once dirname(__FILE__) . '/csstidy-1.3/class.csstidy_optimise.php';
+require_once dirname(__FILE__) . '/csstidy-1.3/class.csstidy_print.php';
+require_once dirname(__FILE__) . '/csstidy-1.3/class.csstidy.php';
+
 /**
  * Scaffold_Extension_CSSTidy
- *
- * Parses the CSS through CSSTidy
  * 
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>
@@ -13,26 +18,30 @@
 class Scaffold_Extension_CSSTidy extends Scaffold_Extension
 {
 	/**
-	 * Default settings which are used if the configuration
-	 * settings from the file aren't set.
 	 * @var array
 	 */
-	public $_defaults = array();
-	
-	/**
-	 * @access public
-	 * @param $source
-	 * @return string
-	 */
-	public function initialize($source,$scaffold)
-	{
-		require_once dirname(__FILE__) . '/csstidy-1.3/data.inc.php';
-		require_once dirname(__FILE__) . '/csstidy-1.3/lang.inc.php';
-		require_once dirname(__FILE__) . '/csstidy-1.3/class.csstidy_optimise.php';
-		require_once dirname(__FILE__) . '/csstidy-1.3/class.csstidy_print.php';
-		require_once dirname(__FILE__) . '/csstidy-1.3/class.csstidy.php';
-	}
-	
+	public $_defaults = array
+	(
+		'options' => array
+		(
+			'case_properties' 				=> false,
+			'lowercase_s' 					=> false,
+			'compress_colors'				=> false,
+			'compress_font-weight' 			=> false,
+			'merge_selectors'				=> false,
+			'optimise_shorthands'			=> false,
+			'remove_bslash'					=> false,
+			'preserve_css'					=> true,
+			'sort_selectors'				=> false,
+			'sort_properties'				=> false,
+			'remove_last_;'					=> false,
+			'discard_invalid_properties'	=> false,
+			'css_level'						=> '2.1',
+			'timestamp'						=> false,
+		)
+		'template' => 'low_compression',
+	);
+
 	/**
 	 * @access public
 	 * @param $source
@@ -42,26 +51,19 @@ class Scaffold_Extension_CSSTidy extends Scaffold_Extension
 	{
 		$css = new csstidy();
 		
-		$css->set_cfg('case_properties',false);
-		$css->set_cfg('lowercase_s',true);
-		$css->set_cfg('compress_colors',false);
-		$css->set_cfg('compress_font-weight',false);
-		$css->set_cfg('merge_selectors', true);
-		$css->set_cfg('optimise_shorthands',true);
-		$css->set_cfg('remove_bslash',false);
-		$css->set_cfg('preserve_css',true);
-		$css->set_cfg('sort_selectors',true);
-		$css->set_cfg('sort_properties',true);
-		$css->set_cfg('remove_last_;',true);
-		$css->set_cfg('discard_invalid_properties',true);
-		$css->set_cfg('css_level','2.1');
-		$css->set_cfg('timestamp',false);
+		// Set the CSSTidy options
+		foreach($this->config['options'] as $key => $value)
+		{
+			$css->set_cfg($key,$value);
+		}
 		
-		$css->load_template('highest_compression');
+		// Set the style template
+		$css->load_template($this->config['template']);
 		
+		// Parse the contents
 		$result = $css->parse($source->contents);
-		$output = $css->print->plain();
 
-		$source->contents = $output;
+		// Set the source content
+		$source->contents = $css->print->plain();
 	}
 }
