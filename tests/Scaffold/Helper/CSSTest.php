@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../_init.php';
+<?php
 
 class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 {	

@@ -1,8 +1,5 @@
 <?php
 
-// Loads PHPUnit and autoloads classes
-require_once __DIR__ . '/../_init.php';
-
 class ScaffoldTest extends PHPUnit_Framework_TestCase
 {
 	var $object;

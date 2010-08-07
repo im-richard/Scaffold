@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../_init.php';
-
 class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 {
 	private $object;

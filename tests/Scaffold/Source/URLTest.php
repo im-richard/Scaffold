@@ -1,4 +1,4 @@
-<?php require_once __DIR__ . '/../../_init.php';
+<?php
 
 class Scaffold_Source_UrlTest extends PHPUnit_Framework_TestCase
 {
