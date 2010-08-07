@@ -37,7 +37,7 @@ class Scaffold_Extension_YUI extends Scaffold_Extension
 	public function post_format($source,$scaffold)
 	{		
 		// If we're including certain stylesheets
-		$assets_dir = dirname(__FILE__) . '/assets/';
+		$assets_dir = dirname(__FILE__) . '/lib/';
 		
 		// Types of CSS we can add
 		$types = array('reset','fonts','grids','base');
@@ -59,7 +59,7 @@ class Scaffold_Extension_YUI extends Scaffold_Extension
 			// Path to jar file
 			if($this->config['jar'] === false)
 			{
-				$jar = dirname(__FILE__) . '/yuicompressor-2.4.2.jar';
+				$jar = $assets_dir . 'yuicompressor-2.4.2.jar';
 			}
 			else
 			{

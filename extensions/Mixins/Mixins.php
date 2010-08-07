@@ -21,9 +21,9 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 	public $mixins = array();
 
 	/**
-	 * Extracts the mixin bases
 	 * @param $source
-	 * @return return type
+	 * @param $scaffold
+	 * @return void
 	 */
 	public function process($source,$scaffold)
 	{	
