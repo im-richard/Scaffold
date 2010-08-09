@@ -85,7 +85,7 @@ class Scaffold_Container
 			if(file_exists($file))
 			{
 				require_once realpath($ext.$name.'.php');
-				$scaffold->attach($name,new $class($scaffold,$config));
+				$scaffold->attach($name,new $class($config));
 			}
 		}
 

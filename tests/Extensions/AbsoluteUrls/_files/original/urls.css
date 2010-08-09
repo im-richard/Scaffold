@@ -1,0 +1,16 @@
+@import '../file.css';
+@import url('../file.css');
+@import '../file.css' screen;
+@import url(../file.css);
+@import url(../file.css) screen,projector;
+@import '/absolute/file.css';
+@import '\\file.css';
+@import 'http://file.css';
+
+#id
+{
+	background:url('../file.css');
+	background:url('/file.css');
+	background:url(../file.css);
+	background:url(http://www.google.com/file.css);
+}

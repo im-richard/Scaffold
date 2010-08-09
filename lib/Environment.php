@@ -64,6 +64,20 @@ class Environment
 			require_once $path;
 			return true;
 		}
+		
+		# Second chance, look in the extensions folder
+		if(strstr($file, '/Extension/'))
+		{
+			$name = str_replace('Scaffold_Extension_','',$class);
+			$file = str_replace('Scaffold/Extension/'.$name,$name.'/'.$name,$file);
+			$path = dirname(__FILE__) . '/../extensions/' . $file;
+			
+			if(file_exists($path))
+			{
+				require_once $path;
+				return true;
+			}
+		}
 
 		return false;
 	}
