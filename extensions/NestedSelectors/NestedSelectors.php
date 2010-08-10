@@ -64,20 +64,20 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 							{
 								if(strstr($sv,htmlentities('&')))
 								{
-									$new[] = str_replace(htmlentities('&'), $pv, $sv);
+									$new[] = str_replace(htmlentities('&'), $pv, trim($sv));
 								}
 								else
 								{
-									$new[] = $pv.' '.$sv;
+									$new[] = $pv.' '.trim($sv);
 								}
 							}
 						}
 	
-						$selector = implode(',',$new);
+						$selector = implode(",\n",$new);
 					}
 					
 					# Parse the inner content
-					$output .= $selector . '{' . $content . '}';
+					$output .= $selector . "\n{\n" . preg_replace('/\t+/',"\t",$content) . "\n}\n";
 					
 					# Add the nested selectors after it
 					$output .= $this->_parse_children($value->block,$selector);
@@ -90,20 +90,20 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 					$output .= '@'.(string) $value->attributes()->name.' '.(string) $value->attributes()->params;
 					
 					# Properties and other content
-					$output .= '{' . $content . $this->_parse_children($value->children()) . '}';
+					$output .= "\n{\n" . $content . $this->_parse_children($value->children()) . "\n}\n";
 				}
 			}
 			
 			# Single line directives
 			elseif($key == 'directive')
 			{
-				$output .= '@'.(string) $value->attributes()->name.' '.(string) $value->attributes()->params . ';';
+				$output .= '@'.(string) $value->attributes()->name.' '.(string) $value->attributes()->params . ';' . "\n";
 			}
 			
 			# Comments
 			elseif($key == 'comment_block')
 			{
-				$output .= '/*' . (string)$value . '*/';
+				//$output .= '/*' . (string)$value . '*/' . "\n\n";
 			}
 		}
 		
