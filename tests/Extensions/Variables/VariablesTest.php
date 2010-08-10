@@ -27,8 +27,20 @@ class Scaffold_Extension_VariablesTest extends PHPUnit_Framework_TestCase
 			$source = new Scaffold_Source_File($original);
 			$this->object->process($source,$this->scaffold);
 			
+			// Remove unnecessary whitespace
+			$actual = trim($source->contents);
+			$actual = explode("\n",$actual);
+			$actual = array_filter($actual, array($this,'remove_empty_lines'));
+			$actual = implode("\n",$actual);
+			
 			# The source contents should equal the expect output
-			$this->assertEquals($expected,$source->contents);
+			$this->assertEquals($expected,$actual);
 		}
+	}
+	
+	private function remove_empty_lines($value)
+	{
+		$value = trim($value);
+		return ($value != '');
 	}
 }

@@ -78,12 +78,12 @@ class Scaffold_Extension_XMLVariables extends Scaffold_Extension
 	}
 	
 	/**
-	 * Merge our variables with the variables object
+	 * Merge our variables with the variables object before they are replaced
 	 * @access public
 	 * @param $variables Scaffold_Extension_Variables
 	 * @return void
 	 */
-	public function variables_start(Scaffold_Source $source,Scaffold_Extension_Variables $var)
+	public function variables_replace(Scaffold_Source $source,Scaffold_Extension_Variables $var)
 	{
 		$var->variables = array_merge($var->variables,$this->variables);
 	}

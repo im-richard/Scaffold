@@ -72,6 +72,9 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 			}
 		}
 		
+		// HOOK //
+		$scaffold->notify('variables_replace',array($source,$this));
+		
 		// Replace the variables
 		$source->contents = trim($this->replace_variables($source->contents));
 		
