@@ -58,8 +58,8 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 						if(strstr($param, '='))
 						{
 							$equals = strpos($param, '=');
-							$default_params[$param_key] = substr($param, $equals + 1, strlen($param) - $equals);
-							$params[$param_key] = substr($param, 0, $equals - 1);
+							$default_params[$param_key] = trim(substr($param, $equals + 1, strlen($param) - $equals));
+							$params[$param_key] = trim(substr($param, 0, $equals));
 						}
 						else
 						{
@@ -94,9 +94,10 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 					if(!isset($this->mixins[$include]))
 						throw new Exception("Mixin does not exist - $include");
 				
-					$mixin = $this->mixins[$include];
-					$params = ($includes[3][$include_key] != false) ? explode(',',$includes[3][$include_key]) : false;
-					$content = $mixin['content'];
+					$mixin 		= $this->mixins[$include];
+					$params 	= ($includes[3][$include_key] != false) ? explode(',',$includes[3][$include_key]) : false;
+					
+					$content 	= $mixin['content'];
 					
 					if($mixin['params'] !== false)
 					{
@@ -113,7 +114,7 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 								
 								$params[$key] = $mixin['default_params'][$key];
 							}
-							
+
 							$content = str_replace(trim($param),$params[$key],$content);
 						}
 					}
