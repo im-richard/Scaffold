@@ -16,31 +16,24 @@
 class Scaffold_Loader
 {
 	/**
-	 * Include paths. Used for searching for relative files.
-	 *
+	 * Include paths. Used for searching for files.
 	 * @var array
 	 */
 	public $_load_paths = array();
 	
 	/**
-	 * Constructor
-	 *
 	 * @param $load_paths
 	 */
-	public function __construct($load_paths)
+	public function __construct(array $load_paths)
 	{
 		$this->_load_paths = $load_paths; 
 	}
-	
-	// ============================
-	// = Public Methods =
-	// ============================
 
 	/**
 	 * Adds a load path
 	 * @access public
 	 * @param $path
-	 * @throws Scaffold_Loader_Exception
+	 * @throws Exception
 	 * @return void
 	 */
 	public function add_load_path($path)
@@ -51,7 +44,7 @@ class Scaffold_Loader
 		}
 		else
 		{
-			// Throw exception
+			throw new Exception("Path does not exist [$path]");
 		}
 	}
 	
@@ -80,34 +73,32 @@ class Scaffold_Loader
 	 */
 	public function find_file($file,$required = true)
 	{
+		$real = realpath($file);
+		
+		// We've already found it
+		if(is_file($real))
+		{
+			$file = $real;
+		}
+		
 		// Docroot relative file
-		if($file[0] == DIRECTORY_SEPARATOR)
+		elseif($file[0] == DIRECTORY_SEPARATOR)
 		{
 			$file = $_SERVER['DOCUMENT_ROOT'] . $file;
 		}
 		
-		// Relative File
+		// Look in the load paths
 		else
-		{		
-			$real = realpath($file);
-			
-			// We've already found it
-			if(is_file($real))
+		{
+			// Go through each of the include paths to find it
+			foreach($this->_load_paths as $path)
 			{
-				$file = $real;
-			}
-			else
-			{
-				// Go through each of the include paths to find it
-				foreach($this->_load_paths as $path)
+				$search = $path.DIRECTORY_SEPARATOR.$file;
+				
+				if(is_file($search))
 				{
-					$search = $path.DIRECTORY_SEPARATOR.$file;
-					
-					if(is_file($search))
-					{
-						$file = $search;
-						break;
-					}
+					$file = $search;
+					break;
 				}
 			}
 		}
