@@ -13,7 +13,7 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Environment
+class Scaffold_Environment
 {
 	/**
 	 * @var string
@@ -37,6 +37,17 @@ class Environment
 	);
 	
 	/**
+	 * Automatically load any Scaffold Classes
+	 * @see http://php.net/spl_autoload_register
+	 * @param $enabled boolean
+	 * @return void
+	 */
+	public static function auto_load($enabled)
+	{
+		spl_autoload_register(array(__CLASS__,'_auto_load'));
+	}
+	
+	/**
 	 * Automatically loads Scaffold's classes.
 	 * Assumes the scaffold folder with all the classes
 	 * is located next to this file.
@@ -44,7 +55,7 @@ class Environment
 	 * @param $class string
 	 * @return boolean
 	 */
-	public static function auto_load($class)
+	public static function _auto_load($class)
 	{
 		# Check if class is already loaded
 		if (class_exists($class,false)) 
@@ -57,7 +68,7 @@ class Environment
 		$file = str_replace('_', '/', ucfirst($class)) . '.php';
 		
 		# The path to the lib folder with the file
-		$path = dirname(__FILE__) . '/' . $file;
+		$path = dirname(__FILE__) . '/../' . $file;
 		
 		if(file_exists($path))
 		{
@@ -70,7 +81,7 @@ class Environment
 		{
 			$name = str_replace('Scaffold_Extension_','',$class);
 			$file = str_replace('Scaffold/Extension/'.$name,$name.'/'.$name,$file);
-			$path = dirname(__FILE__) . '/../extensions/' . $file;
+			$path = dirname(__FILE__) . '/../../extensions/' . $file;
 			
 			if(file_exists($path))
 			{
@@ -80,6 +91,32 @@ class Environment
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Handle errors and exceptions
+	 * @param $enabled boolean
+	 * @return void
+	 */
+	public static function error_handling($enabled)
+	{
+		/**
+		 * Catch any exceptions to display a nice error message
+		 * @see http://au.php.net/manual/en/function.set-exception-handler.php
+		 */
+		set_exception_handler(array(__CLASS__,'exception_handler'));
+		
+		/**
+		 * Catch errors and convert them into exceptions
+		 * @see http://au.php.net/manual/en/function.set-error-handler.php
+		 */
+		set_error_handler(array(__CLASS__,'error_handler'));
+		
+		/**
+		 * Catches errors not caught by the other handlers like E_PARSE
+		 * @see http://au.php.net/manual/en/function.register-shutdown-function.php
+		 */
+		register_shutdown_function(array(__CLASS__, 'shutdown_handler'));
 	}
 
 	/**

@@ -22,40 +22,25 @@ date_default_timezone_set('GMT');
 
 /**
  * Automatically load any Scaffold Classes
- * @see http://php.net/spl_autoload_register
  */
-spl_autoload_register(array('Environment','auto_load'));
+Scaffold_Environment::auto_load(true);
 
 /**
- * Catch any exceptions to display a nice error message
- * @see http://au.php.net/manual/en/function.set-exception-handler.php
+ * Let Scaffold handle errors
  */
-set_exception_handler(array('Environment','exception_handler'));
-
-/**
- * Catch errors and convert them into exceptions
- * @see http://au.php.net/manual/en/function.set-error-handler.php
- */
-set_error_handler(array('Environment','error_handler'));
-
-/**
- * Catches errors not caught by the other handlers like E_PARSE
- * @see http://au.php.net/manual/en/function.register-shutdown-function.php
- */
-register_shutdown_function(array('Environment', 'shutdown_handler'));
+Scaffold_Environment::error_handling(true);
 
 /** 
  * Set the view to use for errors and exceptions
  */
-Environment::set_view(realpath($system.'/views/error.php'));
+Scaffold_Environment::set_view(realpath($system.'/views/error.php'));
 
 // =========================================
 // = Start the scaffolding magic  =
 // =========================================
 
 // Make sure the config var is set
-if(!isset($config))
-	$config = array();
+if(!isset($config)) $config = array();
 
 // The container creates Scaffold objects
 $container = new Scaffold_Container($system,$config);
@@ -66,7 +51,7 @@ $scaffold = $container->build();
 // Get the requested source
 if(isset($_GET['file']))
 {
-	$source = new Scaffold_Source_File( $scaffold->loader->find_file($_GET['file']) );
+	$source = new Scaffold_Source_File( $scaffold->helper->load->file($_GET['file']) );
 }
 elseif(isset($_GET['url']) AND $config['enable_url'] === true)
 {
