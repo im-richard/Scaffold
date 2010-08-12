@@ -74,28 +74,28 @@ class Scaffold_Response_EncoderTest extends PHPUnit_Framework_TestCase
     public function testNoCompression()
     {
     	$encoder = new Scaffold_Response_Encoder(false);
-    	$this->assertEquals($encoder->get_encoding_method(),false);
-    	$this->assertEquals($encoder->get_compression_level(),false);
+    	$this->assertEquals($encoder->get_method(),false);
+    	$this->assertEquals($encoder->get_level(),false);
     }
     
     public function testCompressionLevelOne()
     {
     	$encoder = new Scaffold_Response_Encoder(1);
-    	$this->assertEquals($encoder->get_compression_level(),1);
+    	$this->assertEquals($encoder->get_level(),1);
     }
     
     public function testCompressionNegativeValue()
     {
     	$encoder = new Scaffold_Response_Encoder(-1);
-    	$this->assertEquals($encoder->get_encoding_method(),false);
-    	$this->assertEquals($encoder->get_compression_level(),false);
+    	$this->assertEquals($encoder->get_method(),false);
+    	$this->assertEquals($encoder->get_level(),false);
     }
     
     public function testCompressionZeroValue()
     {
     	$encoder = new Scaffold_Response_Encoder(0);
-    	$this->assertEquals($encoder->get_encoding_method(),false);
-    	$this->assertEquals($encoder->get_compression_level(),false);
+    	$this->assertEquals($encoder->get_method(),false);
+    	$this->assertEquals($encoder->get_level(),false);
     }
     
     public function testCompressionTrue()
@@ -111,7 +111,7 @@ class Scaffold_Response_EncoderTest extends PHPUnit_Framework_TestCase
     		$_SERVER['HTTP_USER_AGENT'] = $test['ua'];
     		
     		$encoder = new Scaffold_Response_Encoder(1);
-    		$encoding = $encoder->get_encoding_method();
+    		$encoding = $encoder->get_method();
     		
     		$this->assertEquals($encoding,$test['exp']);
     	}
@@ -125,7 +125,7 @@ class Scaffold_Response_EncoderTest extends PHPUnit_Framework_TestCase
     	$encoder = new Scaffold_Response_Encoder(1);
  
         $content = 'foo';
-        $content = $encoder->compress($content);
+        $content = $encoder->encode($content);
         $this->assertEquals($content,gzencode('foo',1));
     }
     
@@ -137,7 +137,7 @@ class Scaffold_Response_EncoderTest extends PHPUnit_Framework_TestCase
 		$encoder = new Scaffold_Response_Encoder(1);
 		
 		$content = 'foo';
-		$content = $encoder->compress($content);
+		$content = $encoder->encode($content);
 		$this->assertEquals($content,gzdeflate('foo',1));
 	}
 }

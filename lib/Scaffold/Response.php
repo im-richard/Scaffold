@@ -114,14 +114,10 @@ class Scaffold_Response
 	 */
 	public function render($use_cache = true)
 	{
-		// Is the browser cache older?
-		$not_modified = ($this->cache->modified($this->headers['Last-Modified']) === false);
+		// Is the browser cache still valid?
+		$cache_valid = $this->cache->valid($this->headers['Last-Modified'],$this->headers['ETag']);
 		
-		// Do the etags match?
-		$etags_match = $this->cache->matched($this->headers['ETag']);
-		
-		// Cache is still fresh
-		if($not_modified AND $etags_match AND $use_cache)
+		if($cache_valid AND $use_cache)
 		{
 			$this->status = 304;
 			$this->headers = array();
@@ -129,7 +125,6 @@ class Scaffold_Response
 			exit;
 		}
 		
-		// Send it all to the browser
 		$this->send_headers();
 		echo $this->output;
 		exit;

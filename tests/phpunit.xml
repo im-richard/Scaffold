@@ -1,8 +1,16 @@
 <phpunit bootstrap="./Bootstrap.php">
 	
-    <testsuite name="scaffold test suite">
-        <directory>./</directory>
-    </testsuite>
+	<testsuites>
+		<testsuite name="env">
+		    <directory>./Environment</directory>
+		</testsuite>
+	    <testsuite name="core">
+	        <directory>./Scaffold</directory>
+	    </testsuite>
+	    <testsuite name="ext">
+	        <directory>./Extensions</directory>
+	    </testsuite>
+    </testsuites>
 
     <php>
     	<ini name="include_path" value="../lib:/usr/local/zend/share/pear:/usr/lib/php/PEAR"/>

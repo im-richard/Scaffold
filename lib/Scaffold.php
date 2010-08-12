@@ -37,19 +37,12 @@ class Scaffold extends Scaffold_Extension_Observable
 	public $response;
 	
 	/**
-	 * Loads in files,directories and sources
+	 * Helper classes
 	 * @access public
-	 * @var Scaffold_Loader
+	 * @var Scaffold_Helper
 	 */
-	 public $loader;
-	 
-	 /**
-	  * Optional objects with helper methods
-	  * @access public
-	  * @var Scaffold_Helper
-	  */
 	 public $helper;
-	
+
 	// =========================================
 	// = Protected Variables =
 	// =========================================
@@ -72,13 +65,11 @@ class Scaffold extends Scaffold_Extension_Observable
 	 * @param $production 	boolean
 	 * @return void
 	 */
-	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, Scaffold_Loader $loader, Scaffold_Helper $helper, $production = false)
+	public function __construct(Scaffold_Cache $cache, Scaffold_Response $response, $production = false)
 	{		
-		$this->cache = $cache;
-		$this->response = $response;
-		$this->loader = $loader;
-		$this->helper = $helper;
-		$this->production = $production;
+		$this->cache 		= $cache;
+		$this->response 	= $response;
+		$this->production 	= $production;
 	}
 	
 	// ============================
@@ -115,10 +106,9 @@ class Scaffold extends Scaffold_Extension_Observable
 			$cached = $this->cache->get($source->id);
 		}
 
-		// Update the source with the cache values
-		$source->contents = $cached->contents;
-		$source->last_modified = $cached->last_modified;
-		$source->expires = $cached->expires;
+		$source->contents 		= $cached->contents;
+		$source->last_modified 	= $cached->last_modified;
+		$source->expires 		= $cached->expires;
 		
 		return $source;
 	}
@@ -187,5 +177,16 @@ class Scaffold extends Scaffold_Extension_Observable
 			$source->contents,
 			$source->last_modified
 		);
+	}
+	
+	/**
+	 * Adds a helper object
+	 * @param Scaffold_Helper
+	 * @access public
+	 * @return void
+	 */
+	public function attach_helper(Scaffold_Helper $helper)
+	{
+		$this->helper = $helper;
 	}
 }

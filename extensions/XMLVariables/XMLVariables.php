@@ -11,7 +11,12 @@
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
 class Scaffold_Extension_XMLVariables extends Scaffold_Extension
-{
+{	
+	/**
+	 * @var array
+	 */
+	public $variables = array();
+	
 	/**
 	 * @var array
 	 */
@@ -20,61 +25,100 @@ class Scaffold_Extension_XMLVariables extends Scaffold_Extension
 	);
 	
 	/**
-	 * @var array
-	 */
-	public $variables = array();
-	
-	/**
 	 * Loop through each file and load the XML variables
 	 * @access public
 	 * @param $source
 	 * @return string
 	 */
-	public function initialize($source,$scaffold)
+	public function variables_start($source,$scaffold)
 	{
-		// List of XML files to parse
-		$files = $this->config['files'];
+		// Find all loaders within the CSS
+		$urls = $this->find_directives($source->contents);
 		
-		foreach($files as $file)
+		foreach($urls[1] as $file)
 		{
-			// Try and load the file
-			$file = $scaffold->loader->find_file($file,false);
-			
-			if(!is_file($file)) continue;
-			
-			// The variables
-			$xml = simplexml_load_file($file);
-			$this->_load_variables_from_xml($xml);
+			if($found = $source->find($file))
+			{
+				$this->load($found);
+			}
+		}
+		
+		foreach($this->config['files'] as $file)
+		{
+			if($found = $scaffold->loader->find_file($file,false))
+			{
+				$this->load($found);
+			}
 		}
 	}
 	
 	/**
-	 * Load variables from an XML object
-	 * @access private
-	 * @param $xml
-	 * @return void
+	 * Loads an XML file and loads it's variables into the object.
+	 * Returns true if successful
+	 * @access public
+	 * @param $file
+	 * @return boolean
 	 */
-	private function _load_variables_from_xml($xml,$group = 'var')
+	public function load($file)
 	{
-		foreach($xml->variable as $name => $variable)
+		if(!is_file($file)) return false;
+		$this->variables = $this->to_array(simplexml_load_file($file));
+		return true;
+	}
+	
+	/**
+	 * Saves an array of variables as XML
+	 * @access public
+	 * @param $vars array
+	 * @return boolean
+	 */
+	public function save(array $vars,$file)
+	{
+		$xml = "<?xml version=\"1.0\" ?><variables>";
+		
+		foreach($vars as $group => $group_vars)
+		{
+			$xml .= '<group name="'.$group.'">';
+			
+			foreach($group_vars as $key => $value)
+			{
+				$xml .= '<variable name="'.$key.'">'.$value.'</variable>';
+			}
+			
+			$xml .= '</group>';
+		}
+		
+		$xml .= '</variables>';
+		
+		return file_put_contents($file,$xml);
+	}
+	
+	/**
+	 * Load variables from an XML object
+	 * @access public
+	 * @param $xml
+	 * @return array
+	 */
+	public function to_array($xml,$group = 'var')
+	{
+		$variables = array();
+
+		foreach($xml->variable as $variable)
 		{
 			$key 	= (string)$variable->attributes()->name;
 			$value 	= (string)$variable;
 			$group  = (string)$group;
 			
-			if(isset($this->variables[$group]) === false)
-			{
-				$this->variables[$group] = array();
-			}
-			
-			$this->variables[$group][$key] = $value; 
+			$variables[$group][$key] = $value; 
 		}
 		
 		foreach($xml->group as $vargroup)
 		{
 			$group = (string)$vargroup->attributes()->name;
-			$this->_load_variables_from_xml($vargroup,$group);
+			$variables = array_merge($variables,$this->to_array($vargroup,$group));
 		}
+		
+		return $variables;
 	}
 	
 	/**
@@ -86,5 +130,30 @@ class Scaffold_Extension_XMLVariables extends Scaffold_Extension
 	public function variables_replace(Scaffold_Source $source,Scaffold_Extension_Variables $var)
 	{
 		$var->variables = array_merge($var->variables,$this->variables);
+	}
+	
+	/**
+	 * Finds all @variable urls
+	 * @access public
+	 * @param $str
+	 * @return array
+	 */
+	public function find_directives($str)
+	{
+		preg_match_all(
+		    '/
+		        @variables\\s+
+		        (?:url\\(\\s*)?      # maybe url(
+		        [\'"]?               # maybe quote
+		        (.*?)                # 1 = URI
+		        [\'"]?               # maybe end quote
+		        (?:\\s*\\))?         # maybe )
+		        ;                    # end token
+		    /x'
+		    ,$str
+		    ,$found
+		);
+		
+		return $found;
 	}
 }

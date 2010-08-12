@@ -12,20 +12,14 @@
  */
 abstract class Scaffold_Extension_Observable
 {
-	public $data;
-
 	/**
-	 * Array of extension objects
-	 *
 	 * @access public
 	 * @var array
 	 */
 	public $extensions = array();
 
 	/**
-	 * Attaches a module as an observer
-	 *
-	 * @param $module
+	 * @param $extension
 	 * @access public
 	 * @return void
 	 */
@@ -35,10 +29,7 @@ abstract class Scaffold_Extension_Observable
 	}
 	
 	/**
-	 * Detaches an observer
-	 *
-	 * @author your name
-	 * @param $module
+	 * @param $extension
 	 * @access public
 	 * @return void
 	 */
@@ -58,11 +49,11 @@ abstract class Scaffold_Extension_Observable
 	}
 
 	/**
-	 * Notifies observers of a hook
-	 *
+	 * Notifies observers
 	 * @param $hook
+	 * @param $params array
 	 * @access public
-	 * @return Scaffold_Engine
+	 * @return mixed
 	 */
 	public function notify($hook,$params = array())
 	{

@@ -8,10 +8,16 @@ class Scaffold_Extension_VariablesTest extends PHPUnit_Framework_TestCase
 	
 	protected function setUp()
 	{
-		$system 			= realpath(__DIR__.'/../../../');
-		$container 			= new Scaffold_Container($system);
+		$options = array(
+			'extensions' => array(
+				'Variables'
+			)
+		);
+
+		$system 			= realpath(__DIR__.'/../../../');	
+		$container 			= new Scaffold_Container($system,$options);
 		$this->scaffold 	= $container->build();
-		$this->object 		= new Scaffold_Extension_Variables();
+		$this->object 		= $this->scaffold->extensions['Variables'];
 	}
 
 	public function test_process()

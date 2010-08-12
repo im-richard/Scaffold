@@ -1,7 +1,12 @@
 <?php
 
 class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
-{	
+{
+	public function setUp()
+	{
+		$this->object = new Scaffold_Helper_CSS();
+	}
+	
 	/**
 	 * Remove inline comments
 	 * @author Anthony Short
@@ -11,7 +16,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 	{
 		$string = "\n// Inline comment\n#id { background:blue }";
 		$expected = "\n#id { background:blue }";
-		$output = Scaffold_Helper_CSS::remove_inline_comments($string);
+		$output = $this->object->remove_inline_comments($string);
 		$this->assertEquals($output,$expected);
 	}
 
@@ -24,7 +29,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 	{
 		$string = "\n\r#id {\nbackground:\t\tblue;\n}\n\n";
 		$expected = "#id {background:blue;}";
-		$output = Scaffold_Helper_CSS::remove_newlines($string);
+		$output = $this->object->remove_newlines($string);
 		$this->assertEquals($output,$expected);
 	}
 	
@@ -37,7 +42,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 	{
 		$string = "/* Comment */#id /* Comment */{background/* Comment */:/* Comment */blue;/* Comment */}";
 		$expected = "#id {background:blue;}";
-		$output = Scaffold_Helper_CSS::remove_comments($string);
+		$output = $this->object->remove_comments($string);
 		$this->assertEquals($output,$expected);
 	}
 	
@@ -61,7 +66,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 				)
 		);
 	
-		$output = Scaffold_Helper_CSS::find_functions('url',$string);
+		$output = $this->object->find_functions('url',$string);
 		$this->assertEquals($output,$expected);
 	}
 
@@ -77,7 +82,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 				)
 		);
 	
-		$actual = Scaffold_Helper_CSS::find_atrule('constants',$string);
+		$actual = $this->object->find_atrule('constants',$string);
 		$this->assertEquals($expected,$actual);
     }
 
@@ -98,7 +103,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			'color' => 'red'
 		);
 	
-		$output = Scaffold_Helper_CSS::ruleset_to_array($string);
+		$output = $this->object->ruleset_to_array($string);
 		$this->assertEquals($output,$expected);
     }
 
@@ -115,7 +120,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			'font' => '13px/20px "Helvetica Neue", Helvetica, Arial, sans-serif',
 			'color' => '#333'
 		);
-		$output = Scaffold_Helper_CSS::ruleset_to_array($string);
+		$output = $this->object->ruleset_to_array($string);
 		$this->assertEquals($output,$expected);
 		
 		//
@@ -126,7 +131,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 			'top' => 0,
 			'left' => 0
 		);
-		$output = Scaffold_Helper_CSS::ruleset_to_array($string);
+		$output = $this->object->ruleset_to_array($string);
 		$this->assertEquals($output,$expected);
 		
 		//
@@ -136,7 +141,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 		(
 			'font-family' => '/*Monaco, ProFont,*/ "Courier New", monospace',
 		);
-		$output = Scaffold_Helper_CSS::ruleset_to_array($string);
+		$output = $this->object->ruleset_to_array($string);
 		$this->assertEquals($output,$expected);
 		
 		//
@@ -146,7 +151,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 		(
 			'content' => '":"',
 		);
-		$output = Scaffold_Helper_CSS::ruleset_to_array($string);
+		$output = $this->object->ruleset_to_array($string);
 		$this->assertEquals($output,$expected);
 		
 		// Duplicate rule keys
@@ -156,7 +161,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 		(
 			'content' => "'Foo'",
 		);
-		$output = Scaffold_Helper_CSS::ruleset_to_array($string);
+		$output = $this->object->ruleset_to_array($string);
 		$this->assertEquals($output,$expected);
 	}
 	
@@ -180,7 +185,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 				)
 		);
 
-		$output = Scaffold_Helper_CSS::find_selectors_with_property('background',$string);
+		$output = $this->object->find_selectors_with_property('background',$string);
 		$this->assertEquals($expected,$output);
 	}
 	
@@ -201,7 +206,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 					'value' => 'red'
 				)
 		);
-		$output = Scaffold_Helper_CSS::find_properties_with_value('color','red',$string);
+		$output = $this->object->find_properties_with_value('color','red',$string);
 		$this->assertEquals($expected,$output);
 		
 		$expected = array
@@ -213,7 +218,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 					'value' => 'red'
 				)
 		);
-		$output = Scaffold_Helper_CSS::find_properties_with_value('background-color','red',$string);
+		$output = $this->object->find_properties_with_value('background-color','red',$string);
 		$this->assertEquals($expected,$output);
 		
 		$expected = array
@@ -231,7 +236,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 					'value' => 'blue'
 				)
 		);
-		$output = Scaffold_Helper_CSS::find_properties_with_value('background','blue',$string);
+		$output = $this->object->find_properties_with_value('background','blue',$string);
 		$this->assertEquals($expected,$output);
 	}
 	
@@ -244,107 +249,107 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 	{
 		$selector = '*';
 		$expected = '\*';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'id';
 		$expected = 'id';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E[foo]';
 		$expected = 'E\[foo\]';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E[foo="bar"]';
 		$expected = 'E\[foo\="bar"\]';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E[foo~="bar"]';
 		$expected = 'E\[foo~\="bar"\]';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E[foo^="bar"]';
 		$expected = 'E\[foo\^\="bar"\]';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E[foo*="bar"]';
 		$expected = 'E\[foo\*\="bar"\]';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E[foo|="en"]';
 		$expected = 'E\[foo\|\="en"\]';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E:root';
 		$expected = 'E\:root';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E:nth-child(n)';
 		$expected = 'E\:nth\-child\(n\)';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E:nth-last-child(n)';
 		$expected = 'E\:nth\-last\-child\(n\)';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E:nth-of-type(n)';
 		$expected = 'E\:nth\-of\-type\(n\)';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E::first-line';
 		$expected = 'E\:\:first\-line';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E.warning';
 		$expected = 'E\.warning';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E#myid';
 		$expected = 'E\#myid';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E F';
 		$expected = 'E\s+F';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E > F';
 		$expected = 'E\s+\>\s+F';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E + F';
 		$expected = 'E\s+\+\s+F';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E ~ F';
 		$expected = 'E\s+~\s+F';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E_F';
 		$expected = 'E_F';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 		
 		$selector = 'E-F';
 		$expected = 'E\-F';
-		$actual = Scaffold_Helper_CSS::escape_regex($selector);
+		$actual = $this->object->escape_regex($selector);
 		$this->assertEquals($expected,$actual);
 	}
 	
@@ -360,35 +365,35 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 		(
 			0 => 'id{background:blue}'
 		);
-		$output = Scaffold_Helper_CSS::find_selectors('id',$string);
+		$output = $this->object->find_selectors('id',$string);
 		$this->assertEquals($expected,$output);
 		
 		$expected = array
 		(
 			0 => '#id2{color:blue}'
 		);
-		$output = Scaffold_Helper_CSS::find_selectors('#id2',$string);
+		$output = $this->object->find_selectors('#id2',$string);
 		$this->assertEquals($expected,$output);
 		
 		$expected = array
 		(
 			0 => '#id3{background-color:red}'
 		);
-		$output = Scaffold_Helper_CSS::find_selectors('#id3',$string);
+		$output = $this->object->find_selectors('#id3',$string);
 		$this->assertEquals($expected,$output);
 		
 		$expected = array
 		(
 			0 => '#id4{dbackground:blue}'
 		);
-		$output = Scaffold_Helper_CSS::find_selectors('#id4',$string);
+		$output = $this->object->find_selectors('#id4',$string);
 		$this->assertEquals($expected,$output);
 		
 		$expected = array
 		(
 			0 => '#id5{color:red;background:blue}'
 		);
-		$output = Scaffold_Helper_CSS::find_selectors('#id5',$string);
+		$output = $this->object->find_selectors('#id5',$string);
 		$this->assertEquals($expected,$output);
 	}
 
@@ -415,7 +420,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
 					'value' => 'blue'
 				),
 		);
-		$output = Scaffold_Helper_CSS::find_properties('background',$string);
+		$output = $this->object->find_properties('background',$string);
 		
 		$this->assertEquals($expected,$output);
     }
@@ -423,15 +428,15 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
     public function testSelector_exists()
     {
         $string = 'id{background:blue}#id2{color:blue}#id3{background-color:red}#id4{dbackground:blue}#id5{color:red;background:blue}';
-		$output = Scaffold_Helper_CSS::selector_exists('#id2',$string);
+		$output = $this->object->selector_exists('#id2',$string);
 		$this->assertTrue($output);
 		
 		$string = 'id > blah{color:red;background:blue}';
-		$output = Scaffold_Helper_CSS::selector_exists('id > blah',$string);
+		$output = $this->object->selector_exists('id > blah',$string);
 		$this->assertTrue($output);
 		
 		$string = 'id > blah, bloo blah{color:red;background:blue}';
-		$output = Scaffold_Helper_CSS::selector_exists('id > blah',$string);
+		$output = $this->object->selector_exists('id > blah',$string);
 		$this->assertFalse($output);
     }
 
@@ -439,7 +444,7 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
     {
         $string = 'id{background:blue}#id2{color:blue}#id3{background-color:red}#id4{dbackground:blue}#id5{color:red;background:blue}';
 		$expected = 'id{}#id2{color:blue}#id3{background-color:red}#id4{dbackground:blue}#id5{color:red;}';
-		$output = Scaffold_Helper_CSS::remove_properties_with_value('background','blue',$string);
+		$output = $this->object->remove_properties_with_value('background','blue',$string);
 		$this->assertEquals($expected,$output);
     }
 
@@ -447,14 +452,14 @@ class Scaffold_Helper_CSSTest extends PHPUnit_Framework_TestCase
     {
         $string = 'id{background:blue}#id2{color:blue}#id3{background-color:red}#id4{dbackground:blue}#id5{color:red;background:blue}';
 		$expected = 'id{}#id2{color:blue}#id3{background-color:red}#id4{dbackground:blue}#id5{color:red;}';
-		$output = Scaffold_Helper_CSS::remove_properties('background',$string);
+		$output = $this->object->remove_properties('background',$string);
 		$this->assertEquals($expected,$output);
 		
 		//
 
 		$string = 'id{background:blue}#id2{color:blue}#id3{background-color:red}#id4{dbackground:blue}#id5{color:red;background:blue}';
 		$expected = 'id{background:blue}#id2{color:blue}#id3{}#id4{dbackground:blue}#id5{color:red;background:blue}';
-		$output = Scaffold_Helper_CSS::remove_properties('background-color',$string);
+		$output = $this->object->remove_properties('background-color',$string);
 		$this->assertEquals($expected,$output);
     }
 	

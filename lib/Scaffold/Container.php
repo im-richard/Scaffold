@@ -60,8 +60,9 @@ class Scaffold_Container
 	 * @return return type
 	 */
 	public function load_extensions($path,$scaffold)
-	{
-		$extensions = array();
+	{	
+		# Scaffold_Helper object
+		$helper = $this->getHelper();
 	
 		# Load each of the extensions
 		foreach(glob($path.'/*/') as $ext)
@@ -85,7 +86,9 @@ class Scaffold_Container
 			if(file_exists($file))
 			{
 				require_once realpath($ext.$name.'.php');
-				$scaffold->attach($name,new $class($config));
+				$object = new $class($config);
+				$object->attach_helper($helper);
+				$scaffold->attach($name,$object);
 			}
 		}
 
@@ -98,23 +101,18 @@ class Scaffold_Container
 	 */
 	public function build() 
 	{
-		# For caching CSS files
-		$cache = $this->getCache();
-		
-		# Sending responses to the browser
-		$response = $this->getResponse();
-		
-		# Loading files and directories
-		$loader = $this->getLoader();
-		
-		# Helper methods
-		$helper = $this->getHelper();
-		
+		$cache 		= $this->getCache();
+		$response 	= $this->getResponse();
+		$helper 	= $this->getHelper();
+
 		# The main object
-		$scaffold = new Scaffold($cache,$response,$loader,$helper,$this->options['production']);
+		$scaffold = new Scaffold($cache,$response,$this->options['production']);
 		
 		# Load extensions
 		$scaffold = $this->load_extensions($this->system.'/extensions/',$scaffold);
+		
+		# Attach the helper object
+		$scaffold->attach_helper($helper);
 		
 		return $scaffold;
 	}
@@ -132,22 +130,10 @@ class Scaffold_Container
 		$helper = new Scaffold_Helper();
 		$helper->add('string',new Scaffold_Helper_String());
 		$helper->add('css',new Scaffold_Helper_CSS());
+		$helper->add('load',new Scaffold_Helper_Loader($this->options['load_paths']));
 		$this->_helper = $helper;
 		
 		return $this->_helper; 
-	}
-
-	/**
-	 * Gets the loader object
-	 * @access public
-	 * @return Scaffold_Loader
-	 */
-	public function getLoader()
-	{
-		if(isset($this->_loader))
-			return $this->_loader;
-		
-		return $this->_loader = new Scaffold_Loader($this->options['load_paths']);
 	}
 	
 	/**

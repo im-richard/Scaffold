@@ -1,6 +1,6 @@
 <?php
 /**
- * Scaffold_Load
+ * Scaffold_Helper_Loader
  *
  * - Loads files
  * - Returns the contents of files
@@ -13,7 +13,7 @@
  * @license 		http://opensource.org/licenses/bsd-license.php  New BSD License
  * @link 			https://github.com/anthonyshort/csscaffold/master
  */
-class Scaffold_Loader
+class Scaffold_Helper_Loader
 {
 	/**
 	 * Include paths. Used for searching for files.
@@ -65,13 +65,13 @@ class Scaffold_Loader
 	/**
 	 * Finds a file on the filesystem using the load paths
 	 * and the document root. 		
-	 *
-	 * @access private
+	 * @access public
 	 * @param $file
+	 * @param $required boolean
 	 * @throws Scaffold_Loader_Exception
-	 * @return string
+	 * @return mixed
 	 */
-	public function find_file($file,$required = true)
+	public function file($file,$required = true)
 	{
 		$real = realpath($file);
 		

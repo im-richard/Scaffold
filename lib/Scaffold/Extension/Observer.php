@@ -34,9 +34,8 @@ abstract class Scaffold_Extension_Observer
 	}
 
 	/**
-	 * Called from the observable object
-	 *
-	 * @param $observable
+	 * @param $hook
+	 * @param $params array
 	 * @access public
 	 * @return void
 	 */
