@@ -42,7 +42,7 @@ class Scaffold_Environment
 	 * @param $enabled boolean
 	 * @return void
 	 */
-	public static function auto_load($enabled)
+	public static function auto_load()
 	{
 		spl_autoload_register(array(__CLASS__,'_auto_load'));
 	}
@@ -98,7 +98,7 @@ class Scaffold_Environment
 	 * @param $enabled boolean
 	 * @return void
 	 */
-	public static function error_handling($enabled)
+	public static function handle_errors()
 	{
 		/**
 		 * Catch any exceptions to display a nice error message

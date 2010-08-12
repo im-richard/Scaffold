@@ -11,7 +11,7 @@ $system = dirname(__FILE__).'/';
  * to make Scaffold function, but makes it a bit
  * nicer to use.
  */
-include $system.'/lib/Environment.php';
+include $system.'/lib/Scaffold/Environment.php';
 
 /**
  * Set timezone, just in case it isn't set. PHP 5.3+ 
@@ -23,12 +23,12 @@ date_default_timezone_set('GMT');
 /**
  * Automatically load any Scaffold Classes
  */
-Scaffold_Environment::auto_load(true);
+Scaffold_Environment::auto_load();
 
 /**
  * Let Scaffold handle errors
  */
-Scaffold_Environment::error_handling(true);
+Scaffold_Environment::handle_errors();
 
 /** 
  * Set the view to use for errors and exceptions
