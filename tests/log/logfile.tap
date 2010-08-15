@@ -65,12 +65,13 @@ ok 63 - Scaffold_Source_UrlTest::Get_a_url_that_fails
 ok 64 - Scaffold_Extension_AbsoluteUrlsTest::test_up_directory
 ok 65 - Scaffold_Extension_AbsoluteUrlsTest::test_unquote
 ok 66 - Scaffold_Extension_AbsoluteUrlsTest::test_post_format
-ok 67 - Scaffold_Extension_ImportTest::test_pre_process
-ok 68 - Scaffold_Extension_MinifyTest::test_post_format
-ok 69 - Scaffold_Extension_MixinsTest::test_process
-ok 70 - Scaffold_Extension_NestedSelectorsTest::test_process
-ok 71 - Scaffold_Extension_SassTest::test_process
-ok 72 - Scaffold_Extension_VariablesTest::test_process
-ok 73 - Scaffold_Extension_XMLVariablesTest::test_variables_start
-ok 74 - Scaffold_Extension_XMLVariablesTest::test_save
-1..74
+ok 67 - Scaffold_Extension_ImageReplaceTest::test_process
+ok 68 - Scaffold_Extension_ImportTest::test_pre_process
+ok 69 - Scaffold_Extension_MinifyTest::test_post_format
+ok 70 - Scaffold_Extension_MixinsTest::test_process
+ok 71 - Scaffold_Extension_NestedSelectorsTest::test_process
+ok 72 - Scaffold_Extension_SassTest::test_process
+ok 73 - Scaffold_Extension_VariablesTest::test_process
+ok 74 - Scaffold_Extension_XMLVariablesTest::test_variables_start
+ok 75 - Scaffold_Extension_XMLVariablesTest::test_save
+1..75
