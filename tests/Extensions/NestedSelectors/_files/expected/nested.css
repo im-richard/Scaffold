@@ -1,0 +1,32 @@
+@import 'blah.css';
+@media (min-width: -100px)
+{
+body,html
+{
+	color:hsla(150,100,100,1);
+	width: 100px;
+}
+body #data > foobar[foo="bar"],
+html #data > foobar[foo="bar"],
+body #id,
+html #id
+{
+	background:#000;
+}
+body table:first-child,
+html table:first-child
+{
+	color:red;
+}
+body img,
+html img,
+body td,
+html td,
+body table,
+html table,
+body:first-child,
+html:first-child
+{
+	margin: 0;
+}
+}

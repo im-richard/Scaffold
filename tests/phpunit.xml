@@ -1,8 +1,16 @@
-<phpunit bootstrap="./_init.php">
+<phpunit bootstrap="./Bootstrap.php">
 	
-    <testsuite name="scaffold test suite">
-        <directory>./</directory>
-    </testsuite>
+	<testsuites>
+		<testsuite name="env">
+		    <directory>./Environment</directory>
+		</testsuite>
+	    <testsuite name="core">
+	        <directory>./Scaffold</directory>
+	    </testsuite>
+	    <testsuite name="ext">
+	        <directory>./Extensions</directory>
+	    </testsuite>
+    </testsuites>
 
     <php>
     	<ini name="include_path" value="../lib:/usr/local/zend/share/pear:/usr/lib/php/PEAR"/>
@@ -14,11 +22,14 @@
         </whitelist>
     </filter>
 	
-    <logging>
-        <log type="coverage-html" target="./log/report" charset="UTF-8"
-            yui="true" highlight="true"
-            lowUpperBound="50" highLowerBound="80"/>
-        <log type="testdox-html" target="./log/testdox.html" />
-    </logging>
+	<logging>
+		<log type="coverage-html" target="./log/report" charset="UTF-8" yui="true" highlight="true" lowUpperBound="50" highLowerBound="80"/>
+		<log type="coverage-xml" target="./log/coverage.xml"/>
+		<log type="json" target="./log/logfile.json"/>
+		<log type="tap" target="./log/logfile.tap"/>
+		<log type="junit" target="./log/logfile.xml" logIncompleteSkipped="false"/>
+		<log type="testdox-html" target="./log/testdox.html"/>
+		<log type="testdox-text" target="./log/testdox.txt"/>
+	</logging>
 
 </phpunit>

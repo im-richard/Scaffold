@@ -65,6 +65,16 @@ $config['output_compression'] = false;
  */
 $config['set_etag'] = true;
 
+/** 
+ * Enables the use of strings in the URL as a source
+ */
+$config['enable_string'] = false;
+
+/**
+ * Enables the use of URLs as a source
+ */
+$config['enable_url'] = false;
+
 // =========================================
 // = Extension Configuration =
 // =========================================
@@ -74,7 +84,6 @@ $config['set_etag'] = true;
  */
 $config['extensions'] = array(
 	'AbsoluteUrls',
-	'Constants',
 	'Embed',
 	'Functions',
 	'HSL',
@@ -83,6 +92,9 @@ $config['extensions'] = array(
 	'Properties',
 	'Random',
 	'Import',
+	'Mixins',
+	'NestedSelectors',
+	'Variables',
 	
 	# Process-heavy Extensions
 	//'Sass',

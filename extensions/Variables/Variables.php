@@ -41,58 +41,76 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 	 */
 	public function process($source,$scaffold)
 	{		
-		// HOOK //
-		$scaffold->notify('variables_start',array($source,$this));
-		
-		# Save any variables created in the options
+		// Get variables from the config
 		$this->variables = array_merge($this->config['variables'],$this->variables);
-		
-		// Create a real regex string
-		$regex = $scaffold->helper->css->create_regex($this->regex);
 	
-		// Extract the variables from the source and save them
+		// Extract the variables from the source
+		$this->variables = array_merge($this->variables,$this->extract($source));
+		
+		// HOOK //
+		$scaffold->notify('variables_replace',array($source,$this));
+		
+		// Replace the variables
+		$source->contents = $this->replace_variables($source->contents,$this->variables);
+	}
+	
+	/**
+	 * Returns the 
+	
+	/**
+	 * Finds variable groups in a CSS string
+	 * @access public
+	 * @param $str
+	 * @return str The string with the @variables removed
+	 */
+	public function extract(Scaffold_Source $source)
+	{
+		$variables = array();
+
+		// Create a real regex string
+		$regex = $this->helper->css->create_regex($this->regex);
+		
 		if(preg_match_all('/'.$regex.'/xs',$source->contents,$matches))
 		{
 			foreach ($matches[0] as $key => $value)
 			{
 				// Default var group
 				$group 	= ($matches[1][$key] == false) ? 'var' : trim($matches[1][$key]);
-				$values = $scaffold->helper->css->ruleset_to_array($matches[2][$key]);
+				$values = $this->helper->css->ruleset_to_array($matches[2][$key]);
 				
 				// If the group exists
-				if(isset($this->variables[$group]))
+				if(isset($variables[$group]))
 				{
-					$values = array_merge($this->variables[$group],$values);
+					// Merge the new variables over the top of them
+					$values = array_merge($variables[$group],$values);
 				}
-
-				$this->variables[$group] = $values;
 				
-				// Remove the at-rule
+				// Remove the @variable groups
 				$source->contents = str_replace($value,'',$source->contents);
+				
+				// Save the variable
+				$variables[$group] = $values;
 			}
 		}
 		
-		// Replace the variables
-		$source->contents = trim($this->replace_variables($source->contents));
-		
-		// HOOK //
-		$scaffold->notify('variables_end',array($source,$this));
+		return $variables;
 	}
 	
 	/**
 	 * Replaces variables in a string
-	 * @param string
+	 * @param $str string
+	 * @param $variables array
 	 * @return string
 	 */
-	public function replace_variables($str)
+	public function replace_variables($str,array $variables)
 	{		
 		// Now replace each of the variables in the CSS string
-		foreach($this->variables as $group => $variables)
+		foreach($variables as $group => $vars)
 		{
 			// Sort the variables so they replace correctly
-			$variables = $this->_sort_array_by_key_length($variables);
+			$sorted = $this->_sort_array_by_key_length($vars);
 			
-			foreach($variables as $key => $value)
+			foreach($sorted as $key => $value)
 			{
 				$str = str_replace($group.'.'.$key,$value,$str);
 			}

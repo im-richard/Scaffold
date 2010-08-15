@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<variables>
+	<variable name="font_family">Helvetica</variable>
+	<group name="colors">
+		<variable name="text">#000</variable>
+	</group>
+	<group name="ad">
+		<variable name="height">300px</variable>
+		<variable name="width">250px</variable>
+	</group>
+</variables>

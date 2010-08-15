@@ -1,4 +1,7 @@
 <?php
+
+require dirname(__FILE__) . '/Compressor.php';
+
 /**
  * Scaffold_Extension_Minify
  *
@@ -13,25 +16,6 @@
 class Scaffold_Extension_Minify extends Scaffold_Extension
 {
 	/**
-	 * Default settings which are used if the configuration
-	 * settings from the file aren't set.
-	 * @var array
-	 */
-	public $_defaults = array();
-	
-	/**
-	 * Loads the minify library
-	 * @access public
-	 * @param $source
-	 * @return void
-	 */
-	public function initialize($source,$scaffold)
-	{
-		require dirname(__FILE__) . '/Compressor.php';
-	}
-	
-	/**
-	 * Formats the CSS
 	 * @access public
 	 * @param $source
 	 * @return string

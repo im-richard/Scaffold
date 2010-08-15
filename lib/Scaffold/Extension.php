@@ -14,36 +14,39 @@
 abstract class Scaffold_Extension extends Scaffold_Extension_Observer
 {
 	/**
-	 * The configuration
 	 * @var array
 	 */
 	public $config = array();
 	
 	/**
-	 * Path to the folder containing this extension
-	 * @var string
-	 */
-	public $path;
-	
-	/**
-	 * Default settings which are used if the configuration
-	 * settings from the file aren't set.
-	 *
+	 * Default settings
 	 * @var array
 	 */
 	public $_defaults = array();
 	
 	/**
-	 * Sets the configuration
-	 * @param $engine object Scaffold_Engine
-	 * @param $config array Custom configration for this module
-	 * @param $path string The path to the module folder to use
+	 * @var Scaffold_Helper
+	 */
+	public $helper;
+	
+	/**
+	 * @param $config array
 	 * @access public
 	 * @return void
 	 */
-	public function __construct(Scaffold $scaffold,$config = array())
+	public function __construct($config = array())
 	{
-		// Merge the default config with the custom config
 		$this->config = array_merge($this->_defaults,$config);
+	}
+	
+	/**
+	 * Adds a helper object
+	 * @param Scaffold_Helper
+	 * @access public
+	 * @return void
+	 */
+	public function attach_helper(Scaffold_Helper $helper)
+	{
+		$this->helper = $helper;
 	}
 }

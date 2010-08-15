@@ -1,0 +1,16 @@
+@import '/tests/Extensions/AbsoluteUrls/_files/file.css';
+@import '/tests/Extensions/AbsoluteUrls/_files/file.css';
+@import '/tests/Extensions/AbsoluteUrls/_files/file.css' screen;
+@import '/tests/Extensions/AbsoluteUrls/_files/file.css';
+@import '/tests/Extensions/AbsoluteUrls/_files/file.css' screen,projector;
+@import '/absolute/file.css';
+@import '\\file.css';
+@import 'http://file.css';
+
+#id
+{
+	background:url(/tests/Extensions/AbsoluteUrls/_files/file.css);
+	background:url('/file.css');
+	background:url(/tests/Extensions/AbsoluteUrls/_files/file.css);
+	background:url(http://www.google.com/file.css);
+}

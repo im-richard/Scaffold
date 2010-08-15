@@ -1,0 +1,29 @@
+@mixin name
+{
+	color:blue;
+}
+
+@mixin name2($foo = 'bar')
+{
+	height:$foo;
+}
+
+@mixin name3($foo)
+{
+	height:$foo;
+}
+
+@mixin name4($foo,$bar=zoom)
+{
+	height:$foo;
+	$bar:1;
+}
+
+#id
+{
+	@include name;
+	@include name2;
+	@include name3('foo');
+	@include name4(10px);
+	@include name3(100px);
+}

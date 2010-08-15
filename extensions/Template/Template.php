@@ -28,7 +28,7 @@ class Scaffold_Extension_Template extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function initialize($source)
+	public function initialize($source,$scaffold)
 	{
 	
 	}
@@ -38,7 +38,7 @@ class Scaffold_Extension_Template extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function pre_format($source)
+	public function pre_format($source,$scaffold)
 	{
 	
 	}
@@ -48,7 +48,7 @@ class Scaffold_Extension_Template extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function pre_process($source)
+	public function pre_process($source,$scaffold)
 	{
 	
 	}
@@ -58,7 +58,7 @@ class Scaffold_Extension_Template extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function process($source)
+	public function process($source,$scaffold)
 	{
 	
 	}
@@ -68,7 +68,7 @@ class Scaffold_Extension_Template extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function post_process($source)
+	public function post_process($source,$scaffold)
 	{
 	
 	}
@@ -78,7 +78,7 @@ class Scaffold_Extension_Template extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function post_format($source)
+	public function post_format($source,$scaffold)
 	{
 	
 	}

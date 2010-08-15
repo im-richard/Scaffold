@@ -1,0 +1,31 @@
+@variables grid
+{
+	column-width:40px;
+	gutter-width:20px;
+	column-count:12;
+	baseline:18px; 
+}
+
+@variables color {
+  base: #e2e2e1;
+  highlight: #fe8d12;
+  page: #fff;
+}
+
+body
+{
+	line-height:grid.baseline;
+	background:color.page;
+	color:color.base;
+} 
+
+@variables {
+  reset:0;
+  blockElements: body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,textarea,p,blockquote,th,td;
+}
+ 
+var.blockElements
+{
+	color:color.base;
+	margin:var.reset;
+}

@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ .'/../../_init.php';
-
 class Scaffold_Cache_FileTest extends PHPUnit_Framework_TestCase
 {
 	var $cache_dir;

@@ -111,16 +111,15 @@ class Scaffold_Extension_Import extends Scaffold_Extension
 			// Error message
 			$title = "Missing File";
 			$message = "<code>$include</code> cannot be found or doesn't exist.<pre><code> ".$rules[0][0]."</code></pre>";
-			$line = Scaffold_Helper_String::line_number($rules[0][0],$css);
 			
 			// Throw the error
-			throw new Scaffold_Extension_Exception($title,$message,$base,$line);
+			throw new Scaffold_Extension_Exception($title,$message,$base);
 		}
 		
 		# It's already been loaded
 		if($this->is_loaded($path))
 		{
-			$css = str_replace($matches[0][0],'', $css);
+			//$css = str_replace($matches[0][0],'', $css);
 		}
 			
 		$this->loaded[] = $path;

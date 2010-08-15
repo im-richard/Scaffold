@@ -4,7 +4,6 @@
  *
  * Uses the Function extension to create a new CSS function called embed().
  * This lets you embed images and other url() data in the CSS as base64 encoded strings.
- * Uses MHTML for IE6/7.
  * 
  * @package 		Scaffold
  * @author 			Anthony Short <anthonyshort@me.com>

@@ -91,7 +91,7 @@ class Scaffold_Response_Cache
 		{
 			$header = substr($header, 0, $strpos);
 		}
-
+		
 		return strtotime($header);
 	}
 	
@@ -108,6 +108,18 @@ class Scaffold_Response_Cache
 	// ============================
 	// = Cache Checking Methods =
 	// ============================
+	
+	/**
+	 * Check if the browser cache is valid
+	 * @access public
+	 * @param $modified
+	 * @param $etag
+	 * @return boolean
+	 */
+	public function valid($modified,$etag)
+	{
+		return ($this->modified($modified) === false AND $this->matched($etag) === true);
+	}
 
 	/**
 	 * ETags match
@@ -128,6 +140,6 @@ class Scaffold_Response_Cache
 	 */
 	public function modified($last_modified)
 	{
-		return (strtotime($last_modified) > $this->_modified_since);
+		return ($last_modified > $this->_modified_since);
 	}
 }

@@ -1,7 +1,5 @@
 <?php
 
-require_once __DIR__ . '/../_init.php';
-
 class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 {
 	private $object;
@@ -43,27 +41,7 @@ class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 		$expected = 'gzip';
 		$this->assertEquals($expected,$actual);
 	}
-	
-	/**
-	 * @test
-	 */
-	public function Check_default_scope()
-	{
-		$actual = $this->object->options['scope'];
-		$expected = 'public';
-		$this->assertEquals($expected,$actual);
-	}
-	
-	/**
-	 * @test
-	 */
-	public function Check_default_etag()
-	{
-		$actual = $this->object->options['etag'];
-		$expected = false;
-		$this->assertEquals($expected,$actual);
-	}
-	
+
 	/**
 	 * @test
 	 */
@@ -74,10 +52,6 @@ class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 		
 		$actual = $this->object->output;
 		$expected = 'foo';
-		$this->assertEquals($expected,$actual);
-		
-		$actual = $this->object->headers['Content-Length'];
-		$expected = 3;
 		$this->assertEquals($expected,$actual);
 		
 		$actual = $this->object->headers['Content-Type'];
@@ -95,10 +69,6 @@ class Scaffold_ResponseTest extends PHPUnit_Framework_TestCase
 		
 		$actual = $this->object->output;
 		$expected = 'foo';
-		$this->assertEquals($expected,$actual);
-		
-		$actual = $this->object->headers['Content-Length'];
-		$expected = 3;
 		$this->assertEquals($expected,$actual);
 		
 		$actual = $this->object->headers['Content-Type'];
