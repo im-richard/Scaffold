@@ -20,6 +20,12 @@ class Scaffold_Source_File extends Scaffold_Source
 	public $path;
 	
 	/**
+	 * Path used to find relative files
+	 * @var string
+	 */
+	public $basepath;
+	
+	/**
 	 * The type of source
 	 * @var string
 	 */
@@ -31,20 +37,34 @@ class Scaffold_Source_File extends Scaffold_Source
 	public function __construct($path,$options = array())
 	{
 		$this->options = $options;
-		$this->contents = $this->original = file_get_contents($path);
-		$this->path = $path;
+		$this->path = $this->basepath = realpath($path);
+		
+		if(!is_file($this->path))
+		{
+			throw new Exception('File does not exist [' . $path . ']');
+		}
+		
+		$this->contents = $this->original = file_get_contents($this->path);
 		$this->last_modified = (isset($options['last_modified'])) ? $options['last_modified'] : filemtime($path);
 		$this->id = (isset($options['id'])) ? $options['id'] : md5($path);
 	}
 	
 	/**
-	 * Return the original contents of the source
 	 * @access public
 	 * @return string
 	 */
 	public function path()
 	{
 		return $this->path;
+	}
+	
+	/**
+	 * @access public
+	 * @return string
+	 */
+	public function basepath()
+	{
+		return $this->basepath;
 	}
 	
 	/**
@@ -111,7 +131,7 @@ class Scaffold_Source_File extends Scaffold_Source
 		}
 		else
 		{
-			$path = dirname($this->path) . DIRECTORY_SEPARATOR . $url;
+			$path = dirname($this->basepath) . DIRECTORY_SEPARATOR . $url;
 		}
 
 		return (file_exists($path)) ? $path : false;

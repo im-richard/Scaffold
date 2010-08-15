@@ -30,29 +30,7 @@ class Scaffold_Extension_Import extends Scaffold_Extension
 	 */
 	public function pre_process($source,$scaffold)
 	{
-		// Can only parse files, obviously
-		if($source->type != 'file') return;
-
-		// Replace all the imports
-		$source->contents = $this->find_and_replace($source->contents,$source->path);
-	}
-	
-	/**
-	 * Search through a CSS string, and recursively replace import rules
-	 *
-	 * @author your name
-	 * @param $css
-	 * @param $base Search for files relative to this file
-	 * @return return type
-	 */
-	public function find_and_replace($css,$base)
-	{
-		while($rules = $this->find_rules($css))
-		{
-			$css = $this->replace_rules($rules,$css,$base);
-		}
-		
-		return $css;
+		$this->replace_rules($source,$scaffold);
 	}
 	
 	/**
@@ -82,56 +60,28 @@ class Scaffold_Extension_Import extends Scaffold_Extension
 
 	/**
 	 * Imports css via @import statements
-	 * @param $rules mixed
-	 * @param $css string
-	 * @param $base Search for files relative to this file
-	 * @return string
+	 * @param $source Scaffold_Source
+	 * @param $scaffold Scaffold
+	 * @return void
 	 */
-	public function replace_rules($rules,$css,$base)
+	public function replace_rules($source,Scaffold $scaffold)
 	{
-		$unique = array_unique($rules[1]);
-		$include = str_replace("\\", "/", $unique[0]);
-		
-		# If they haven't supplied an extension, we'll assume its a css file
-		if(pathinfo($include, PATHINFO_EXTENSION) == "")
-			$include .= '.css';
-		
-		# The base is set, and it's relative
-		if($include[0] != DIRECTORY_SEPARATOR)
-		{
-			$path = dirname($base) . DIRECTORY_SEPARATOR . $include;
+		if($rules = $this->find_rules($source->contents))
+		{	
+			foreach($rules[1] as $key => $file)
+			{
+				if($file = $source->find($file))
+				{
+					$this->loaded[] = $file;
+					
+					# Use Scaffold to compile the inner CSS file
+					$inner = $scaffold->compile(new Scaffold_Source_File($file));
+					
+					# Replace the rule		
+					$source->contents = str_replace($rules[0][$key],$inner->contents,$source->contents);
+				}
+			}
 		}
-		elseif($include[0] == DIRECTORY_SEPARATOR)
-		{
-			$path = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . $include;
-		}
-		
-		if(!is_file($path))
-		{
-			// Error message
-			$title = "Missing File";
-			$message = "<code>$include</code> cannot be found or doesn't exist.<pre><code> ".$rules[0][0]."</code></pre>";
-			
-			// Throw the error
-			throw new Scaffold_Extension_Exception($title,$message,$base);
-		}
-		
-		# It's already been loaded
-		if($this->is_loaded($path))
-		{
-			//$css = str_replace($matches[0][0],'', $css);
-		}
-			
-		$this->loaded[] = $path;
-		
-		# Check the file for more imports
-		$contents = file_get_contents($path);	
-		$contents = $this->find_and_replace($contents,$path);
-
-		# Replace the rule		
-		$css = str_replace($rules[0][0],$contents,$css);
-
-		return $css;
 	}
 	
 	/**

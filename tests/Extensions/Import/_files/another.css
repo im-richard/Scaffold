@@ -1,0 +1,6 @@
+#id
+{
+	color:$blue;
+}
+
+@import 'big.css';
