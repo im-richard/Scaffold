@@ -43,30 +43,38 @@ class Scaffold_Extension_ImageReplace extends Scaffold_Extension
 	 */
 	public function image_replace($value)
 	{
-		$url = preg_match('/url\((.*)\)/', $value,$match);
-		$url = $match[1];
+		$url = preg_match('/
+				(?:url\(\s*)?      	 # maybe url(
+				[\'"]?               # maybe quote
+				([^\'\"\)]*)                # 1 = URI
+				[\'"]?               # maybe end quote
+				(?:\\s*\\))?         # maybe )
+			/xs',
+			$value,
+			$match
+		);
 		
-		// Get the size of the image file
-		$size = GetImageSize($this->source->find($url));
-		$width = $size[0];
-		$height = $size[1];
-		
-		// Make sure theres a value so it doesn't break the css
-		if(!$width && !$height)
+		if($match)
 		{
-			$width = $height = 0;
+			$url = $match[1];
+			
+			// Get the size of the image file
+			$size = GetImageSize($this->source->find($url));
+			$width = $size[0];
+			$height = $size[1];
+			
+			// Make sure theres a value so it doesn't break the css
+			if(!$width && !$height)
+			{
+				$width = $height = 0;
+			}
+			
+			// Build the selector
+			$properties = 'background:url('.$url.') no-repeat 0 0;height:0;padding-top:'.$height.'px;width:'.$width.'px;display:block;text-indent:-9999px;overflow:hidden;';
+		
+			return $properties;
 		}
 		
-		// Build the selector
-		$properties = '
-			background:url('.$url.') no-repeat 0 0;
-			height:0;
-			padding-top:'.$height.'px;
-			width:'.$width.'px;
-			display:block;
-			text-indent:-9999px;
-			overflow:hidden;';
-	
-		return $properties;
+		return false;
 	}
 }

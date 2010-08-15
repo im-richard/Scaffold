@@ -82,6 +82,12 @@ Scaffold_Extension_AbsoluteUrls
  [x] test unquote
  [x] test post format
 
+Scaffold_Extension_ImageReplace
+ [x] test process
+
+Scaffold_Extension_Import
+ [x] test pre process
+
 Scaffold_Extension_Minify
  [x] test post format
 
