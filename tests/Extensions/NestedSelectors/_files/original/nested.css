@@ -1,5 +1,7 @@
 @import 'blah.css';
 
+/* Comment */
+
 @media (min-width: -100px)
 {
 	body,html

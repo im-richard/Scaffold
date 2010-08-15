@@ -142,7 +142,7 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 
 	protected function encode_comment($comment)
 	{
-		return "<comment_block>".htmlentities($comment[1])."</comment_block>";
+		//return "<comment_block>".htmlentities($comment[1])."</comment_block>";
 	}
 	
 	protected function single_line_directive($rule)
