@@ -82,7 +82,7 @@ class Scaffold_Helper_Loader
 		}
 		
 		// Docroot relative file
-		elseif($file[0] == DIRECTORY_SEPARATOR)
+		elseif($file[0] == '/' OR $file[0] == '\\')
 		{
 			$file = $_SERVER['DOCUMENT_ROOT'] . $file;
 		}

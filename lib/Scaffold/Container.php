@@ -63,9 +63,12 @@ class Scaffold_Container
 	{	
 		# Scaffold_Helper object
 		$helper = $this->getHelper();
+		
+		# The glob path
+		$path = realpath($path) . DIRECTORY_SEPARATOR . '*';
 	
 		# Load each of the extensions
-		foreach(glob($path.'/*/') as $ext)
+		foreach(glob($path) as $ext)
 		{			
 			$ext .= DIRECTORY_SEPARATOR;
 		
