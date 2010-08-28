@@ -75,7 +75,7 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 		# Relative path to the file
 		$relative = $this->up_directory(
 			$relative_path, 
-			substr_count($path, '..'.DIRECTORY_SEPARATOR, 0)
+			substr_count($path, '..'.DIRECTORY_SEPARATOR)
 		); 
 		
 		# Absolute path				
