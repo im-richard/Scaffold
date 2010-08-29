@@ -72,6 +72,12 @@ class Scaffold_Extension_Import extends Scaffold_Extension
 			{
 				if($file = $source->find($file))
 				{
+					# Only include files once
+					if(in_array($file, $this->loaded))
+					{
+						continue;
+					}
+					
 					$this->loaded[] = $file;
 					
 					# Use Scaffold to compile the inner CSS file
