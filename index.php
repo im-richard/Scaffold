@@ -61,6 +61,10 @@ elseif(isset($_GET['string']) AND $config['enable_string'] === true)
 {
 	$source = new Scaffold_Source_String($_GET['string']);
 }
+elseif(isset($config['default_source']))
+{
+	$source = new Scaffold_Source_File($config['default_source']);
+}
 else
 {
 	echo 'No source :(';
