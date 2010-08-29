@@ -98,7 +98,8 @@ Scaffold_Extension_NestedSelectors
  [x] test process
 
 Scaffold_Extension_Sass
- [x] test process
+ [x] test scss
+ [x] test sass
 
 Scaffold_Extension_Variables
  [x] test process
