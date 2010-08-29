@@ -51,7 +51,7 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 	 * @param $source
 	 * @return string
 	 */
-	public function process($source,$scaffold)
+	public function post_process($source,$scaffold)
 	{		
 		// The path to the cache file we'll use to temporary store the files
 		$path = $scaffold->cache->set('sass/'.$source->id,$source->contents,null,false,false);
