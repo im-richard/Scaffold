@@ -43,9 +43,15 @@ class Scaffold_Extension_XMLVariables extends Scaffold_Extension
 			}
 		}
 		
+		// Remove the @variable url directives from the CSS string
+		foreach($urls[0] as $directive)
+		{
+			$source->contents = str_replace( $directive, '', $source->contents);
+		}
+		
 		foreach($this->config['files'] as $file)
 		{
-			if($found = $scaffold->loader->find_file($file,false))
+			if($found = $scaffold->helper->load->file($file,false))
 			{
 				$this->load($found);
 			}
@@ -128,8 +134,8 @@ class Scaffold_Extension_XMLVariables extends Scaffold_Extension
 	 * @return void
 	 */
 	public function variables_replace(Scaffold_Source $source,Scaffold_Extension_Variables $var)
-	{
-		$var->variables = array_merge($var->variables,$this->variables);
+	{	
+		$var->variables = $this->helper->array->merge_recursive($var->variables,$this->variables);
 	}
 	
 	/**
@@ -153,7 +159,7 @@ class Scaffold_Extension_XMLVariables extends Scaffold_Extension
 		    ,$str
 		    ,$found
 		);
-		
+
 		return $found;
 	}
 }

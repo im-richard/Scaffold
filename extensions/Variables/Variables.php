@@ -40,7 +40,7 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 	 * @return void
 	 */
 	public function process($source,$scaffold)
-	{		
+	{
 		// Get variables from the config
 		$this->variables = array_merge($this->config['variables'],$this->variables);
 	
@@ -48,8 +48,9 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 		$this->variables = array_merge($this->variables,$this->extract($source));
 		
 		// HOOK //
+		$scaffold->notify('variables_start',array($source,$this));
 		$scaffold->notify('variables_replace',array($source,$this));
-		
+
 		// Replace the variables
 		$source->contents = $this->replace_variables($source->contents,$this->variables);
 	}

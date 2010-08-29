@@ -132,6 +132,7 @@ class Scaffold_Container
 			
 		$helper = new Scaffold_Helper();
 		$helper->add('string',new Scaffold_Helper_String());
+		$helper->add('array',new Scaffold_Helper_Array());
 		$helper->add('css',new Scaffold_Helper_CSS());
 		$helper->add('load',new Scaffold_Helper_Loader($this->options['load_paths']));
 		$this->_helper = $helper;
