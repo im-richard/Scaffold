@@ -24,7 +24,7 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 		# We can only process files
 		if($source->path === false) return;
 
-		$relative_path = str_replace($_SERVER['DOCUMENT_ROOT'],'',dirname($source->path));
+		$relative_path = str_replace($_SERVER['DOCUMENT_ROOT'],'',dirname($source->path) . DIRECTORY_SEPARATOR);
 	
 		# Process all @imports
 		if($found = $this->find_imports($source->contents))
