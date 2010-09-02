@@ -49,7 +49,6 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 		
 		// HOOK //
 		$scaffold->notify('variables_start',array($source,$this));
-		$scaffold->notify('variables_replace',array($source,$this));
 
 		// Replace the variables
 		$source->contents = $this->replace_variables($source->contents,$this->variables);
@@ -107,10 +106,10 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 	{		
 		// Now replace each of the variables in the CSS string
 		foreach($variables as $group => $vars)
-		{
+		{			
 			// Sort the variables so they replace correctly
 			$sorted = $this->_sort_array_by_key_length($vars);
-			
+
 			foreach($sorted as $key => $value)
 			{
 				$str = str_replace($group.'.'.$key,$value,$str);
@@ -175,9 +174,9 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 	 */
 	private function _sort_array_by_key_length($array)
 	{
-		array_flip($array);
+		$array = array_flip($array);
 		uasort($array,array($this,'_sort'));
-		array_flip($array);	
+		$array = array_flip($array);	
 		return $array;
 	}
 	
