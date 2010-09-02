@@ -95,11 +95,10 @@ $config['extensions'] = array(
 	'Mixins',
 	'NestedSelectors',
 	'Variables',
-	
-	# Process-heavy Extensions
+	'XMLVariables',
 	//'Sass',
 	//'CSSTidy',
-	//'YUICompressor'
+	//'YUI'
 );
 
 /**

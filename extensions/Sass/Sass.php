@@ -66,7 +66,7 @@ class Scaffold_Extension_Sass extends Scaffold_Extension
 		// There's an error
 		if($output !== array())
 		{
-			throw new Scaffold_Extension_Exception('Sass Error',$output[0]);
+			throw new Scaffold_Extension_Exception('Sass Error',implode("\n",$output));
 		}
 		
 		$sass = file_get_contents($temp);

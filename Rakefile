@@ -32,7 +32,7 @@ end
 desc "Creates a new release from the current tag"
 task :release, :tag do |t, args|
 	tag = args[:tag]
-	system("git archive #{tag} --prefix=scaffold/ --format=zip > releases/scaffold-#{tag}.zip")
+	system("git archive #{tag} --prefix=scaffold/ --format=zip > ../Releases/scaffold-#{tag}.zip")
 end
 
 desc "Creates a new tag"
