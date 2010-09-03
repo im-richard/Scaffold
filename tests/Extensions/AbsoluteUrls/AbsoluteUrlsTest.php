@@ -21,15 +21,86 @@ class Scaffold_Extension_AbsoluteUrlsTest extends PHPUnit_Framework_TestCase
 	 */
 	public function test_up_directory()
 	{
+		$dir = '/this/is/my/path';
+		$expected = '/this/is';
+		$actual = $this->object->up_directory($dir,2);
+		$this->assertEquals($expected,$actual);
 		
+		$dir = '/this/is/my/path/';
+		$expected = '/this/is';
+		$actual = $this->object->up_directory($dir,2);
+		$this->assertEquals($expected,$actual);
+		
+		$dir = 'this/is/my/path/';
+		$expected = '/this/is';
+		$actual = $this->object->up_directory($dir,2);
+		$this->assertEquals($expected,$actual);
+		
+		$dir = '/this/is/my/path/';
+		$expected = '/';
+		$actual = $this->object->up_directory($dir,5);
+		$this->assertEquals($expected,$actual);
+		
+		$dir = 'this/is/my/path/';
+		$expected = '/';
+		$actual = $this->object->up_directory($dir,5);
+		$this->assertEquals($expected,$actual);
+		
+		$dir = '/this/is/my/path';
+		$expected = '/this/is/my/path';
+		$actual = $this->object->up_directory($dir,0);
+		$this->assertEquals($expected,$actual);
 	}
 	
-	/**
-	 * @test
-	 */
-	public function test_unquote()
+	public function test_remove_up_directories()
 	{
+		$dir = '../../my/path';
+		$expected = '/my/path';
+		$actual = $this->object->remove_up_directories($dir);
+		$this->assertEquals($expected,$actual);
+		
+		$dir = '..\..\my\path';
+		$expected = '/my\path';
+		$actual = $this->object->remove_up_directories($dir);
+		$this->assertEquals($expected,$actual);
+		
+		$dir = '/my/path';
+		$expected = '/my/path';
+		$actual = $this->object->remove_up_directories($dir);
+		$this->assertEquals($expected,$actual);
+	}
 	
+	public function test_resolve_path()
+	{
+		$base = '/this/is/my/path';
+		$dir = '../foo';
+		$expected = '/this/is/my/foo';
+		$actual = $this->object->resolve_path($base,$dir);
+		$this->assertEquals($expected,$actual);
+		
+		$base = '/this/is/my/path/';
+		$dir = '../foo';
+		$expected = '/this/is/my/foo';
+		$actual = $this->object->resolve_path($base,$dir);
+		$this->assertEquals($expected,$actual);
+		
+		$base = '/this/is/my/path';
+		$dir = '../../foo';
+		$expected = '/this/is/foo';
+		$actual = $this->object->resolve_path($base,$dir);
+		$this->assertEquals($expected,$actual);
+		
+		$base = '/this/is/my/path';
+		$dir = '/foo';
+		$expected = '/foo';
+		$actual = $this->object->resolve_path($base,$dir);
+		$this->assertEquals($expected,$actual);
+		
+		$base = '/this/is/my/path';
+		$dir = 'foo';
+		$expected = '/this/is/my/path/foo';
+		$actual = $this->object->resolve_path($base,$dir);
+		$this->assertEquals($expected,$actual);
 	}
 	
 	/**

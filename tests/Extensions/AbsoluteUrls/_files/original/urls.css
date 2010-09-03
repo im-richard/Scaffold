@@ -1,4 +1,5 @@
 @import '../file.css';
+@import 'file.css';
 @import url('../file.css');
 @import '../file.css' screen;
 @import url(../file.css);
@@ -10,6 +11,7 @@
 #id
 {
 	background:url('../file.css');
+	background:url(file.css);
 	background:url('/file.css');
 	background:url(../file.css);
 	background:url(http://www.google.com/file.css);
