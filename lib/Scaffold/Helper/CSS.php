@@ -172,22 +172,22 @@ class Scaffold_Helper_CSS
 	public function ruleset_to_array($string)
 	{
 		$return = array();
-
-		foreach(explode(";", $string) as $value)
+		$string = trim($string);
+		
+		foreach(explode(";", $string) as$value)
 		{
-			// Encode any colons inside quotations
-			if(preg_match_all('/[\'"](.*?\:.*?)[\'"]/',$value,$m) )
-			{
-				$value = str_replace($m[0][0],str_replace(':','#COLON#',$m[0][0]),$value);
-			}
+			if($value == '') continue;
 
-			$value = explode(":", $value);	
+			// First colon
+			$first = strpos($value, ':');
 			
-			// Make sure it's set
-			if(isset($value[1]))
-			{
-				$return[trim($value[0])] = str_replace('#COLON#', ':', trim($value[1]));
-			}
+			// the key
+			$k = substr($value, 0, $first);
+			
+			// The property comes after the first colon
+			$v = substr($value, $first + 1, strlen($value) - $first);
+			
+			$return[trim($k)] = trim($v);
 		}
 		
 		return $return;
