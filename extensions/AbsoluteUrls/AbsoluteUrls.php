@@ -23,8 +23,11 @@ class Scaffold_Extension_AbsoluteUrls extends Scaffold_Extension
 	{
 		# We can only process files
 		if($source->path === false) return;
-
-		$relative_path = str_replace($_SERVER['DOCUMENT_ROOT'],'',dirname($source->path));
+		
+		# This will work with Apache VirtualDocumentRoot.
+		$root = str_replace($_SERVER['SCRIPT_NAME'],"",$_SERVER['SCRIPT_FILENAME']); 
+		
+		$relative_path = str_replace($root,'',dirname($source->path));
 	
 		# Process all @imports
 		if($found = $this->find_imports($source->contents))
