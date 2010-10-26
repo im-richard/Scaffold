@@ -91,7 +91,7 @@ class Scaffold extends Scaffold_Extension_Observable
 		$cached = $this->cache->get($source->id);
 		
 		# Can't load it from the cache, we're in dev mode, or the original file has changed
-		if($cached === false OR $this->production === false OR $source->last_modified > $cached->last_modified)
+		if( true || $cached === false OR $this->production === false OR $source->last_modified > $cached->last_modified)
 		{
 			// Run it through the extensions
 			$source = $this->parse($source);
@@ -110,6 +110,64 @@ class Scaffold extends Scaffold_Extension_Observable
 		$source->last_modified 	= $cached->last_modified;
 		$source->expires 		= $cached->expires;
 		
+		return $source;
+	}
+	
+	/**
+	 * Compiles the CSS using the engine and caches the result
+	 * @access public
+	 * @return array
+	 */
+	public function getSources ( ) {
+		$sources = array();
+		
+		if ( !empty($_GET['f']) ) {
+			$files = explode($_GET['f']);
+			unset($_GET['f']);
+			foreach ( $files as $file ) {
+				$sources[] = $this->getSource($file);
+			}
+		}
+		else {
+			$sources = array($this->getSource());
+		}
+		
+		return $sources;
+	}
+		
+	/**
+	 * Compiles the CSS using the engine and caches the result
+	 * @access public
+	 * @param string $file
+	 * @return Scaffold_Source
+	 */
+	public function getSource ( $file = null, $config = array() ) {
+		if ( $file || ($file = $_GET['f']) ) {
+			if ( strstr($file, 'http') )
+				$source = new Scaffold_Source_Url($file);
+			else
+				$source = new Scaffold_Source_File($this->helper->load->file($file));
+		}
+		elseif(isset($_GET['file']))
+		{
+			$source = new Scaffold_Source_File( $this->helper->load->file($_GET['file']) );
+		}
+		elseif(isset($_GET['url']) AND $config['enable_url'] === true)
+		{
+			$source = new Scaffold_Source_Url($_GET['url']);
+		}
+		elseif(isset($_GET['string']) AND $config['enable_string'] === true)
+		{
+			$source = new Scaffold_Source_String($_GET['string']);
+		}
+		elseif(isset($config['default_source']))
+		{
+			$source = new Scaffold_Source_File($config['default_source']);
+		}
+		else
+		{
+			throw new Exception('Could not detect source.');
+		}
 		return $source;
 	}
 

@@ -39,40 +39,17 @@ Scaffold_Environment::set_view(realpath($system.'/views/error.php'));
 // = Start the scaffolding magic  =
 // =========================================
 
-// Make sure the config var is set
-if(!isset($config)) $config = array();
-
 // The container creates Scaffold objects
-$container = new Scaffold_Container($system,$config);
+$Container = new Scaffold_Container($system,$config);
 
 // This is where the magic happens
-$scaffold = $container->build();
+$Scaffold = $Container->build();
 
-// Get the requested source
-if(isset($_GET['file']))
-{
-	$source = new Scaffold_Source_File( $scaffold->helper->load->file($_GET['file']) );
-}
-elseif(isset($_GET['url']) AND $config['enable_url'] === true)
-{
-	$source = new Scaffold_Source_Url($_GET['url']);
-}
-elseif(isset($_GET['string']) AND $config['enable_string'] === true)
-{
-	$source = new Scaffold_Source_String($_GET['string']);
-}
-elseif(isset($config['default_source']))
-{
-	$source = new Scaffold_Source_File($config['default_source']);
-}
-else
-{
-	echo 'No source :(';
-	exit;
-}
+// Get the sources
+$Source = $Scaffold->getSource(null,$config);
 
 // Compiles the source object
-$source = $scaffold->compile($source);
+$Source = $Scaffold->compile($Source);
 
 // Use the result to render it to the browser. Hooray!
-$scaffold->render($source);
+$Scaffold->render($Source);

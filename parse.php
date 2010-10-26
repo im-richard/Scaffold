@@ -7,7 +7,7 @@
 /**
  * The location of the Scaffold system folder
  */
-$system = './';
+$system = dirname(__FILE__).'/';
 
 /**
  * Production Mode

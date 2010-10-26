@@ -27,6 +27,8 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 	 */
 	public function process($source,$scaffold)
 	{	
+		$filename = empty($source->path) ? (empty($source->url) ? '' : $source->url) : $source->path;
+		
 		// Find any mixins
 		if(preg_match_all('/\@mixin\s+([0-9a-zA-Z_\-]+) (\((.*?)\))? \s* \{/sx',$source->contents,$mixins))
 		{
@@ -86,44 +88,51 @@ class Scaffold_Extension_Mixins extends Scaffold_Extension
 			}
 			
 			// Now we need to replace them in the CSS
-			if(preg_match_all('/\@include\s+([0-9a-zA-Z_\-]+)(\((.*?)\))?\s*\;/sx', $css, $includes))
-			{
-				foreach($includes[1] as $include_key => $include)
+			while ( true ) {
+				if(preg_match_all('/\@include\s+([0-9a-zA-Z_\-]+)(\((.*?)\))?\s*\;/sx', $css, $includes))
 				{
-					// If the mixin doesn't exist	
-					if(!isset($this->mixins[$include]))
-						throw new Exception("Mixin does not exist - $include");
-				
-					$mixin 		= $this->mixins[$include];
-					$params 	= ($includes[3][$include_key] != false) ? explode(',',$includes[3][$include_key]) : false;
-					
-					$content 	= $mixin['content'];
-					
-					if($mixin['params'] !== false)
+					foreach($includes[1] as $include_key => $include)
 					{
-						foreach($mixin['params'] as $key => $param)
+						// If the mixin doesn't exist	
+						if(!isset($this->mixins[$include]))
+							throw new Exception("Mixin does not exist - $include [$filename]");
+					
+						$mixin 		= $this->mixins[$include];
+						$params 	= ($includes[3][$include_key] != false) ? explode(',',$includes[3][$include_key]) : false;
+						
+						$content 	= $mixin['content'];
+						
+						if($mixin['params'] !== false)
 						{
-							// Missing a parameter
-							if(!isset($params[$key]))
+							foreach($mixin['params'] as $key => $param)
 							{
-								// No default value
-								if($mixin['default_params'][$key] === false)
+								// Missing a parameter
+								if(!isset($params[$key]))
 								{
-									throw new Exception("Missing parameter $key from $include");
+									// No default value
+									if($mixin['default_params'][$key] === false)
+									{
+										throw new Exception("Missing parameter $key from $include [$filename]");
+									}
+									
+									$params[$key] = $mixin['default_params'][$key];
+									
 								}
 								
-								$params[$key] = $mixin['default_params'][$key];
+								$content = str_replace(trim($param),trim($params[$key],"\"' \t\r\n\0\x0B"),$content);
 							}
-
-							$content = str_replace(trim($param),$params[$key],$content);
 						}
+						
+						$css = str_replace($includes[0][$include_key],$content,$css);
 					}
-
-					$css = str_replace($includes[0][$include_key],$content,$css);
 				}
-			}	
+				else {
+					break;
+				}
+			}
 			
 			$source->contents = $css;
 		}
 	}
+	
 }

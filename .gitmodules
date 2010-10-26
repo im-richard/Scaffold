@@ -1,0 +1,6 @@
+[submodule "imports/foundation"]
+	path = imports/foundation
+	url = http://github.com/balupton/Foundation-CSS-Framework.git
+[submodule "imports/bal"]
+	path = imports/bal
+	url = http://github.com/balupton/Scaffold-Import-Bal.git

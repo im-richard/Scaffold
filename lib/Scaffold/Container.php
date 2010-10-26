@@ -54,6 +54,21 @@ class Scaffold_Container
 	}
 	
 	/**
+	 * Get the Container Instance
+	 * @return Scaffold_Container
+	 */
+	public static function getInstance ( $system = null, $options = array() ) {
+		# Apply
+		if ( empty($GLOBALS['Scaffold_Container']) ) {
+			$Scaffold_Container = new Scaffold_Container($system,$options);
+			$GLOBALS['Scaffold_Container'] = $Scaffold_Container;
+		}
+		
+		# Return
+		return $GLOBALS['Scaffold_Container'];
+	}
+	
+	/**
 	 * Loads the extension files
 	 * @author your name
 	 * @param $param
