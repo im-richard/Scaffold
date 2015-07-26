@@ -1,4 +1,4 @@
-h3. Scaffold is a CSS pre-processor built in PHP that allows developers to easily create custom extensions to CSS and reduce the amount of time they spend writing code. 
+##### Scaffold is a CSS pre-processor built in PHP that allows developers to easily create custom extensions to CSS and reduce the amount of time they spend writing code. 
 
 Out of the box, you get:
 
@@ -19,7 +19,7 @@ With a complete cache system included; you don’t need to worry about the hit t
 * Sets a far-future expires header
 * Configures ETags
 
-h2. How it works
+### How it works
 
 Requests to CSS files are made through Scaffold:
 
@@ -31,11 +31,11 @@ You need to tell @parse.php@ the location of a CSS file, and it will do all the 
 
 If the file has changed, Scaffold will recache the file, otherwise it will just fetch the processed file from the cache and return that.
 
-h2. Requirements
+### Requirements
 
 * PHP 5.2
 
-h2. Setup
+### Setup
 
 <a href="http://github.com/anthonyshort/Scaffold/zipball/master">Download the latest version</a> and place the _scaffold/_ folder somewhere on your webserver.
 
@@ -49,11 +49,11 @@ Now in your HTML reference CSS files by going through the @parse.php@ file:
 
 The file parameter can point to the CSS file using either an *absolute path, a path relative to parse.php or you can add your stylesheet directory* to the @load_paths@ array in @parse.php@.
 
-h2. Documentation
+### Documentation
 
 <a href="http://github.com/anthonyshort/Scaffold/wiki">See the wiki</a> for more detailed documentation.
 
-h2. License
+### License
 
 Copyright (c) 2015 Richard Tanner & Anthony Short
 
