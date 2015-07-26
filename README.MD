@@ -13,7 +13,7 @@ Out of the box, you get:
 * Variables powered by XML
 * Mixins
 
-All of this is backed by a strong file cache, so you don't need to worry about the hit to the server. In addition, Scaffold will serve your CSS to the browser with the correct caching headers.  
+With a complete cache system included; you don’t need to worry about the hit to the server. In addition, Scaffold will serve your CSS to the browser with the correct caching headers.
 
 * Gzip components
 * Sets a far-future expires header
