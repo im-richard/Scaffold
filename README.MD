@@ -23,9 +23,8 @@ With a complete cache system included; you don’t need to worry about the hit t
 
 Requests to CSS files are made through Scaffold:
 
-<code>
-  <link href="scaffold/parse.php?file=/stylesheets/master.css" rel="stylesheet"/>
-</code>
+``<link href="scaffold/parse.php?file=/stylesheets/master.css" rel="stylesheet"/>``
+
 
 You need to tell @parse.php@ the location of a CSS file, and it will do all the work for you. Alternatively, you can [[use a .htaccess file automatically parse CSS files in a directory|Automatically parsing files with a .htaccess file]].
 
@@ -43,9 +42,7 @@ The @parse.php@ file needs to be accessible to the web, so either put the _scaff
 
 Now in your HTML reference CSS files by going through the @parse.php@ file:
 
-<code>
-  <link href="path/to/parse.php?file=/path/to/stylesheet.css" rel="stylesheet"/>
-</code>
+``<link href="path/to/parse.php?file=/path/to/stylesheet.css" rel="stylesheet"/>``
 
 The file parameter can point to the CSS file using either an *absolute path, a path relative to parse.php or you can add your stylesheet directory* to the @load_paths@ array in @parse.php@.
 
