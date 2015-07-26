@@ -127,13 +127,28 @@ class Scaffold_Source_File extends Scaffold_Source
 	{
 		if($url[0] == '/' OR $url[0] == '\\')
 		{
-			$path = $_SERVER['DOCUMENT_ROOT'] . $url;
+			$path = $_SERVER['DOCUMENT_ROOT'].$url;
+			if ( !file_exists($path) ) {
+				$path = false;
+			}
 		}
 		else
 		{
-			$path = dirname($this->basepath) . DIRECTORY_SEPARATOR . $url;
+			$Container = Scaffold_Container::getInstance();
+			$import_paths = $Container->options['import_paths'];
+			array_unshift($import_paths, dirname($this->basepath));
+			
+			foreach ( $import_paths as $import_path ) {
+				$path = $import_path.DIRECTORY_SEPARATOR.$url;
+				if ( file_exists($path) ) {
+					break;
+				}
+			}
+			if ( !file_exists($path) ) {
+				$path = false;
+			}
 		}
-
-		return (file_exists($path)) ? $path : false;
+		
+		return $path;
 	}
 }

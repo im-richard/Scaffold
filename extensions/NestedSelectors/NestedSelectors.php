@@ -20,7 +20,8 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 */
 	public function post_process($source,$scaffold)
 	{
-		$xml = $this->to_xml($source->contents);		
+		$filename = empty($source->path) ? $source->url : $source->path;
+		$xml = $this->to_xml($source->contents, $filename);		
 		$source->contents = html_entity_decode($this->_parse_children($xml->children()));
 	}
 
@@ -115,7 +116,7 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	 *
 	 * @return string $css
 	 */
-	public function to_xml($css)
+	public function to_xml($css, $filename = null)
 	{
 		# Convert comments
 		$xml = preg_replace_callback('/\/\*(.*?)\*\//sx', array($this,'encode_comment') ,$css);
@@ -136,10 +137,49 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 		//$xml = preg_replace_callback('/([-_A-Za-z*]+)\s*:\s*([^;}{]+)(?:;)/sx', array($this,'_property'), $xml);
 
 		$xml = '<?xml version="1.0" ?><css>'.$xml.'</css>';
+	
+		libxml_use_internal_errors(true); 
+		$result = simplexml_load_string($xml);
+		$errors = libxml_get_errors();
+		libxml_clear_errors();
+		foreach ($errors as $error) {
+			echo $this->display_xml_error($error,$xml);
+			throw new Exception('NestedSelectors failed on ['.$filename.']: '.$error->message, $error->code);
+		}
 		
-		return simplexml_load_string($xml);
+		return $result;
 	}
-
+	
+	protected function display_xml_error($error, $xmlstr)
+	{
+		$xml = explode("\n", $xmlstr);
+	
+	    $return  = $xml[$error->line - 1] . "\n";
+	    $return .= str_repeat('-', $error->column) . "^\n";
+	
+	    switch ($error->level) {
+	        case LIBXML_ERR_WARNING:
+	            $return .= "Warning $error->code: ";
+	            break;
+	         case LIBXML_ERR_ERROR:
+	            $return .= "Error $error->code: ";
+	            break;
+	        case LIBXML_ERR_FATAL:
+	            $return .= "Fatal Error $error->code: ";
+	            break;
+	    }
+	
+	    $return .= trim($error->message) .
+	               "\n  Line: $error->line" .
+	               "\n  Column: $error->column";
+	
+	    if ($error->file) {
+	        $return .= "\n  File: $error->file";
+	    }
+	
+	    return "$return\n\n--------------------------------------------\n\n";
+	}
+	
 	protected function encode_comment($comment)
 	{
 		//return "<comment_block>".htmlentities($comment[1])."</comment_block>";
@@ -147,7 +187,8 @@ class Scaffold_Extension_NestedSelectors extends Scaffold_Extension
 	
 	protected function single_line_directive($rule)
 	{
-		return '<directive name="'.$rule[1].'" params="'.$rule[2].'" />';
+		$result = '<directive name="'.$rule[1].'" params="'.str_replace('"','\'',$rule[2]).'" />';
+		return $result;
 	}
 	
 	protected function _property($property)

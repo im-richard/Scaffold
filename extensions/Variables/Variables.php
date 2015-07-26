@@ -103,20 +103,24 @@ class Scaffold_Extension_Variables extends Scaffold_Extension
 	 * @return string
 	 */
 	public function replace_variables($str,array $variables)
-	{		
+	{	
+		$find = $replace = array();
+		
 		// Now replace each of the variables in the CSS string
 		foreach($variables as $group => $vars)
 		{			
 			// Sort the variables so they replace correctly
-			$sorted = $this->_sort_array_by_key_length($vars);
-
+			$sorted = $vars; //$this->_sort_array_by_key_length($vars);
 			foreach($sorted as $key => $value)
 			{
-				$str = str_replace($group.'.'.$key,$value,$str);
+				$find[] = $group.'.'.$key;
+				$replace[] = $value;
 			}
 		}
 		
-		return $str;
+		$result = str_replace($find, $replace, $str);
+		
+		return $result;
 	}
 
 	/**
